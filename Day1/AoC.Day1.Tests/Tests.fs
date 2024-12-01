@@ -55,14 +55,6 @@ let ``Single element list with diff values in other order return similarity`` ()
     Assert.Equal(6, similarity [3; 4] [3; 3])
 
 // [<Fact>]
-// let ``Multi-element pre-sorted list similarity`` () =
-//     Assert.Equal(2, similarity [3; 4] [4; 5])
-
-// [<Fact>]
-// let ``Multi-element unsorted list similarity`` () =
-//     Assert.Equal(5, similarity [10; 4] [4; 5])
-
-// [<Fact>]
 // let ``Sample data from Advent of Code similarity`` () =
 //     Assert.Equal(Sample.similarity, similarity Sample.left Sample.right)
 

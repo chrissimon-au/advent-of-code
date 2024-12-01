@@ -9,6 +9,7 @@ let distance (leftList: int list) (rightList: int list) =
 let similarity (leftList: int list) (rightList: int list) =
     leftList
     |> List.map (fun left ->
-        List.filter (fun right -> right = left) rightList        
-        |> List.sum)
+        List.filter (op_Equality left) rightList        
+        |> List.length
+        |> op_Multiply left)
     |> List.sum
