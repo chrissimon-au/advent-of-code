@@ -42,9 +42,9 @@ let ``Test data from Advent of Code distance`` () =
 let ``Empty lists return 0 similarity`` () =
     Assert.Equal(0, similarity [] [])
 
-// [<Fact>]
-// let ``Single element list with same values return 0 similarity`` () =
-//     Assert.Equal(0, similarity [3] [3])
+[<Fact>]
+let ``Single element list with same values return 0 similarity`` () =
+    Assert.Equal(0, similarity [3] [0])
 
 // [<Fact>]
 // let ``Single element list with diff values return similarity`` () =
