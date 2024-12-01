@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Distance.fs" />
+    <Compile Include="ChiefHistorianFinding.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
