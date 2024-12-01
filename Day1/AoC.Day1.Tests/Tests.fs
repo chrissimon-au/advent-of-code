@@ -11,3 +11,7 @@ let ``Empty lists return 0 distance`` () =
 [<Fact>]
 let ``Single element list with same values return 0 distance`` () =
     Assert.Equal(0, distance [3] [3])
+
+[<Fact>]
+let ``Single element list with diff values return distance`` () =
+    Assert.Equal(1, distance [4] [3])
