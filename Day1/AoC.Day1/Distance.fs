@@ -1,7 +1,8 @@
 module AoC.Day1.Distance
 
-let distance (leftList: int list) (rightList: int list) = 
+let rec distance (leftList: int list) (rightList: int list) = 
     match leftList, rightList with
     | [], [] -> 0
     | [a], [b] -> System.Math.Abs(a-b)
-    | _, _ -> raise <| System.NotImplementedException()
+    | (a :: aTail), (b :: bTail) -> System.Math.Abs(a-b) + (distance aTail bTail)
+    | _, _ -> raise <| System.NotImplementedException("")
