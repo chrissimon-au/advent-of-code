@@ -6,4 +6,9 @@ let distance (leftList: int list) (rightList: int list) =
     |> List.map (fun (left, right) -> System.Math.Abs(left-right))
     |> List.sum
 
-let similarity (leftList: int list) (rightList: int list) = 0
+let similarity (leftList: int list) (rightList: int list) =
+    leftList
+    |> List.map (fun left ->
+        List.filter (fun right -> right = left) rightList        
+        |> List.sum)
+    |> List.sum
