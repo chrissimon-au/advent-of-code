@@ -19,3 +19,7 @@ let ``Single element list with diff values return distance`` () =
 [<Fact>]
 let ``Single element list with diff values in other order return distance`` () =
     Assert.Equal(1, distance [3] [4])
+
+[<Fact>]
+let ``Multi-element pre-sorted list`` () =
+    Assert.Equal(2, distance [3; 4] [4; 5])
