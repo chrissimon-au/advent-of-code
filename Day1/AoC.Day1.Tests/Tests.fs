@@ -50,9 +50,9 @@ let ``Single element list with same values return 0 similarity`` () =
 let ``Single element list with value in once`` () =
     Assert.Equal(3, similarity [3] [3])
 
-// [<Fact>]
-// let ``Single element list with diff values in other order return similarity`` () =
-//     Assert.Equal(1, similarity [3] [4])
+[<Fact>]
+let ``Single element list with diff values in other order return similarity`` () =
+    Assert.Equal(6, similarity [3; 4] [3; 3])
 
 // [<Fact>]
 // let ``Multi-element pre-sorted list similarity`` () =
