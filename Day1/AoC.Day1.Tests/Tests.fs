@@ -46,9 +46,9 @@ let ``Empty lists return 0 similarity`` () =
 let ``Single element list with same values return 0 similarity`` () =
     Assert.Equal(0, similarity [3] [0])
 
-// [<Fact>]
-// let ``Single element list with diff values return similarity`` () =
-//     Assert.Equal(1, similarity [4] [3])
+[<Fact>]
+let ``Single element list with value in once`` () =
+    Assert.Equal(3, similarity [3] [3])
 
 // [<Fact>]
 // let ``Single element list with diff values in other order return similarity`` () =
