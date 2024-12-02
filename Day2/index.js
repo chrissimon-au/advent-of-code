@@ -33,8 +33,11 @@ function isReportSafe(report) {
 
 function isReportSafeWithProblemDampener(report) {
     const diffs = adjacentDifferences(report);
-    const numProblems = diffs.filter(diff => diff > 3 || diff < 1).length
-    return numProblems == 0 || numProblems == 1;
+    const firstProblemIdx = diffs.findIndex(diff => diff > 3 || diff < 1);
+    
+    const attemptWithoutProblem = report.toSpliced(firstProblemIdx, 1);
+
+    return isReportSafe(attemptWithoutProblem);
 }
 
 function numSafeReports(reports) {
