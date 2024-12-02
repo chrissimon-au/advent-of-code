@@ -2,5 +2,6 @@ obj
 bin
 TestData.*
 sampledata.*
+testdata.*
 
 node_modules

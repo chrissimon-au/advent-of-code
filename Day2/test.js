@@ -1,6 +1,12 @@
 const { parse, numSafeReports } = require('./index');
 const fs = require('fs');
 
+const getData = (filePrefix) =>
+    [
+        parse(fs.readFileSync(`./${filePrefix}.txt`, {encoding: 'utf-8'})),
+        parseInt(fs.readFileSync(`./${filePrefix}.answer.txt`, {encoding: 'utf-8'}))
+    ]
+
 describe('parse', () => {
 
     test.each([
@@ -56,10 +62,8 @@ describe('Report Safety', () => {
             [ [ 1, 2, 7] ],
             0
         ],
-        [
-            parse(fs.readFileSync('./sampledata.txt', {encoding: 'utf-8'})),
-            parseInt(fs.readFileSync('./sampledata.answer.txt', {encoding: 'utf-8'}))
-        ]
+        getData('sampledata'),
+        getData('testdata'),
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeReports(reports)).toEqual(expectedSafetyCount);
     });
