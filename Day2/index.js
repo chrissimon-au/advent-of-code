@@ -31,12 +31,16 @@ function isReportSafe(report) {
     return diffs.filter(diff => diff > 3 || diff < 1).length == 0;
 }
 
+function isReportSafeWithProblemDampener(report) {
+    return isReportSafe(report);
+}
+
 function numSafeReports(reports) {
     return reports.filter(isReportSafe).length;
 }
 
 function numSafeWithProblemDampenerReports(reports) {
-    throw "Not implemented";
+    return reports.filter(isReportSafeWithProblemDampener).length;
 }
 
 module.exports = {
