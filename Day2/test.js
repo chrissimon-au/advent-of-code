@@ -29,7 +29,11 @@ describe('Report Safety', () => {
     test.each([
         [
             [[1]],
-            1
+            1            
+        ],
+        [
+            [[1],[1]],
+            2
         ]
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeReports(reports)).toEqual(expectedSafetyCount);
