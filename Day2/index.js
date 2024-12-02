@@ -12,7 +12,7 @@ function parse(input) {
 }
 
 function numSafeReports(reports) {
-    return 1;
+    return reports.length;
 }
 
 module.exports = {
