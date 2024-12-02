@@ -38,6 +38,10 @@ describe('Report Safety', () => {
         [
             [[1,2],[1,5]],
             1
+        ],
+        [
+            [[1,1],[1,4]],
+            1
         ]
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeReports(reports)).toEqual(expectedSafetyCount);
