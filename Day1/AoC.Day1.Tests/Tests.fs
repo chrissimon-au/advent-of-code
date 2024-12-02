@@ -54,14 +54,10 @@ let ``Single element list with value in once`` () =
 let ``Single element list with diff values in other order return similarity`` () =
     Assert.Equal(6, similarity [3; 4] [3; 3])
 
-// [<Fact>]
-// let ``Sample data from Advent of Code similarity`` () =
-//     Assert.Equal(Sample.similarity, similarity Sample.left Sample.right)
+[<Fact>]
+let ``Sample data from Advent of Code similarity`` () =
+    Assert.Equal(Sample.similarity, similarity Sample.left Sample.right)
 
-// [<Fact>]
-// let ``Test data from Advent of Code similarity`` () =
-//     Assert.Equal(Test.similarity, similarity Test.left Test.right)
-
-
-
-
+[<Fact>]
+let ``Test data from Advent of Code similarity`` () =
+    Assert.Equal(Test.similarity, similarity Test.left Test.right)
