@@ -3,5 +3,5 @@ bin
 TestData.*
 sampledata.*
 testdata.*
-
+result
 node_modules

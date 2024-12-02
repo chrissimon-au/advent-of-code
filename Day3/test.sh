@@ -1,0 +1,1 @@
+watchexec -e rock,sh --timings ./aoc-day3.test.sh
