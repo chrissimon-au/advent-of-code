@@ -32,7 +32,9 @@ function isReportSafe(report) {
 }
 
 function isReportSafeWithProblemDampener(report) {
-    return isReportSafe(report);
+    const diffs = adjacentDifferences(report);
+    const numProblems = diffs.filter(diff => diff > 3 || diff < 1).length
+    return numProblems == 0 || numProblems == 1;
 }
 
 function numSafeReports(reports) {
