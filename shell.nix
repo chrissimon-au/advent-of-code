@@ -6,5 +6,6 @@ in
 pkgs.mkShellNoCC {
   packages = with pkgs; [
     dotnetCorePackages.sdk_9_0
+    nodejs_23
   ];
 }
