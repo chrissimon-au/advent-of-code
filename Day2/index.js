@@ -11,6 +11,11 @@ function parse(input) {
     );
 }
 
+function numSafeReports(reports) {
+
+}
+
 module.exports = {
-    parse
+    parse,
+    numSafeReports
 } 

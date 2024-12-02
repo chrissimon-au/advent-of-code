@@ -1,4 +1,4 @@
-const { parse } = require('./index');
+const { parse, numSafeReports } = require('./index');
 
 describe('parse', () => {
 
@@ -20,6 +20,19 @@ describe('parse', () => {
         let inputData = parse(input);
     
         expect(inputData).toEqual(output);
+    });
+
+});
+
+describe('Report Safety', () => {
+
+    test.each([
+        [
+            [[1]],
+            1
+        ]
+    ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
+        expect(numSafeReports(reports)).toEqual(expectedSafetyCount);
     });
 
 });
