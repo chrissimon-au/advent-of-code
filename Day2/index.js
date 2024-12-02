@@ -25,15 +25,17 @@ function adjacentDifferences(report) {
     return diffs;
 }
 
+const isDiffUnSafe = diff => diff > 3 || diff < 1;
+
 function isReportSafe(report) {
     const diffs = adjacentDifferences(report);
 
-    return diffs.filter(diff => diff > 3 || diff < 1).length == 0;
+    return diffs.filter(isDiffUnSafe).length == 0;
 }
 
 function isReportSafeWithProblemDampener(report) {
     const diffs = adjacentDifferences(report);
-    const firstProblemIdx = diffs.findIndex(diff => diff > 3 || diff < 1);
+    const firstProblemIdx = diffs.findIndex(isDiffUnSafe);
     
     const attemptWithoutProblem = report.toSpliced(firstProblemIdx, 1);
 
