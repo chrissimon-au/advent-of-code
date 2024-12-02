@@ -81,6 +81,10 @@ describe('Report Safety With Problem Dampener', () => {
             [[1, 3, 2]],
             1            
         ],
+        [
+            [[1, 2, 7, 8, 9]],
+            0
+        ],
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeWithProblemDampenerReports(reports)).toEqual(expectedSafetyCount);
     });
