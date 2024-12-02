@@ -1,4 +1,5 @@
 const { parse, numSafeReports } = require('./index');
+const fs = require('fs');
 
 describe('parse', () => {
 
@@ -54,6 +55,10 @@ describe('Report Safety', () => {
         [
             [ [ 1, 2, 7] ],
             0
+        ],
+        [
+            parse(fs.readFileSync('./sampledata.txt', {encoding: 'utf-8'})),
+            parseInt(fs.readFileSync('./sampledata.answer.txt', {encoding: 'utf-8'}))
         ]
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeReports(reports)).toEqual(expectedSafetyCount);
