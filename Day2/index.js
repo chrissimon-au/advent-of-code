@@ -20,7 +20,7 @@ function adjacentDifferences(report) {
 
 function isReportSafe(report) {
     const diffs = adjacentDifferences(report);
-    return diffs.filter(diff => diff > 3).length == 0;
+    return diffs.filter(diff => diff > 3 || diff < 1).length == 0;
 }
 
 function numSafeReports(reports) {
