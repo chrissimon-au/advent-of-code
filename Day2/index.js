@@ -11,8 +11,20 @@ function parse(input) {
     );
 }
 
+function adjacentDifferences(report) {
+    if (report.length < 2) {
+        return [];
+    }
+    return report.splice(1).map((value, index) => value - report[index]);
+}
+
+function isReportSafe(report) {
+    const diffs = adjacentDifferences(report);
+    return diffs.filter(diff => diff > 3).length == 0;
+}
+
 function numSafeReports(reports) {
-    return reports.length;
+    return reports.filter(isReportSafe).length;
 }
 
 module.exports = {
