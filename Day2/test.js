@@ -86,7 +86,11 @@ describe('Report Safety With Problem Dampener', () => {
             0
         ],
         [
-            [[40, 42, 44, 47, 49, 50, 48]],
+            [[1, 2, 7, 5, 8]],
+            1
+        ],
+        [
+            [[71, 74, 72, 70, 68, 65, 62, 60]],
             1
         ],
         getData("sampledata", 2),
