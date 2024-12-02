@@ -19,7 +19,7 @@ function adjacentDifferences(report) {
     const diffs = report.slice(1).map((value, idx) => {
         return value - report[idx];
     });
-    if (diffs[0] < 0) {
+    if (diffs.filter(diff => diff < 0).length >= report.length / 2) {
         return diffs.map (diff => diff * -1);
     }
     return diffs;
