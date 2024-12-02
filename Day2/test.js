@@ -1,8 +1,16 @@
 const { parse } = require('./index');
 
-test('Parses text to list of lists', () => {
-    let input = `1`;
-    let inputData = parse(input);
+describe('parse', () => {
 
-    expect(inputData).toEqual([[1]]);
+    test.each([
+            [
+                '1',
+                [[1]]
+            ]
+        ])('Parses text to list of lists', (input, output) => {
+        let inputData = parse(input);
+    
+        expect(inputData).toEqual(output);
+    });
+
 });
