@@ -1,10 +1,10 @@
 const { parse, numSafeReports, numSafeWithProblemDampenerReports } = require('./index');
 const fs = require('fs');
 
-const getData = (filePrefix) =>
+const getData = (filePrefix, answerSuffix="") =>
     [
         parse(fs.readFileSync(`./${filePrefix}.txt`, {encoding: 'utf-8'})),
-        parseInt(fs.readFileSync(`./${filePrefix}.answer.txt`, {encoding: 'utf-8'}))
+        parseInt(fs.readFileSync(`./${filePrefix}.answer${answerSuffix}.txt`, {encoding: 'utf-8'}))
     ]
 
 describe('parse', () => {
@@ -85,6 +85,7 @@ describe('Report Safety With Problem Dampener', () => {
             [[1, 2, 7, 8, 9]],
             0
         ],
+        getData("sampledata", 2),
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeWithProblemDampenerReports(reports)).toEqual(expectedSafetyCount);
     });
