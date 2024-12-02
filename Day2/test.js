@@ -10,7 +10,12 @@ describe('parse', () => {
             [
                 '1 2',
                 [[1, 2]]
-            ]
+            ],
+            [
+                `1 2
+3 4`,
+                [[1, 2], [3, 4]]
+            ],
         ])('Parses %s to %o', (input, output) => {
         let inputData = parse(input);
     
