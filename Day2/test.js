@@ -6,8 +6,12 @@ describe('parse', () => {
             [
                 '1',
                 [[1]]
+            ],
+            [
+                '1 2',
+                [[1, 2]]
             ]
-        ])('Parses text to list of lists', (input, output) => {
+        ])('Parses %s to %o', (input, output) => {
         let inputData = parse(input);
     
         expect(inputData).toEqual(output);
