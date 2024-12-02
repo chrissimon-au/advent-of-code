@@ -1,5 +1,5 @@
-function parse() {
-    return [[1]];
+function parse(input) {    
+    return [input.split(/\s/).map(a => parseInt(a))];
 }
 
 module.exports = {
