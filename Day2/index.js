@@ -35,7 +35,12 @@ function numSafeReports(reports) {
     return reports.filter(isReportSafe).length;
 }
 
+function numSafeWithProblemDampenerReports(reports) {
+    throw "Not implemented";
+}
+
 module.exports = {
     parse,
-    numSafeReports
+    numSafeReports,
+    numSafeWithProblemDampenerReports
 } 

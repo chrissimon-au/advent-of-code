@@ -1,4 +1,4 @@
-const { parse, numSafeReports } = require('./index');
+const { parse, numSafeReports, numSafeWithProblemDampenerReports } = require('./index');
 const fs = require('fs');
 
 const getData = (filePrefix) =>
@@ -66,6 +66,19 @@ describe('Report Safety', () => {
         getData('testdata'),
     ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
         expect(numSafeReports(reports)).toEqual(expectedSafetyCount);
+    });
+
+});
+
+describe('Report Safety With Problem Dampener', () => {
+
+    test.each([
+        [
+            [[1]],
+            1            
+        ]
+    ])('Safety of %o is %i', (reports, expectedSafetyCount) => {
+        expect(numSafeWithProblemDampenerReports(reports)).toEqual(expectedSafetyCount);
     });
 
 });
