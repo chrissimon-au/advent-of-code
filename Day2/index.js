@@ -16,10 +16,15 @@ function adjacentDifferences(report) {
         return [];
     }
 
+    let numDecreasing = 0;
     const diffs = report.slice(1).map((value, idx) => {
-        return value - report[idx];
+        const diff = value - report[idx];
+        if (diff < 0) {
+            numDecreasing++;
+        }
+        return diff;
     });
-    if (diffs.filter(diff => diff < 0).length >= report.length / 2) {
+    if (numDecreasing >= report.length / 2) {
         return diffs.map (diff => diff * -1);
     }
     return diffs;
@@ -36,11 +41,9 @@ function isReportSafe(report) {
 function isReportSafeWithProblemDampener(report) {
     const diffs = adjacentDifferences(report);
     const firstProblemIdx = diffs.findIndex(isDiffUnSafe);
-    
-    const attemptWithoutProblemBefore = report.toSpliced(firstProblemIdx, 1);
-    const attemptWithoutProblemAfter = report.toSpliced(firstProblemIdx+1, 1);
-    
-    return isReportSafe(attemptWithoutProblemBefore) || isReportSafe(attemptWithoutProblemAfter);
+
+    return isReportSafe(report.toSpliced(firstProblemIdx, 1))
+        || isReportSafe(report.toSpliced(firstProblemIdx+1, 1));
 }
 
 function numSafeReports(reports) {
