@@ -37,9 +37,10 @@ function isReportSafeWithProblemDampener(report) {
     const diffs = adjacentDifferences(report);
     const firstProblemIdx = diffs.findIndex(isDiffUnSafe);
     
-    const attemptWithoutProblem = report.toSpliced(firstProblemIdx, 1);
-
-    return isReportSafe(attemptWithoutProblem);
+    const attemptWithoutProblemBefore = report.toSpliced(firstProblemIdx, 1);
+    const attemptWithoutProblemAfter = report.toSpliced(firstProblemIdx+1, 1);
+    
+    return isReportSafe(attemptWithoutProblemBefore) || isReportSafe(attemptWithoutProblemAfter);
 }
 
 function numSafeReports(reports) {
