@@ -25,5 +25,15 @@ testMul10by2() {
   assertEquals "20" "${result}"
 }
 
+testMul10by2WithCorruptedMemoryBefore() {
+  result=`rockstar aoc-day3.rock "&*mul(10,2)"`
+  assertEquals "20" "${result}"
+}
+
+testMul10by2WithCorruptedMemoryAfter() {
+  result=`rockstar aoc-day3.rock "&*mul(10,2)%&"`
+  assertEquals "20" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
