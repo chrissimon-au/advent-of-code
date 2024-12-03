@@ -50,5 +50,10 @@ testMultipleMuls() {
   assertEquals "17" "${result}"
 }
 
+testCompletelyMalformed() {
+  result=`rockstar aoc-day3.rock "mul[2,4]"`
+  assertEquals "0" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
