@@ -121,20 +121,29 @@ otherwise
     let active = true
     while true
         let firstMulIdx = IndexOf taking memory, "mul"
+        let nextDont = IndexOf taking memory, "don't()"
+        let nextDo = IndexOf taking memory, "do()"
+        if nextDont < 0 then nextDont = firstMulIdx+1
+        if nextDo < 0 then nextDo = firstMulIdx+1
+        if false then
+            write "  firstMulIdx,nextDont,nextDo:"
+            print firstMulIdx + "," + nextDont + "," + nextDo + ","
+        end
+        if nextDont < firstMulIdx or nextDo < firstMulIdx then
+            if nextDont < nextDo then
+                active = false
+                let nextDontStrip = nextDont + 1
+                let memory be StripChars taking memory, nextDontStrip
+            else
+                active = true
+                let nextDoStrip = nextDo + 1
+                let memory be StripChars taking memory, nextDoStrip
+            end
+            continue
+        end
         if firstMulIdx < 0 then
             break
-        end
-        if active then
-            let nextDont = IndexOf taking memory, "don't()"
-            if nextDont < firstMulIdx then
-                active = false
-            end
-        else
-            let nextDo = IndexOf taking memory, "do()"
-            if nextDo < firstMulIdx then
-                active = true
-            end
-        end
+        end        
         let memory be StripChars taking memory, firstMulIdx
         let closingBracketIdx = IndexOf taking memory, ")"
         if closingBracketIdx < 0
