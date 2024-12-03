@@ -70,5 +70,10 @@ testMalFormedArg() {
   assertEquals "6" "${result}"
 }
 
+testWrongNumArgs() {
+  result=`rockstar aoc-day3.rock "mul(2,3,6)"`
+  assertEquals "0" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
