@@ -65,6 +65,10 @@ testGreedyMalformedMul() {
   assertEquals "16" "${result}"
 }
 
+testMalFormedArg() {
+  result=`rockstar aoc-day3.rock "mul(mul(2,3)"`
+  assertEquals "6" "${result}"
+}
 
 # Load shUnit2.
 . shunit2
