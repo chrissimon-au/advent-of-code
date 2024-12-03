@@ -129,6 +129,11 @@ otherwise
             if nextDont < firstMulIdx then
                 active = false
             end
+        else
+            let nextDo = IndexOf taking memory, "do()"
+            if nextDo < firstMulIdx then
+                active = true
+            end
         end
         let memory be StripChars taking memory, firstMulIdx
         let closingBracketIdx = IndexOf taking memory, ")"
