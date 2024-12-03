@@ -1,12 +1,20 @@
+MulArgs takes mulStr
+
+split mulStr into parts with "mul"
+let argString be parts at 1
+split argString into argStrings with ","
+let arg1 be argStrings at 0 at 1
+let arg2 be argStrings at 1 at 0
+let args at 0 be arg1
+let args at 1 be arg2
+give back args
+ 
+
 if the world are mysterious
 say 0 
 otherwise
 let mem be the world at 0
-split mem into parts with "mul"
-for part in parts
-    if part
-        split part into args with ","
-        say args at 0 at 1
-    end
-end
+let args be MulArgs taking mem
+let arg1 be args at 0
+print arg1
 yeah
