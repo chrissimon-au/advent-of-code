@@ -1,1 +1,5 @@
-say 0
+if arguments are 0
+say 0 
+else
+say 1
+yeah
