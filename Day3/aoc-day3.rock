@@ -1,3 +1,44 @@
+TakeChars takes str and numChars
+    shatter str into strChars
+    let lenStr be strChars + 0
+    let proportion be numChars / lenStr
+    let prefix be str * proportion
+give back prefix
+
+StripChars takes str and numChars
+    if numChars = 0 then
+        give back str
+    end
+    shatter str into strChars
+    let lenStr be strChars + 0
+    let remainingChars be lenStr - numChars
+    let proportion be remainingChars / lenStr
+    let proportion be proportion * -1
+    let suffix be str * proportion
+    let suffix be suffix * -1
+give back suffix
+
+StartsWith takes str and prefix
+    shatter prefix into prefixChars
+    let lenPrefix be prefixChars + 0
+    let strPrefix be TakeChars taking str, lenPrefix
+    let doesStartWith be prefix is strPrefix
+give back doesStartWith
+
+IndexOf takes str and search
+    shatter str into strChars
+    shatter search into searchChars
+    let searchLen be searchChars + 0
+    for char and idx in strChars
+        join strChars into partialChars
+        let prefix be TakeChars taking partialChars,searchLen
+        if prefix = search then
+            give back idx
+        end
+        strChars at idx is ""
+    end
+give back -1
+
 CheckIfNumber takes numAsString
     shatter numAsString into chars
     for char in chars
@@ -42,9 +83,23 @@ give back args
 if the world are mysterious
     say 0 
 otherwise
-    let mem be the world at 0
-    let args be MulArgs taking mem
-    let arg1 be args at 0
-    let arg2 be args at 1
-    print arg1 * arg2
+    let memory be the world at 0
+    let accumulator = 0
+    while true
+        let firstMulIdx = IndexOf taking memory, "mul"
+        if firstMulIdx < 0 then
+            break
+        end
+        let memory be StripChars taking memory, firstMulIdx
+        let closingBracketIdx = IndexOf taking memory, ")"
+        let endOfMulIdx be closingBracketIdx + 1
+        let firstMul = TakeChars taking memory, endOfMulIdx
+        let args be MulArgs taking firstMul
+        let arg1 be args at 0
+        let arg2 be args at 1
+        let result be arg1 * arg2
+        let accumulator be accumulator + result
+        let memory be StripChars taking memory, closingBracketIdx
+    end
+    print accumulator
 yeah
