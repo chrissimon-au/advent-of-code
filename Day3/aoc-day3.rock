@@ -3,6 +3,12 @@ TakeChars takes str and numChars
     let lenStr be strChars + 0
     let proportion be numChars / lenStr
     let prefix be str * proportion
+    let p2 be prefix
+    cut p2 into pch
+    let lenPrefix be pch + 0
+    if lenPrefix ain't numChars
+        let prefix be TakeChars taking prefix,numChars
+    end
 give back prefix
 
 StripChars takes str and numChars
@@ -89,7 +95,7 @@ otherwise
         let firstMulIdx = IndexOf taking memory, "mul"
         if firstMulIdx < 0 then
             break
-        end
+        end        
         let memory be StripChars taking memory, firstMulIdx
         let closingBracketIdx = IndexOf taking memory, ")"
         if closingBracketIdx < 0
