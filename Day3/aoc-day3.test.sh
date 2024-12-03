@@ -55,5 +55,10 @@ testCompletelyMalformed() {
   assertEquals "0" "${result}"
 }
 
+testMixOfValidAndMalformed() {
+  result=`rockstar aoc-day3.rock "xmul(2,4)%&mul[3,7]"`
+  assertEquals "8" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
