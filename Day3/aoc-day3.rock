@@ -6,7 +6,7 @@ TakeChars takes str and numChars
     let p2 be prefix
     cut p2 into pch
     let lenPrefix be pch + 0
-    if lenPrefix ain't numChars
+    if lenPrefix ain't numChars then
         let prefix be TakeChars taking prefix,numChars
     end
 give back prefix
@@ -18,10 +18,19 @@ StripChars takes str and numChars
     shatter str into strChars
     let lenStr be strChars + 0
     let remainingChars be lenStr - numChars
-    let proportion be remainingChars / lenStr
+    let proportion be remainingChars / lenStr * 100000
+    turn down proportion
+    let proportion be proportion / 100000
     let proportion be proportion * -1
     let suffix be str * proportion
     let suffix be suffix * -1
+    let s2 be suffix
+    cut s2 into sch
+    let lenSuffix be sch + 0
+    if lenSuffix ain't remainingChars then
+        let newStripNumChars be lenSuffix - remainingChars
+        let suffix be StripChars taking suffix,newStripNumChars        
+    end
 give back suffix
 
 StartsWith takes str and prefix
@@ -46,6 +55,9 @@ IndexOf takes str and search
 give back -1
 
 CheckIfNumber takes numAsString
+    if not numAsString then
+        give back 0
+    end
     shatter numAsString into chars
     for char in chars
         cast char into charNum
@@ -95,7 +107,7 @@ otherwise
         let firstMulIdx = IndexOf taking memory, "mul"
         if firstMulIdx < 0 then
             break
-        end        
+        end
         let memory be StripChars taking memory, firstMulIdx
         let closingBracketIdx = IndexOf taking memory, ")"
         if closingBracketIdx < 0
@@ -108,7 +120,7 @@ otherwise
         let arg2 be args at 1
         let result be arg1 * arg2
         let accumulator be accumulator + result
-        let memory be StripChars taking memory, closingBracketIdx
+        let memory be StripChars taking memory, 1
     end
     print accumulator
 yeah
