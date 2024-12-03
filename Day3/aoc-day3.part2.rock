@@ -1,0 +1,153 @@
+TakeChars takes str and numChars
+    shatter str into strChars
+    let lenStr be strChars + 0
+    let proportion be numChars / lenStr * 100000
+    turn down proportion
+    let proportion be proportion / 100000
+    let prefix be str * proportion
+    let p2 be prefix
+    cut p2 into pch
+    let lenPrefix be pch + 0
+    if lenPrefix ain't numChars then
+        let prefix be TakeChars taking prefix,numChars
+    end
+give back prefix
+
+StripChars takes str and numChars
+    if numChars = 0 then
+        give back str
+    end
+    shatter str into strChars
+    let lenStr be strChars + 0
+    let remainingChars be lenStr - numChars
+    let proportion be remainingChars / lenStr * 100000
+    turn down proportion
+    let proportion be proportion / 100000
+    let proportion be proportion * -1
+    let suffix be str * proportion
+    let suffix be suffix * -1
+    let s2 be suffix
+    cut s2 into sch
+    let lenSuffix be sch + 0
+    if lenSuffix ain't remainingChars then
+        let newStripNumChars be lenSuffix - remainingChars
+        let suffix be StripChars taking suffix,newStripNumChars        
+    end
+give back suffix
+
+StartsWith takes str and prefix
+    shatter prefix into prefixChars
+    let lenPrefix be prefixChars + 0
+    let strPrefix be TakeChars taking str, lenPrefix
+    let doesStartWith be prefix is strPrefix
+give back doesStartWith
+
+IndexOf takes str and search
+    shatter str into strChars
+    shatter search into searchChars
+    let searchLen be searchChars + 0
+    for char and idx in strChars
+        join strChars into partialChars
+        let prefix be TakeChars taking partialChars,searchLen
+        if prefix = search then
+            give back idx
+        end
+        strChars at idx is ""
+    end
+give back -1
+
+CheckIfNumber takes numAsString
+    if not numAsString then
+        give back 0
+    end
+    shatter numAsString into chars
+    for char in chars
+        cast char into charNum
+        if charNum < 48 or charNum > 57 then
+            give back 0
+        end
+    end
+give back 1
+
+GetArg takes argArray and position
+    if position is 0 then
+        brace is "("
+        bracePos is 1
+    else
+        brace is ")"
+        bracePos is 0
+    end
+    let arg be argArray at position
+    if not arg then
+        give back 0
+    end
+    split arg into argParts with brace
+    let arg be argParts at bracePos
+    let isNum be CheckifNumber taking arg
+    if not isNum then
+        arg is 0
+    else
+        cast arg with 10
+    end
+give back arg
+
+
+MulArgs takes mulStr
+    split mulStr into parts with "mul"
+    if parts + 0 is 2 then
+        let argString be parts at 1
+        split argString into argStrings with ","
+        if argStrings + 0 ain't 2 then
+            let arg1 be 0
+            let arg2 be 0
+        else
+            let arg1 be GetArg taking argStrings, 0
+            let arg2 be GetArg taking argStrings, 1    
+        end
+    else
+        let arg1 be 0
+        let arg2 be 0
+    end
+    let args at 0 be arg1
+    let args at 1 be arg2
+give back args
+ 
+
+if the world are mysterious
+    say 0 
+otherwise
+    let memory be the world at 0
+    let accumulator = 0
+    let active = true
+    while true
+        let firstMulIdx = IndexOf taking memory, "mul"
+        if firstMulIdx < 0 then
+            break
+        end
+        if active then
+            let nextDont = IndexOf taking memory, "don't()"
+            if nextDont < firstMulIdx then
+                active = false
+            end
+        end
+        let memory be StripChars taking memory, firstMulIdx
+        let closingBracketIdx = IndexOf taking memory, ")"
+        if closingBracketIdx < 0
+            break
+        end
+        let endOfMulIdx be closingBracketIdx + 1
+        if active then
+            let firstMul = TakeChars taking memory, endOfMulIdx
+            let args be MulArgs taking firstMul
+            let arg1 be args at 0
+            let arg2 be args at 1
+            let result be arg1 * arg2
+            if false and result ain't 0 then
+                print firstMul + "," + arg1 + "," + arg2 + "," + result
+            end
+            let accumulator be accumulator + result
+        end
+        let memory be StripChars taking memory, 1
+    end
+    print accumulator
+yeah
