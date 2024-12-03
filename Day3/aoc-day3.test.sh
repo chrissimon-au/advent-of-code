@@ -90,18 +90,28 @@ testAdventOfCodeSample() {
 # }
 
 testPart2Dont() {
-  result=`rockstar aoc-day3.part2.rock "mul(2,4)Don't()mul(3,3)"`
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)don't()mul(3,3)"`
   assertEquals "8" "${result}"
 }
 
 testPart2DontAndDo() {
-  result=`rockstar aoc-day3.part2.rock "mul(2,4)Don't()mul(3,3)do()mul(4,3)"`
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)don't()mul(3,3)do()mul(4,3)"`
   assertEquals "20" "${result}"
 }
 
 testPart2MultipleDontAndDos() {
-  result=`rockstar aoc-day3.part2.rock "mul(2,4)Don't()mul(3,3)do()don't()mul(4,3)"`
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)don't()mul(3,3)do()don't()mul(4,3)"`
   assertEquals "8" "${result}"
+}
+
+testPart2MultipleFutureDontAndDos() {
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)$@+doNot_mul(5,1)don't()mul(3,3)do()don't()mul(4,3)"`
+  assertEquals "13" "${result}"
+}
+
+testPart2MultipleMulsAfterLastDont() {
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)$@+doNot_mul(5,1)don't()mul(3,3)do()don't()mul(4,3)mul(4,3)"`
+  assertEquals "13" "${result}"
 }
 
 # Load shUnit2.
