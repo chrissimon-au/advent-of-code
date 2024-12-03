@@ -1,10 +1,11 @@
 MulArgs takes mulStr
-
 split mulStr into parts with "mul"
 let argString be parts at 1
 split argString into argStrings with ","
 let arg1 be argStrings at 0 at 1
 let arg2 be argStrings at 1 at 0
+cast arg1 with 10
+cast arg2 with 10
 let args at 0 be arg1
 let args at 1 be arg2
 give back args
@@ -16,5 +17,6 @@ otherwise
 let mem be the world at 0
 let args be MulArgs taking mem
 let arg1 be args at 0
-print arg1
+let arg2 be args at 1
+print arg1 * arg2
 yeah
