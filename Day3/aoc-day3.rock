@@ -89,10 +89,15 @@ give back arg
 
 MulArgs takes mulStr
     split mulStr into parts with "mul"
-    let argString be parts at 1
-    split argString into argStrings with ","
-    let arg1 be GetArg taking argStrings, 0
-    let arg2 be GetArg taking argStrings, 1    
+    if parts + 0 is 2 then
+        let argString be parts at 1
+        split argString into argStrings with ","
+        let arg1 be GetArg taking argStrings, 0
+        let arg2 be GetArg taking argStrings, 1    
+    else
+        let arg1 be 0
+        let arg2 be 0
+    end
     let args at 0 be arg1
     let args at 1 be arg2
 give back args
