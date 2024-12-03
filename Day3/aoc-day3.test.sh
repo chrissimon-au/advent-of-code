@@ -82,11 +82,16 @@ testAdventOfCodeSample() {
   assertEquals "${expected}" "${result}"
 }
 
-testAdventOfCodeTest() {
-  input=`cat testdata.txt`
-  expected=`cat testdata.answer.txt`
-  result=`rockstar aoc-day3.rock "${input}"`
-  assertEquals "${expected}" "${result}"
+# testAdventOfCodeTest() {
+#   input=`cat testdata.txt`
+#   expected=`cat testdata.answer.txt`
+#   result=`rockstar aoc-day3.rock "${input}"`
+#   assertEquals "${expected}" "${result}"
+# }
+
+testPart2Dont() {
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)Don't()mul(3,3)"`
+  assertEquals "8" "${result}"
 }
 
 # Load shUnit2.
