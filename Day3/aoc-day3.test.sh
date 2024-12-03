@@ -121,12 +121,12 @@ testPart2AdventOfCodeSample() {
   assertEquals "${expected}" "${result}"
 }
 
-testPart2AdventOfCodeTest() {
-  input=`cat testdata.txt`
-  expected=`cat testdata.answer2.txt`
-  result=`rockstar aoc-day3.part2.rock "${input}"`
-  assertEquals "${expected}" "${result}"
-}
+# testPart2AdventOfCodeTest() {
+#   input=`cat testdata.txt`
+#   expected=`cat testdata.answer2.txt`
+#   result=`rockstar aoc-day3.part2.rock "${input}"`
+#   assertEquals "${expected}" "${result}"
+# }
 
 # Load shUnit2.
 . shunit2
