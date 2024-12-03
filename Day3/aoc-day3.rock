@@ -1,5 +1,12 @@
-if arguments are 0
+if the world are mysterious
 say 0 
-else
-say 1
+otherwise
+let mem be the world at 0
+split mem into parts with "mul"
+for part in parts
+    if part
+        split part into args with ","
+        say args at 0 at 1
+    end
+end
 yeah
