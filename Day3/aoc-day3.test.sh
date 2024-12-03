@@ -75,5 +75,19 @@ testWrongNumArgs() {
   assertEquals "0" "${result}"
 }
 
+testAdventOfCodeSample() {
+  input=`cat sampledata.txt`
+  expected=`cat sampledata.answer.txt`
+  result=`rockstar aoc-day3.rock "${input}"`
+  assertEquals "${expected}" "${result}"
+}
+
+testAdventOfCodeTest() {
+  input=`cat testdata.txt`
+  expected=`cat testdata.answer.txt`
+  result=`rockstar aoc-day3.rock "${input}"`
+  assertEquals "${expected}" "${result}"
+}
+
 # Load shUnit2.
 . shunit2

@@ -1,1 +1,1 @@
-watchexec -e rock,sh --timings ./aoc-day3.test.sh
+watchexec -e rock,sh,txt --timings ./aoc-day3.test.sh
