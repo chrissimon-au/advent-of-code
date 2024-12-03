@@ -60,5 +60,11 @@ testMixOfValidAndMalformed() {
   assertEquals "8" "${result}"
 }
 
+testGreedyMalformedMul() {
+  result=`rockstar aoc-day3.rock "mul(2,4)mul[3,7]mul(2,4)"`
+  assertEquals "16" "${result}"
+}
+
+
 # Load shUnit2.
 . shunit2
