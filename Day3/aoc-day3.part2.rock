@@ -111,7 +111,8 @@ MulArgs takes mulStr
     let args at 0 be arg1
     let args at 1 be arg2
 give back args
- 
+
+let debug = false
 
 if the world are mysterious
     say 0 
@@ -119,25 +120,36 @@ otherwise
     let memory be the world at 0
     let accumulator = 0
     let active = true
+    let cumulativePosition = 0
+    let nextDont = -1
+    let nextDo = -1
     while true
         let firstMulIdx = IndexOf taking memory, "mul"
-        let nextDont = IndexOf taking memory, "don't()"
-        let nextDo = IndexOf taking memory, "do()"
+        if nextDo <= 0 or nextDont <= 0 then
+            let nextDont = IndexOf taking memory, "don't()"
+            let nextDo = IndexOf taking memory, "do()"
+        end
         if nextDont < 0 then nextDont = firstMulIdx+1
         if nextDo < 0 then nextDo = firstMulIdx+1
-        if false then
-            write "  firstMulIdx,nextDont,nextDo:"
-            print firstMulIdx + "," + nextDont + "," + nextDo + ","
+        if debug and false then
+            write "  active,firstMulIdx,nextDont,nextDo:"
+            print active + "," + firstMulIdx + "," + nextDont + "," + nextDo + ","
         end
         if nextDont < firstMulIdx or nextDo < firstMulIdx then
             if nextDont < nextDo then
                 active = false
+                if debug then print "don't()"
                 let nextDontStrip = nextDont + 1
                 let memory be StripChars taking memory, nextDontStrip
+                let nextDo = nextDo - nextDontStrip
+                let nextDont = nextDont - nextDontStrip
             else
                 active = true
+                if debug then print "do()"
                 let nextDoStrip = nextDo + 1
                 let memory be StripChars taking memory, nextDoStrip
+                let nextDo = nextDo - nextDoStrip
+                let nextDont = nextDont - nextDoStrip
             end
             continue
         end
@@ -145,6 +157,8 @@ otherwise
             break
         end        
         let memory be StripChars taking memory, firstMulIdx
+        let nextDo = nextDo - firstMulIdx
+        let nextDont = nextDont - firstMulIdx
         let closingBracketIdx = IndexOf taking memory, ")"
         if closingBracketIdx < 0
             break
@@ -156,12 +170,16 @@ otherwise
             let arg1 be args at 0
             let arg2 be args at 1
             let result be arg1 * arg2
-            if false and result ain't 0 then
-                print firstMul + "," + arg1 + "," + arg2 + "," + result
-            end
             let accumulator be accumulator + result
+            if debug and result ain't 0 then
+                print firstMul + "," + arg1 + "," + arg2 + "," + result + "," + accumulator
+            end
+        else
+            if debug print ""
         end
         let memory be StripChars taking memory, 1
+        let nextDo = nextDo - 1
+        let nextDont = nextDont - 1
     end
     print accumulator
 yeah
