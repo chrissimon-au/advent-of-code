@@ -1,17 +1,14 @@
-TakeChars takes str and numChars
-    shatter str into strChars
-    let lenStr be strChars + 0
-    let proportion be numChars / lenStr * 100000
-    turn down proportion
-    let proportion be proportion / 100000
-    let prefix be str * proportion
-    let p2 be prefix
-    cut p2 into pch
-    let lenPrefix be pch + 0
-    if lenPrefix ain't numChars then
-        let prefix be TakeChars taking prefix,numChars
-    end
-give back prefix
+Nothin is Terrifying
+A Lot is A good-times holleroona knifer-cat ballroom-a aballerina
+
+Tall Charlie Wants Potatos and Cheese
+Shatter Potatos into Dumplings
+let Longest Time be Dumplings and Nothin
+let How Much be Cheese / Longest Time times a lot
+turn down How Much
+let How Much be How Much / a lot
+let Something be Potatos times How Much
+Giving Something
 
 StripChars takes str and numChars
     if numChars = 0 then
@@ -38,7 +35,7 @@ give back suffix
 StartsWith takes str and prefix
     shatter prefix into prefixChars
     let lenPrefix be prefixChars + 0
-    let strPrefix be TakeChars taking str, lenPrefix
+    let strPrefix be Tall Charlie taking str, lenPrefix
     let doesStartWith be prefix is strPrefix
 give back doesStartWith
 
@@ -48,7 +45,7 @@ IndexOf takes str and search
     let searchLen be searchChars + 0
     for char and idx in strChars
         join strChars into partialChars
-        let prefix be TakeChars taking partialChars,searchLen
+        let prefix be Tall Charlie taking partialChars,searchLen
         if prefix = search then
             give back idx
         end
@@ -129,7 +126,7 @@ otherwise
             break
         end
         let endOfMulIdx be closingBracketIdx + 1
-        let firstMul = TakeChars taking memory, endOfMulIdx
+        let firstMul = Tall Charlie taking memory, endOfMulIdx
         let args be MulArgs taking firstMul
         let arg1 be args at 0
         let arg2 be args at 1
