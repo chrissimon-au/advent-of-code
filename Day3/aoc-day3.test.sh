@@ -2,7 +2,7 @@
 
 testEmptyMemory() {
   result=`rockstar aoc-day3.rock`
-  assertEquals "" "${result}"
+  assertEquals "0" "${result}"
 }
 
 # Load shUnit2.
