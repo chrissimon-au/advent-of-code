@@ -1,3 +1,13 @@
+CheckIfNumber takes numAsString
+    shatter numAsString into chars
+    for char in chars
+        cast char into charNum
+        if charNum < 48 or charNum > 57 then
+            give back 0
+        end
+    end
+give back 1
+
 GetArg takes argArray and position
     if position is 0 then
         brace is "("
@@ -9,8 +19,8 @@ GetArg takes argArray and position
     let arg be argArray at position
     split arg into argParts with brace
     let arg be argParts at bracePos
-    let containsSpace be arg / " "
-    if containsSpace then
+    let isNum be CheckifNumber taking arg
+    if not isNum then
         arg is 0
     else
         cast arg with 10
