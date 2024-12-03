@@ -92,6 +92,9 @@ otherwise
         end
         let memory be StripChars taking memory, firstMulIdx
         let closingBracketIdx = IndexOf taking memory, ")"
+        if closingBracketIdx < 0
+            break
+        end
         let endOfMulIdx be closingBracketIdx + 1
         let firstMul = TakeChars taking memory, endOfMulIdx
         let args be MulArgs taking firstMul
