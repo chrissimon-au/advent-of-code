@@ -1,7 +1,9 @@
 TakeChars takes str and numChars
     shatter str into strChars
     let lenStr be strChars + 0
-    let proportion be numChars / lenStr
+    let proportion be numChars / lenStr * 100000
+    turn down proportion
+    let proportion be proportion / 100000
     let prefix be str * proportion
     let p2 be prefix
     cut p2 into pch
@@ -76,6 +78,9 @@ GetArg takes argArray and position
         bracePos is 0
     end
     let arg be argArray at position
+    if not arg then
+        give back 0
+    end
     split arg into argParts with brace
     let arg be argParts at bracePos
     let isNum be CheckifNumber taking arg
@@ -92,8 +97,13 @@ MulArgs takes mulStr
     if parts + 0 is 2 then
         let argString be parts at 1
         split argString into argStrings with ","
-        let arg1 be GetArg taking argStrings, 0
-        let arg2 be GetArg taking argStrings, 1    
+        if argStrings + 0 ain't 2 then
+            let arg1 be 0
+            let arg2 be 0
+        else
+            let arg1 be GetArg taking argStrings, 0
+            let arg2 be GetArg taking argStrings, 1    
+        end
     else
         let arg1 be 0
         let arg2 be 0
@@ -124,6 +134,9 @@ otherwise
         let arg1 be args at 0
         let arg2 be args at 1
         let result be arg1 * arg2
+        if false and result ain't 0 then
+            print firstMul + "," + arg1 + "," + arg2 + "," + result
+        end
         let accumulator be accumulator + result
         let memory be StripChars taking memory, 1
     end
