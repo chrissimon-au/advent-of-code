@@ -114,5 +114,19 @@ testPart2MultipleMulsAfterLastDont() {
   assertEquals "13" "${result}"
 }
 
+testPart2AdventOfCodeSample() {
+  input=`cat sampledata.part2.txt`
+  expected=`cat sampledata.answer2.txt`
+  result=`rockstar aoc-day3.part2.rock "${input}"`
+  assertEquals "${expected}" "${result}"
+}
+
+testPart2AdventOfCodeTest() {
+  input=`cat testdata.txt`
+  expected=`cat testdata.answer2.txt`
+  result=`rockstar aoc-day3.part2.rock "${input}"`
+  assertEquals "${expected}" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
