@@ -20,5 +20,10 @@ testMul2by2() {
   assertEquals "4" "${result}"
 }
 
+testMul10by2() {
+  result=`rockstar aoc-day3.rock "mul(10,2)"`
+  assertEquals "20" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
