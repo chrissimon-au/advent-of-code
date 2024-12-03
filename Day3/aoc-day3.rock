@@ -2,8 +2,10 @@ MulArgs takes mulStr
     split mulStr into parts with "mul"
     let argString be parts at 1
     split argString into argStrings with ","
-    let arg1 be argStrings at 0 at 1
-    let arg2 be argStrings at 1 at 0
+    let arg1 be argStrings at 0
+    let arg1 at 0 be " "
+    let arg2 be argStrings at 1
+    let arg2 be arg2 without ")"
     cast arg1 with 10
     cast arg2 with 10
     let args at 0 be arg1
