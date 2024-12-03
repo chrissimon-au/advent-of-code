@@ -1,0 +1,1 @@
+Moved to [Day02](../Day02/)
