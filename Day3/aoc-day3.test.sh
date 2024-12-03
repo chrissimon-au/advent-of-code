@@ -94,5 +94,10 @@ testPart2Dont() {
   assertEquals "8" "${result}"
 }
 
+testPart2DontAndDo() {
+  result=`rockstar aoc-day3.part2.rock "mul(2,4)Don't()mul(3,3)do()mul(4,3)"`
+  assertEquals "20" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
