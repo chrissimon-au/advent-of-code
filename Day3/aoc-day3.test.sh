@@ -45,5 +45,10 @@ testMulWithMidMulCorruptionShouldDoNothing() {
   assertEquals "0" "${result}"
 }
 
+testMultipleMuls() {
+  result=`rockstar aoc-day3.rock "mul(2,4)mul(3,3)"`
+  assertEquals "17" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
