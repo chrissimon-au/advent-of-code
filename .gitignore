@@ -5,3 +5,4 @@ sampledata.*
 testdata.*
 result
 node_modules
+__pycache__

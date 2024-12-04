@@ -9,6 +9,8 @@ pkgs.mkShellNoCC {
     nodejs_23
     watchexec
     shunit2
+    python3
+    poetry
   ];
   buildInputs = with pkgs; [
     (callPackage ./rockstar/rockstar.nix {})

@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "aoc-day04"
+version = "0.1.0"
+description = ""
+authors = ["Chris Simon <chris@chrissimon.au>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
