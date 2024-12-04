@@ -21,7 +21,7 @@ import pytest
      ("X   \n"
       " M  \n"
       "  A \n"
-      "   S",1)
+      "   S",1),
 ])
 def test_count_xmas(test_input: str, expected: int):
     assert count_xmas(test_input) == expected
@@ -33,5 +33,26 @@ def test_count_xmas(test_input: str, expected: int):
      "AC\n"
      "BD")
 ])
-def test_rotate(test_input: str, expected: str):
+def test_rotate_90(test_input: str, expected: str):
     assert rotate_90(test_input) == expected
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("AB\n"
+     "CD",
+     "B\n"
+     "AD\n"
+     "C"),
+    ("X   \n"
+     " M  \n"
+     "  A \n"
+     "   S",
+     " \n"
+     "  \n"
+     "   \n"
+     "XMAS\n"
+     "   \n"
+     "  \n"
+     " "),
+])
+def test_rotate_45(test_input: str, expected: str):
+    assert rotate_45(test_input) == expected

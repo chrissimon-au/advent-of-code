@@ -11,10 +11,37 @@ def rotate_90(input: str):
         output.append("".join(new_line))
     return os.linesep.join(output)
 
+def rotate_45(input: str):
+    lines = input.split(os.linesep)
+    if (len(lines) != len(lines[0])):
+        return ""
+    print(lines)
+    length = len(lines)
+    print(length)
+    output = []
+
+    for i in range(length-1,-1,-1):
+        new_line = []
+        for r in range(0,length-i):
+            c = i+r
+            new_line.append(lines[r][c])
+        output.append("".join(new_line))
+    
+    for i in range(1,length):
+        new_line = []
+        for c in range(0,length-i):
+            r = i+c
+            new_line.append(lines[r][c])
+        output.append("".join(new_line))
+
+    print(output)
+    return os.linesep.join(output)
+
 def count_xmas(input: str):
     all_lines = [
         input,
         rotate_90(input),
+        rotate_45(input),
     ]
     all = os.linesep.join(all_lines)
     return all.count(XMAS) + all.count(REVERSED_XMAS)
