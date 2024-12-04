@@ -66,6 +66,12 @@ def test_count_from_file(file_prefix: str):
      " S.S\n"
      " ,A2\n"
      " M1M",1),
+    ("      \n"
+     " S.S.S\n"
+     " ,A2A.\n"
+     " M1M.M\n"
+     "      \n"
+     "      ",2),
 ])
 def test_count_x_mas(test_input: str, expected: int):
     assert count_x_mas(test_input) == expected
