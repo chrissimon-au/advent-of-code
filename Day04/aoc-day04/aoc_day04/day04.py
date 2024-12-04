@@ -74,7 +74,21 @@ def get_linearised_block(input: str):
     linearised = input.replace(os.linesep,"")
     return get_X(linearised)
     
+def get_linearised_blocks(input: str):
+    lines = input.split(os.linesep)
+    blocks = []
+    for r in range(0,len(lines)-2):
+        for c in range(0,len(lines)-2):
+            block = "".join(
+                [
+                    lines[r][c:c+3],
+                    lines[r+1][c:c+3],
+                    lines[r+2][c:c+3],
+                ])
+            blocks.append(get_linearised_block(block))
+    return blocks
+
 
 def count_x_mas(input: str):
-    linearised_block = get_linearised_block(input)
-    return linearised_block.count("MMASS")
+    linearised_blocks = get_linearised_blocks(input)
+    return linearised_blocks.count("MMASS")
