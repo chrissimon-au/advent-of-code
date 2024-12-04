@@ -4,6 +4,8 @@ https://adventofcode.com/2024
 
 Planning to do each day in a different language:
 
+Setup build environment by [Installing Nix](https://nixos.org/download/) and then running `nix-shell` in the root of the repo.  This should ensure all build tools and dependencies are available.  Then, within the Day folder, language/framework specific methods are used to install/run each program.
+
 * [2024-12-01 - Day 01 in F#](./Day01/)
 * [2024-12-02 - Day 02 in JavaScript](./Day02/)
 * [2024-12-03 - Day 03 in Rockstar](./Day03/)
