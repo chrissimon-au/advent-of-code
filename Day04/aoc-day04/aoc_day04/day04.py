@@ -1,2 +1,2 @@
 def count_xmas(input: str):
-    return input.count("XMAS")
+    return input.count("XMAS") + input.count("SAMX")
