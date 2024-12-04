@@ -34,6 +34,17 @@ import pytest
 def test_count_xmas(test_input: str, expected: int):
     assert count_xmas(test_input) == expected
 
+@pytest.mark.parametrize("file_prefix", [
+    "sample",
+    "test"
+])
+def test_count_from_file(file_prefix: str):
+    with open(file_prefix + 'data.txt', 'r') as file:
+        test_input = file.read()
+    with open(file_prefix + 'data.answer.txt', 'r') as file:
+        expected = int(file.read())
+    assert count_xmas(test_input) == expected
+
 
 @pytest.mark.parametrize("test_input,expected", [
     ("AB\n"

@@ -38,9 +38,7 @@ def rotate_135(input: str):
     lines = input.split(os.linesep)
     if (len(lines) != len(lines[0])):
         return ""
-    print(lines)
     length = len(lines)
-    print(length)
     output = []
 
     for i in range(0,length):
@@ -57,7 +55,6 @@ def rotate_135(input: str):
             new_line.append(lines[r][c])
         output.append("".join(new_line))
 
-    print(output)
     return os.linesep.join(output)
 
 def count_xmas(input: str):
