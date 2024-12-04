@@ -10,6 +10,10 @@ import pytest
      "BLERG..XMAS...........", 3),
     ("ASDFSAMX..", 1),
     ("ASDFSAMXMAS..XMAS...SAMX", 4),
+    ("X\n"
+     "M\n"
+     "A\n"
+     "S",1)
 ])
 def test_count_xmas(test_input: str, expected: str):
     assert count_xmas(test_input) == expected
