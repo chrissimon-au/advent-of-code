@@ -47,7 +47,10 @@ def test_count_from_file(file_prefix: str):
 
 
 @pytest.mark.parametrize("test_input,expected", [
-    ("", 0),    
+    ("", 0),
+    ("M M\n"
+     " A \n"
+     "S S",1)
 ])
 def test_count_x_mas(test_input: str, expected: int):
     assert count_x_mas(test_input) == expected
