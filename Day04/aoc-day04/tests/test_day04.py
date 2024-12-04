@@ -64,3 +64,13 @@ def test_rotate_90(test_input: str, expected: str):
 ])
 def test_rotate_45(test_input: str, expected: str):
     assert rotate_45(test_input) == expected
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("AB\n"
+     "CD",
+     "A\n"
+     "BC\n"
+     "D"),
+])
+def test_rotate_135(test_input: str, expected: str):
+    assert rotate_135(test_input) == expected
