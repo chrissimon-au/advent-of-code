@@ -1,7 +1,6 @@
 from aoc_day04.day04 import *
 import pytest
 
-
 @pytest.mark.parametrize("test_input,expected", [
     ("", 0),
     ("XMAS", 1),
@@ -44,6 +43,14 @@ def test_count_from_file(file_prefix: str):
     with open(file_prefix + 'data.answer.txt', 'r') as file:
         expected = int(file.read())
     assert count_xmas(test_input) == expected
+
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("", 0),    
+])
+def test_count_x_mas(test_input: str, expected: int):
+    assert count_x_mas(test_input) == expected
 
 
 @pytest.mark.parametrize("test_input,expected", [
