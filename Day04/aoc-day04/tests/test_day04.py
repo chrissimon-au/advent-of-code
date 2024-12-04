@@ -1,4 +1,9 @@
 from aoc_day04.day04 import *
+import pytest
 
-def test_count_xmas():
-    assert count_xmas("") == 0
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("", 0),
+])
+def test_count_xmas(test_input: str, expected: str):
+    assert count_xmas(test_input) == expected
