@@ -4,15 +4,15 @@ https://adventofcode.com/2024
 
 Planning to do each day in a different language:
 
-* [2024-12-01 - Day 1 in F#](./Day01/)
-* [2024-12-02 - Day 2 in JavaScript](./Day02/)
-* [2024-12-03 - Day 3 in Rockstar](./Day03/)
-* 2024-12-04 - Day 4 in Python
-* 2024-12-05 - Day 5 in Basic
-* 2024-12-06 - Day 6 in Java
-* 2024-12-07 - Day 7 in Kotlin
-* 2024-12-08 - Day 8 in Scala
-* 2024-12-09 - Day 9 in C#
+* [2024-12-01 - Day 01 in F#](./Day01/)
+* [2024-12-02 - Day 02 in JavaScript](./Day02/)
+* [2024-12-03 - Day 03 in Rockstar](./Day03/)
+* [2024-12-04 - Day 04 in Python](./Day04/)
+* 2024-12-05 - Day 05 in Basic
+* 2024-12-06 - Day 06 in Java
+* 2024-12-07 - Day 07 in Kotlin
+* 2024-12-08 - Day 08 in Scala
+* 2024-12-09 - Day 09 in C#
 * 2024-12-10 - Day 10 in T-sql
 * 2024-12-11 - Day 11 in Haskell
 * 2024-12-12 - Day 12 in Clojure
