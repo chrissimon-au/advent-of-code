@@ -88,9 +88,12 @@ def get_linearised_blocks(input: str):
             blocks.append(get_linearised_block(block))
     return blocks
 
+X_MAS_LINEARISED="MMASS"
+X_MAS_LINEARISED_REVERSED=X_MAS_LINEARISED[::-1]
+
 
 def count_x_mas(input: str):    
     linearised_blocks = \
         get_linearised_blocks(input) + \
         get_linearised_blocks(rotate_90(input))
-    return linearised_blocks.count("MMASS") + linearised_blocks.count("SSAMM")
+    return linearised_blocks.count(X_MAS_LINEARISED) + linearised_blocks.count(X_MAS_LINEARISED_REVERSED)
