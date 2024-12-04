@@ -67,5 +67,9 @@ def count_xmas(input: str):
     all = os.linesep.join(all_lines)
     return all.count(XMAS) + all.count(REVERSED_XMAS)
 
+def get_linearised_block(input: str):
+    return input.replace(os.linesep,"")
+
 def count_x_mas(input: str):
-    return 0
+    linearised_block = get_linearised_block(input)
+    return linearised_block.count("M M A S S")
