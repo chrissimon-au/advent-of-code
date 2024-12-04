@@ -1,2 +1,2 @@
-def fn():
-    raise Exception("Not implemented yet")
+def count_xmas(input: str):
+    return 0
