@@ -66,3 +66,6 @@ def count_xmas(input: str):
     ]
     all = os.linesep.join(all_lines)
     return all.count(XMAS) + all.count(REVERSED_XMAS)
+
+def count_x_mas(input: str):
+    return 0
