@@ -22,6 +22,10 @@ import pytest
       " M  \n"
       "  A \n"
       "   S",1),
+    ("XX  \n"
+     " M  \n"
+     " AA \n"
+     " S S",2)
 ])
 def test_count_xmas(test_input: str, expected: int):
     assert count_xmas(test_input) == expected
