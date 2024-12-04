@@ -92,6 +92,5 @@ def get_linearised_blocks(input: str):
 def count_x_mas(input: str):    
     linearised_blocks = \
         get_linearised_blocks(input) + \
-        get_linearised_blocks(rotate_90(input))        
-    print(linearised_blocks)
+        get_linearised_blocks(rotate_90(input))
     return linearised_blocks.count("MMASS") + linearised_blocks.count("SSAMM")
