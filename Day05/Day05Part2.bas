@@ -42,7 +42,8 @@ For i% = 0 To lineCount% - 1
         Split line$, ",", UpdatePages$()
         Print "Checking Update:";
         Print line$
-        If IsUpdateValid(UpdatePages$(), Rules$()) Then
+        If Not IsUpdateValid(UpdatePages$(), Rules$()) Then
+            FixPageOrder UpdatePages$(), Rules$()
             MiddlePageNum% = MiddlePageFromUpdate%(UpdatePages$())
             MiddlePageSum% = MiddlePageSum% + MiddlePageNum%
         End If
@@ -64,6 +65,10 @@ error_handler:
 Print #1, "[ERROR] " + "Code: " + Str$(Err) + ", Line: " + Str$(_ErrorLine);
 Close #1
 System
+
+Sub FixPageOrder (UpdatePages$(), Rules$())
+    SWAP UpdatePages$(0), UpdatePages$(1)
+End Sub
 
 Function MiddlePageFromUpdate% (UpdatePages$())
     NumPages% = UBound(UpdatePages$)
