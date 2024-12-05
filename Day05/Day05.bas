@@ -27,17 +27,20 @@ Rem --------------------------------
 
 MiddlePageSum% = 0
 CollectingRules` = True`
-Rule$ = ""
+ReDim Rules$(0)
+RuleCount% = 0
 For i% = 0 To lineCount% - 1
     line$ = InputLines$(i%)
     If line$ = "" Then
         CollectingRules` = 0
     ElseIf CollectingRules` Then
-        Rule$ = line$
+        ReDim _Preserve Rules$(RuleCount%) 
+        Rules$(RuleCount%) = line$
+        RuleCount% = RuleCount + 1        
     Else
         ReDim UpdatePages$(0)
         Split line$, ",", UpdatePages$()
-        If IsUpdateValid(UpdatePages$(), Rule$) Then
+        If IsUpdateValid(UpdatePages$(), Rules$()) Then
             MiddlePageNum% = MiddlePageFromUpdate%(UpdatePages$())
             MiddlePageSum% = MiddlePageSum% + MiddlePageNum%
         End If
@@ -66,7 +69,17 @@ Function MiddlePageFromUpdate% (UpdatePages$())
     MiddlePageFromUpdate% = Val(MiddlePage$)
 End Function
 
-Function IsUpdateValid (UpdatePages$(), Rule$)
+Function IsUpdateValid (UpdatePages$(), Rules$())
+    For i% = 0 TO UBound(Rules$)
+        If Not IsUpdateValidForRule(UpdatePages$(), Rules$(i%)) Then
+            IsUpdateValid = False`
+            Exit Function
+        End If
+    Next i%
+    IsUpdateValid = True`
+End Function
+
+Function IsUpdateValidForRule (UpdatePages$(), Rule$)
     ReDim RuleParts$(0)
     Split Rule$, "|", RuleParts$()
     First$ = RuleParts$(0)
@@ -75,14 +88,14 @@ Function IsUpdateValid (UpdatePages$(), Rule$)
     FoundSecond` = False`
     For i% = 0 TO UBOUND(UpdatePages$)
         If UpdatePages$(i%) = First$ And FoundSecond` Then
-            IsUpdateValid = False`
+            IsUpdateValidForRule = False`
             Exit Function
         End If
         If UpdatePages$(i%) = Second$ Then
             FoundSecond` = True`
         End If
     Next i%
-    IsUpdateValid = True`
+    IsUpdateValidForRule = True`
 End Function
 
 Sub Split (Inp$, Splitter$, Parts$())
