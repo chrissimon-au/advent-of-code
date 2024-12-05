@@ -21,7 +21,12 @@ day05() {
   cat $OUTFILE_PATH
 }
 
+testSinglePageUpdate() {
+  result=`day05 "2|3
 
+3,2,1"`
+  assertEquals "3" "${result}"
+}
 
 # Load shUnit2.
 . shunit2
