@@ -3,10 +3,15 @@ InputFile$ = Command$(1)
 OutputFile$ = Command$(2)
 Print "Reading Input from " + InputFile$
 Print "Outputting to " + OutputFile$
-Open InputFile$ For Binary As #1
-l% = LOF(1)
-Arg$ = Space$(l%)
-Get #1, 1, Arg$
+ReDim InputLines$(0)
+Open InputFile$ For Input As #1
+
+Do Until EOF(1)
+    Line Input #1, line$
+    ReDim _Preserve InputLines$(lineCount%)
+    InputLines$(lineCount%) = line$
+    lineCount% = lineCount% + 1
+Loop
 Close #1
 
 Open OutputFile$ For Output As #1
@@ -16,23 +21,18 @@ Rem --------------------------------
 Rem Start Program
 Rem --------------------------------
 
-Nl$ = Char$(10)
-nextNl% = InStr(Arg$, Nl$)
-idx% = 0
+For i% = 0 To lineCount% - 1
 
-If Arg$ = "5" Then
-    Error 100
-ElseIf Arg$ <> "" Then
-    Print #1, Arg$;
-Else
-    Out$ = "0"
-End If
-Print #1, Out$;
+Next i%
+Arg$ = InputLines$(2)
+
+Print #1, Arg$;
 
 Rem --------------------------------
 Rem End Program
 Rem --------------------------------
-System
+System Rem Comment to see regular print output
+Rem End Rem Uncomment to see regular print output
 
 Rem --------------------------------
 Rem Exit with Error
