@@ -1,0 +1,1 @@
+watchexec -e bas,sh,txt --timings ./aoc-day5.test.sh
