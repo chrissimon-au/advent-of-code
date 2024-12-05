@@ -11,6 +11,8 @@ pkgs.mkShellNoCC {
     shunit2
     python3
     poetry
+    jdk23
+    gradle
   ];
   buildInputs = with pkgs; [
     (callPackage ./rockstar/rockstar.nix {})
