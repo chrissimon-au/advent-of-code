@@ -36,10 +36,12 @@ For i% = 0 To lineCount% - 1
     ElseIf CollectingRules` Then
         ReDim _Preserve Rules$(RuleCount%) 
         Rules$(RuleCount%) = line$
-        RuleCount% = RuleCount + 1        
+        RuleCount% = RuleCount% + 1        
     Else
         ReDim UpdatePages$(0)
         Split line$, ",", UpdatePages$()
+        Print "Checking Update:";
+        Print line$
         If IsUpdateValid(UpdatePages$(), Rules$()) Then
             MiddlePageNum% = MiddlePageFromUpdate%(UpdatePages$())
             MiddlePageSum% = MiddlePageSum% + MiddlePageNum%
@@ -71,10 +73,14 @@ End Function
 
 Function IsUpdateValid (UpdatePages$(), Rules$())
     For i% = 0 TO UBound(Rules$)
+        Print "   Checking Rule:";
+        Print Rules$(i%);   
         If Not IsUpdateValidForRule(UpdatePages$(), Rules$(i%)) Then
+            Print "|INVALID"
             IsUpdateValid = False`
             Exit Function
         End If
+        Print "|VALID"
     Next i%
     IsUpdateValid = True`
 End Function
@@ -84,7 +90,6 @@ Function IsUpdateValidForRule (UpdatePages$(), Rule$)
     Split Rule$, "|", RuleParts$()
     First$ = RuleParts$(0)
     Second$ = RuleParts$(1)
-    FoundFirst` = False`
     FoundSecond` = False`
     For i% = 0 TO UBOUND(UpdatePages$)
         If UpdatePages$(i%) = First$ And FoundSecond` Then
