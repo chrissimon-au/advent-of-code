@@ -18,14 +18,14 @@ day05() {
   rm $OUTFILE_PATH
   echo "$1" > $INFILE_PATH
   $EXE_PATH $INFILE_PATH $OUTFILE_PATH
-  echo `cat $OUTFILE_PATH`
+  cat $OUTFILE_PATH
 }
 
 testSinglePageUpdate() {
-  result=`day05 "1|2
+  result=`day05 "2|3
 
-5"`
-  assertEquals "5" "${result}"
+6"`
+  assertEquals "6" "${result}"
 }
 
 # Load shUnit2.
