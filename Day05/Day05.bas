@@ -22,15 +22,20 @@ Rem --------------------------------
 Rem Start Program
 Rem --------------------------------
 
+MiddlePageSum% = 0
+CollectingRules` = -1
 For i% = 0 To lineCount% - 1
-
+    line$ = InputLines$(i%)
+    If line$ = "" Then
+        CollectingRules` = 0
+    ElseIf CollectingRules` = -1 Then
+    Else
+        MiddlePageNum% = MiddlePageFromUpdate%(line$)
+        MiddlePageSum% = MiddlePageSum% + MiddlePageNum%
+    End If
 Next i%
-Update$ = InputLines$(2)
-ReDim UpdatePages$(0)
-Split Update$, ",", UpdatePages$()
-NumPages% = UBound(UpdatePages$)
-MiddlePage$ = UpdatePages$(Int(NumPages% / 2))
-Print #1, MiddlePage$;
+
+Print #1, LTrim$(Str$(MiddlePageSum%));
 
 Rem --------------------------------
 Rem End Program
@@ -46,6 +51,13 @@ Print #1, "[ERROR] " + "Code: " + Str$(Err) + ", Line: " + Str$(_ErrorLine);
 Close #1
 System
 
+Function MiddlePageFromUpdate%(Update$)
+    ReDim UpdatePages$(0)
+    Split Update$, ",", UpdatePages$()
+    NumPages% = UBound(UpdatePages$)
+    MiddlePage$ = UpdatePages$(Int(NumPages% / 2))
+    MiddlePageFromUpdate% = Val(MiddlePage$)
+End Function
 
 Sub Split (Inp$, Splitter$, Parts$())
     ReDim Parts$(0)
