@@ -35,5 +35,12 @@ testSinglePageUpdateInSecondSequence() {
   assertEquals "1" "${result}"
 }
 
+testSampleData() {
+  input=`cat sampledata.txt`
+  expected=`cat sampledata.part2.answer.txt`
+  result=`day05 "${input}"`
+  assertEquals "${expected}" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
