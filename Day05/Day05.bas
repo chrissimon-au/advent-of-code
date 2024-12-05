@@ -1,3 +1,4 @@
+$Debug
 Rem SETUP OUTPUT
 InputFile$ = Command$(1)
 OutputFile$ = Command$(2)
@@ -24,9 +25,12 @@ Rem --------------------------------
 For i% = 0 To lineCount% - 1
 
 Next i%
-Arg$ = InputLines$(2)
-
-Print #1, Arg$;
+Update$ = InputLines$(2)
+ReDim UpdatePages$(0)
+Split Update$, ",", UpdatePages$()
+NumPages% = UBound(UpdatePages$)
+MiddlePage$ = UpdatePages$(Int(NumPages% / 2))
+Print #1, MiddlePage$;
 
 Rem --------------------------------
 Rem End Program
@@ -41,3 +45,24 @@ error_handler:
 Print #1, "[ERROR] " + "Code: " + Str$(Err) + ", Line: " + Str$(_ErrorLine);
 Close #1
 System
+
+
+Sub Split (Inp$, Splitter$, Parts$())
+    ReDim Parts$(0)
+    SplitterPos% = 0
+    LastSplitterPos% = 1
+    PartCount% = 0
+    SplitterLen% = Len(Splitter$)
+    Do
+        SplitterPos% = InStr(SplitterPos% + 1, Inp$, Splitter$)
+        PartLen% = SplitterPos% - LastSplitterPos%
+        ReDim _Preserve Parts$(PartCount%)
+        If SplitterPos% > 0 Then
+            Parts$(PartCount%) = Mid$(Inp$, LastSplitterPos%, PartLen%)
+        Else
+            Parts$(PartCount%) = Mid$(Inp$, LastSplitterPos%)
+        End If
+        PartCount% = PartCount% + 1
+        LastSplitterPos% = SplitterPos% + SplitterLen%
+    Loop Until SplitterPos% = 0
+End Sub
