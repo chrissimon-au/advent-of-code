@@ -61,5 +61,18 @@ testMultipleUpdatesMultiplePagesMultipleRulesWithInvalidUpdate() {
   assertEquals "72" "${result}"
 }
 
+testMoreRulesAndUpdates() {
+  result=`day05 "2|3
+5|4
+12|11
+15|72
+
+6,3,2
+4,5,6
+50,12,72,11,15
+9"`
+  assertEquals "9" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
