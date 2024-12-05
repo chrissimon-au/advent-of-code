@@ -1,36 +1,31 @@
 #! /bin/sh
 
 BIN_PATH="bin"
-OUT_PATH="out"
+IO_PATH="io"
 EXE_PATH="$PWD/$BIN_PATH/Day05"
-OUTFILE_PATH="$PWD/$OUT_PATH/output.txt"
+INFILE_PATH="$PWD/$IO_PATH/infile.txt"
+OUTFILE_PATH="$PWD/$IO_PATH/output.txt"
 mkdir -p $BIN_PATH
-mkdir -p $OUT_PATH
+mkdir -p $IO_PATH
 
 echo "Compiling to $EXE_PATH"
+echo "Reading input from $INFILE_PATH"
 echo "Outputting to $OUTFILE_PATH"
 
 qb64 -x $PWD/Day05.bas -o $EXE_PATH
 
 day05() {
   rm $OUTFILE_PATH
-  $EXE_PATH $OUTFILE_PATH $1
+  echo "$1" > $INFILE_PATH
+  $EXE_PATH $INFILE_PATH $OUTFILE_PATH
   echo `cat $OUTFILE_PATH`
 }
 
-testCheck() {
-  result=`day05`
-  assertEquals "0" "${result}"
-}
+testSinglePageUpdate() {
+  result=`day05 "1|2
 
-testCheckWithInput() {
-  result=`day05 1`
-  assertEquals "1" "${result}"
-}
-
-testError() {
-  result=`day05 5`
-  assertEquals "" "${result}"
+5"`
+  assertEquals "5" "${result}"
 }
 
 # Load shUnit2.

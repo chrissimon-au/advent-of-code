@@ -1,19 +1,29 @@
 Rem SETUP OUTPUT
-OutputFile$ = Command$(1)
+InputFile$ = Command$(1)
+OutputFile$ = Command$(2)
+Print "Reading Input from " + InputFile$
 Print "Outputting to " + OutputFile$
+Open InputFile$ For Binary As #1
+l% = LOF(1)
+Arg$ = Space$(l%)
+Get #1, 1, Arg$
+Close #1
+
 Open OutputFile$ For Output As #1
 On Error GoTo error_handler
-
-Argument$ = Command$(2)
 
 Rem --------------------------------
 Rem Start Program
 Rem --------------------------------
 
-If Argument$ = "5" Then
+Nl$ = Char$(10)
+nextNl% = InStr(Arg$, Nl$)
+idx% = 0
+
+If Arg$ = "5" Then
     Error 100
-ElseIf Argument$ <> "" Then
-    Out$ = Argument$
+ElseIf Arg$ <> "" Then
+    Print #1, Arg$;
 Else
     Out$ = "0"
 End If
