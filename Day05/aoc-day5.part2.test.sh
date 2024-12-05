@@ -28,5 +28,12 @@ testSinglePageUpdate() {
   assertEquals "3" "${result}"
 }
 
+testSinglePageUpdate() {
+  result=`day05 "1|2
+
+3,2,1"`
+  assertEquals "1" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
