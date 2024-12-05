@@ -42,5 +42,12 @@ testSampleData() {
   assertEquals "${expected}" "${result}"
 }
 
+# testTestData() {
+#   input=`cat testdata.txt`
+#   expected=`cat testdata.part2.answer.txt`
+#   result=`day05 "${input}"`
+#   assertEquals "${expected}" "${result}"
+# }
+
 # Load shUnit2.
 . shunit2
