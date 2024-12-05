@@ -67,7 +67,43 @@ Close #1
 System
 
 Sub FixPageOrder (UpdatePages$(), Rules$())
-    SWAP UpdatePages$(0), UpdatePages$(1)
+    For i% = 0 TO UBound(Rules$)
+        Print "   Fixing For Rule:";
+        Print Rules$(i%);   
+        FixPageOrderForRule UpdatePages$(), Rules$(i%)
+    Next i%    
+End Sub
+
+Sub FixPageOrderForRule (UpdatePages$(), Rule$)
+    ReDim RuleParts$(0)
+    Split Rule$, "|", RuleParts$()
+    First$ = RuleParts$(0)
+    Second$ = RuleParts$(1)
+    FirstIdx% = -1
+    SecondIdx% = -1
+    Print "    RuleParts: ";
+    Print First$, Second$
+    For i% = 0 TO UBOUND(UpdatePages$)
+        If UpdatePages$(i%) = First$ Then
+            FirstIdx% = i%
+        End If        
+        If UpdatePages$(i%) = Second$ Then
+            SecondIdx% = i%
+        End If
+        If FirstIdx% > SecondIdx% And FirstIdx% >= 0 And SecondIdx% >= 0 Then
+            Print "     Swapping positions ";
+            Print FirstIdx%;
+            Print " and ";
+            Print SecondIdx%
+            SWAP UpdatePages$(FirstIdx%), UpdatePages$(SecondIdx%)
+            Exit Sub
+        End If        
+    Next i%
+    Print "     Got to end without swapping";
+    Print " FirstIdx:";
+    Print FirstIdx%;
+    Print " SecondIdx:";
+    Print SecondIdx%
 End Sub
 
 Function MiddlePageFromUpdate% (UpdatePages$())

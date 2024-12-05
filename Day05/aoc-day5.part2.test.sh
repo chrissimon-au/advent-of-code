@@ -28,7 +28,7 @@ testSinglePageUpdate() {
   assertEquals "3" "${result}"
 }
 
-testSinglePageUpdate() {
+testSinglePageUpdateInSecondSequence() {
   result=`day05 "1|2
 
 3,2,1"`
