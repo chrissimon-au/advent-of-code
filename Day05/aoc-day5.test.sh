@@ -51,5 +51,15 @@ testMultipleUpdatesMultiplePagesWithInvalidUpdate() {
   assertEquals "5" "${result}"
 }
 
+testMultipleUpdatesMultiplePagesMultipleRulesWithInvalidUpdate() {
+  result=`day05 "2|3
+5|4
+
+6,3,2
+4,5,6
+50,12,72,11,15"`
+  assertEquals "72" "${result}"
+}
+
 # Load shUnit2.
 . shunit2
