@@ -42,11 +42,22 @@ For i% = 0 To lineCount% - 1
         Split line$, ",", UpdatePages$()
         Print "Checking Update:";
         Print line$
-        If Not IsUpdateValid(UpdatePages$(), Rules$()) Then
+        WasInvalid` = False`
+        While Not IsUpdateValid(UpdatePages$(), Rules$())
+            WasInvalid` = True`
             FixPageOrder UpdatePages$(), Rules$()
+            Print "Was: ", line$, "Now"
+            For j% = 0 to UBound(UpdatePages$)
+                Print UpdatePages$(j%);
+                Print ",";
+            Next j%
+            Print ""
+        Wend
+        If WasInvalid` Then
             MiddlePageNum% = MiddlePageFromUpdate%(UpdatePages$())
             MiddlePageSum% = MiddlePageSum% + MiddlePageNum%
         End If
+        
     End If
 Next i%
 
@@ -113,15 +124,14 @@ Function MiddlePageFromUpdate% (UpdatePages$())
 End Function
 
 Function IsUpdateValid (UpdatePages$(), Rules$())
-    For i% = 0 TO UBound(Rules$)
-        Print "   Checking Rule:";
-        Print Rules$(i%);   
+    For i% = 0 TO UBound(Rules$)  
         If Not IsUpdateValidForRule(UpdatePages$(), Rules$(i%)) Then
+            Print "   Checking Rule:";
+            Print Rules$(i%); 
             Print "|INVALID"
             IsUpdateValid = False`
             Exit Function
         End If
-        Print "|VALID"
     Next i%
     IsUpdateValid = True`
 End Function
