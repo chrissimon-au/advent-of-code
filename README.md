@@ -6,6 +6,19 @@ Planning to do each day in a different language:
 
 Setup build environment by [Installing Nix](https://nixos.org/download/) and then running `nix-shell` in the root of the repo.  This should ensure all build tools and dependencies are available.  Then, within the Day folder, language/framework specific methods are used to install/run each program.
 
+Typically, the Advent of Code sample & test data and answers are contained in ignored files typically (naming may vary between days depending on circumstances and variability between parts) named:
+
+* Samples:
+  * `sampledata.txt`
+  * `sampledata.answer.txt`
+  * `sampledata.answer2.txt`
+* Test:
+  * `testdata.txt`
+  * `testdata.answer.txt`
+  * `testdata.answer2.txt`
+
+It's up to each language's test runner to load the data and pass to the test suite.
+
 * [2024-12-01 - Day 01 in F#](./Day01/)
 * [2024-12-02 - Day 02 in JavaScript](./Day02/)
 * [2024-12-03 - Day 03 in Rockstar](./Day03/)
