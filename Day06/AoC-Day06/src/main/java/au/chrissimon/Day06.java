@@ -1,8 +1,7 @@
 package au.chrissimon;
 
 public class Day06 {
-
-    public int getVisitedLocationCount(String map) {
-        return 1;
+    public static int getVisitedLocationCount(String map) {
+        return map.length();
     }
 }
