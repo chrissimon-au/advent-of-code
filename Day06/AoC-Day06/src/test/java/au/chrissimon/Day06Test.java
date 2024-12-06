@@ -22,7 +22,7 @@ class Day06Test {
         ..#.
         """;
 
-    private static Stream<Arguments> testMaps() {
+    private static Stream<Arguments> testMapsForExiting() {
         return Stream.of(
                 Arguments.of("^", 1),
                 Arguments.of(">.", 2),
@@ -32,7 +32,7 @@ class Day06Test {
     }
 
     @ParameterizedTest()
-    @MethodSource("testMaps")
+    @MethodSource("testMapsForExiting")
     public void test_GuardRoute(String map, int expectedVisitedLocationCount) {
         assertEquals(expectedVisitedLocationCount, Day06.getVisitedLocationCount(map));
     }
@@ -45,4 +45,19 @@ class Day06Test {
         assertEquals(expectedVisitedLocationCount, Day06.getVisitedLocationCount(map));
     }
 
+    private static Stream<Arguments> testMapsForLooping() {
+        return Stream.of(
+                Arguments.of("""
+                                        ###
+                                        .^#
+                                        ###
+                                        """, 1)
+        );
+    }
+
+    @ParameterizedTest()
+    @MethodSource("testMapsForLooping")
+    public void test_GuardRouteCreateLoopInterventionPoints(String map, int expectedVisitedLocationCount) {
+        assertEquals(expectedVisitedLocationCount, Day06.getNumberOfLoopInterventionPoints(map));
+    }
 }

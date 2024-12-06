@@ -93,4 +93,8 @@ public class Day06 {
         } while (map.inMap(currentVector.location()));
         return visitedLocations.size();
     }
+
+    public static int getNumberOfLoopInterventionPoints(String map) {
+        return 0;
+    }
 }
