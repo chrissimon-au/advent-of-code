@@ -2,7 +2,7 @@ package au.chrissimon;
 
 public class Day06 {
 
-    public boolean check() {
-        return true;
+    public int getVisitedLocationCount(String map) {
+        return 0;
     }
 }

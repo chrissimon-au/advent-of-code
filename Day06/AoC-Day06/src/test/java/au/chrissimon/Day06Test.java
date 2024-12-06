@@ -1,15 +1,17 @@
 package au.chrissimon;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class Day06Test {
 
-    @Test
-    public void test_check() {
+    @ParameterizedTest()
+    @CsvSource({"^,1"})
+    public void test_GuardRoute(String map, int expectedVisitedLocationCount) {
         Day06 day06 = new Day06();
-        assertTrue(day06.check());
+        assertEquals(expectedVisitedLocationCount, day06.getVisitedLocationCount(map));
     }
 
 }
