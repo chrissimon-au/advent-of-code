@@ -28,6 +28,8 @@ enum Direction {
     }
 }
 
+record RouteResult(List<Vector> routePositions, boolean loops) {}
+
 class Map {
     public Map(String mapInput) {
         _mapRows = mapInput.split("\n");
@@ -58,14 +60,24 @@ class Map {
         return new Vector(location, direction);
     }
 
-    public List<Vector> executeRoute() {
+    public RouteResult executeRoute() {
         Vector currentVector = getCurrentVector();
         List<Vector> routePositions = new ArrayList<>();
         do {
             routePositions.add(currentVector);
             currentVector = currentVector.nextVector(this);
+            if (routePositions.contains(currentVector)) {
+                return new RouteResult(routePositions, true);
+            }
         } while (inMap(currentVector.location()));
-        return routePositions;
+        return new RouteResult(routePositions, false);
+    }
+
+    public void createBlock(Location location) {
+        String row = _mapRows[location.row()];
+        StringBuilder newRow = new StringBuilder(row);
+        newRow.setCharAt(location.col(), '#');
+        _mapRows[location.row()] = newRow.toString();
     }
 }
 
@@ -98,13 +110,28 @@ public class Day06 {
 
     public static int getVisitedLocationCount(String mapInput) {
         Map map = new Map(mapInput);
-        List<Vector> routePositions = map.executeRoute();
+        RouteResult result = map.executeRoute();
+        List<Vector> routePositions = result.routePositions();
         java.util.Map<Location, List<Vector>> locations =
                 routePositions.stream().collect(Collectors.groupingBy(Vector::location));
         return locations.keySet().size();
     }
 
-    public static int getNumberOfLoopInterventionPoints(String map) {
-        return 1;
+    public static int getNumberOfLoopInterventionPoints(String mapInput) {
+        Map map = new Map(mapInput);
+        RouteResult result = map.executeRoute();
+        int loopPoints = 0;
+        Vector startVector = map.getCurrentVector();
+        for (Vector routePosition : result.routePositions()) {
+            if (!routePosition.location().equals(startVector.location())) {
+                Map newMap = new Map(mapInput);
+                newMap.createBlock(routePosition.location());
+                RouteResult newResult = newMap.executeRoute();
+                if (newResult.loops()) {
+                    loopPoints++;
+                }
+            }
+        }
+        return loopPoints;
     }
 }
