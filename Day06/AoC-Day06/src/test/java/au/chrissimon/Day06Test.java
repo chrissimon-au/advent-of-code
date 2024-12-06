@@ -47,11 +47,18 @@ class Day06Test {
 
     private static Stream<Arguments> testMapsForLooping() {
         return Stream.of(
-                Arguments.of("""
+                /*Arguments.of("""
                                         ###
                                         .^#
                                         ###
-                                        """, 1)
+                                        """, 1),*/
+                Arguments.of("""
+                                        ....
+                                        ...#
+                                        ...#
+                                        #^..
+                                        ..#.
+                                        """, 2)
         );
     }
 
