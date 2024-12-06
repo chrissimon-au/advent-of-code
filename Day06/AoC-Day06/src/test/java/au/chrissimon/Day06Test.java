@@ -47,11 +47,11 @@ class Day06Test {
 
     private static Stream<Arguments> testMapsForLooping() {
         return Stream.of(
-                /*Arguments.of("""
+                Arguments.of("""
                                         ###
                                         .^#
                                         ###
-                                        """, 1),*/
+                                        """, 1),
                 Arguments.of("""
                                         ....
                                         ...#
@@ -65,6 +65,14 @@ class Day06Test {
     @ParameterizedTest()
     @MethodSource("testMapsForLooping")
     public void test_GuardRouteCreateLoopInterventionPoints(String map, int expectedVisitedLocationCount) {
+        assertEquals(expectedVisitedLocationCount, Day06.getNumberOfLoopInterventionPoints(map));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"sampledata.txt,sampledata.answer2.txt", "testdata.txt,testdata.answer2.txt"})
+    public void test_TestGuardRouteCreateLoopInterventionPoints(String dataFile, String answerFile) throws IOException {
+        String map = Files.readString(Path.of("src/test/java/au/chrissimon/" + dataFile), Charset.defaultCharset());
+        int expectedVisitedLocationCount =  Integer.parseInt(Files.readString(Path.of("src/test/java/au/chrissimon/" + answerFile), Charset.defaultCharset()));
         assertEquals(expectedVisitedLocationCount, Day06.getNumberOfLoopInterventionPoints(map));
     }
 }
