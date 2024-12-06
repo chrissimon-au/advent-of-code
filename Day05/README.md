@@ -17,7 +17,7 @@ I was unable to get [QB64](https://qb64.com) installed in [Nix](https://nixos.or
 * [QB64](https://qb64.com)
     * Running `aoc-day05.test.sh` assumes that qb64 is in the path and will accept arguments
         * This may or may not be the case depending on how you launch qb64 and on what platform:
-            * qb64 must be run from within it's folder (it needs relative access to the `internal` folder) and so scripts are provided to change into that folder, but the default scripts don't pass through arguments.
+            * qb64 must be run from within its folder (it needs relative access to the `internal` folder) and so scripts are provided to change into that folder, but the default scripts don't pass through arguments.
             * If you add it to the path by creating a symlink from, e.g. `/usr/local/bin` then it won't change into the correct folder.
             * My approach was to create `run_qb64.sh` in the qb64 folder:                
                 ```bash
