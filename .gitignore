@@ -7,3 +7,5 @@ testdata.*
 result
 node_modules
 __pycache__
+target
+.bsp

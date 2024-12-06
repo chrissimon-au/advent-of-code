@@ -13,6 +13,7 @@ pkgs.mkShellNoCC {
     poetry
     jdk23
     gradle
+    sbt
   ];
   buildInputs = with pkgs; [
     (callPackage ./rockstar/rockstar.nix {})
