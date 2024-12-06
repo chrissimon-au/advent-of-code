@@ -25,7 +25,7 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-04 - Day 04 in Python](./Day04/)
 * [2024-12-05 - Day 05 in Basic](./Day05/)
 * [2024-12-06 - Day 06 in Java](./Day06/)
-* 2024-12-07 - Day 07 in Kotlin
+* [2024-12-07 - Day 07 in Kotlin](./Day07/)
 * 2024-12-08 - Day 08 in Scala
 * 2024-12-09 - Day 09 in C#
 * 2024-12-10 - Day 10 in T-sql
