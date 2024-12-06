@@ -120,7 +120,7 @@ public class Day06 {
     public static int getNumberOfLoopInterventionPoints(String mapInput) {
         Map map = new Map(mapInput);
         RouteResult result = map.executeRoute();
-        int loopPoints = 0;
+        Set<Location> loopLocations = new HashSet<>();
         Vector startVector = map.getCurrentVector();
         for (Vector routePosition : result.routePositions()) {
             if (!routePosition.location().equals(startVector.location())) {
@@ -128,10 +128,10 @@ public class Day06 {
                 newMap.createBlock(routePosition.location());
                 RouteResult newResult = newMap.executeRoute();
                 if (newResult.loops()) {
-                    loopPoints++;
+                    loopLocations.add(routePosition.location());
                 }
             }
         }
-        return loopPoints;
+        return loopLocations.size();
     }
 }
