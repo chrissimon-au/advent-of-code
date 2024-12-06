@@ -95,6 +95,6 @@ public class Day06 {
     }
 
     public static int getNumberOfLoopInterventionPoints(String map) {
-        return 0;
+        return 1;
     }
 }
