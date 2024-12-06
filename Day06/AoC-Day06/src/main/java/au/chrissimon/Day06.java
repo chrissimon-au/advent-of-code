@@ -1,7 +1,10 @@
 package au.chrissimon;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 enum Direction {
@@ -54,6 +57,16 @@ class Map {
         Direction direction = Direction.fromChar(mapRow.charAt(location.col()));
         return new Vector(location, direction);
     }
+
+    public List<Vector> executeRoute() {
+        Vector currentVector = getCurrentVector();
+        List<Vector> routePositions = new ArrayList<>();
+        do {
+            routePositions.add(currentVector);
+            currentVector = currentVector.nextVector(this);
+        } while (inMap(currentVector.location()));
+        return routePositions;
+    }
 }
 
 
@@ -85,13 +98,10 @@ public class Day06 {
 
     public static int getVisitedLocationCount(String mapInput) {
         Map map = new Map(mapInput);
-        Vector currentVector = map.getCurrentVector();
-        Set<Location> visitedLocations = new HashSet<>();
-        do {
-            visitedLocations.add(currentVector.location());
-            currentVector = currentVector.nextVector(map);
-        } while (map.inMap(currentVector.location()));
-        return visitedLocations.size();
+        List<Vector> routePositions = map.executeRoute();
+        java.util.Map<Location, List<Vector>> locations =
+                routePositions.stream().collect(Collectors.groupingBy(Vector::location));
+        return locations.keySet().size();
     }
 
     public static int getNumberOfLoopInterventionPoints(String map) {
