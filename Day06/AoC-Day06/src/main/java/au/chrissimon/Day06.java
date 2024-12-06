@@ -122,13 +122,15 @@ public class Day06 {
         RouteResult result = map.executeRoute();
         Set<Location> loopLocations = new HashSet<>();
         Vector startVector = map.getCurrentVector();
-        for (Vector routePosition : result.routePositions()) {
-            if (!routePosition.location().equals(startVector.location())) {
+        java.util.Map<Location, List<Vector>> locations =
+                result.routePositions().stream().collect(Collectors.groupingBy(Vector::location));
+        for (Location routeLocation : locations.keySet()) {
+            if (!routeLocation.equals(startVector.location())) {
                 Map newMap = new Map(mapInput);
-                newMap.createBlock(routePosition.location());
+                newMap.createBlock(routeLocation);
                 RouteResult newResult = newMap.executeRoute();
                 if (newResult.loops()) {
-                    loopLocations.add(routePosition.location());
+                    loopLocations.add(routeLocation);
                 }
             }
         }
