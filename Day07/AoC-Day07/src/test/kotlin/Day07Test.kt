@@ -48,4 +48,16 @@ class Day07Test {
             Files.readString(Path.of("src/test/kotlin/$answerFile"), Charset.defaultCharset()).toLong()
         assertEquals(expectedTotal, totalValidCalibrationResult(equations, baseOperations))
     }
+
+    @ParameterizedTest
+    @CsvSource("sampledata.txt,sampledata.answer2.txt","testdata.txt,testdata.answer2.txt")
+    @Throws(
+        IOException::class
+    )
+    fun testAoCTestPart2(dataFile: String, answerFile: String) {
+        val equations = Files.readString(Path.of("src/test/kotlin/$dataFile"), Charset.defaultCharset())
+        val expectedTotal =
+            Files.readString(Path.of("src/test/kotlin/$answerFile"), Charset.defaultCharset()).toLong()
+        assertEquals(expectedTotal, totalValidCalibrationResult(equations, allOperations))
+    }
 }
