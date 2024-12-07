@@ -26,6 +26,7 @@ class Day07Test {
                     15: 3 2 3
                     10: 1 2 3
                 """.trimIndent(), 32),
+                Arguments.of("156: 15 6", 156)
             )
         }
     }
