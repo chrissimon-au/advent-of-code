@@ -5,7 +5,7 @@ import kotlin.test.Test
 class Day07Test {
     @Test
     fun testCheck() {
-        val day07 = Day07()
-        assertEquals(true, day07.check())
+        val day07 = Day07("1: 1")
+        assertEquals(1, day07.totalValidCalibrationResult())
     }
 }
