@@ -6,15 +6,37 @@ typealias Operation = (Long, Long) -> Long
 
 val operations: List<Operation> = listOf(
     { a, b -> a + b },
-    { a, b -> a * b }
+    { a, b -> a * b },
+    { a, b -> (a.toString() + b.toString()).toLong()}
 )
+
+private fun asBase(input: Int, base: Int): Long {
+    var num: Int = input
+    var ret: Long = 0
+    var factor: Long = 1
+    while (num > 0) {
+        ret += num % 3 * factor
+        num /= 3
+        factor *= 10
+    }
+    return ret
+}
+
+private fun getDigit(numString: String, digit: Int): Int =
+    if (numString.length <= digit) {
+        0
+    } else {
+        numString[numString.length - digit - 1].toString().toInt()
+    }
+
 
 infix fun Int.pow(exponent: Int): Int = toDouble().pow(exponent).toInt()
 
 private fun getOperationSets(numOps: Int): List<List<Operation>> =
-    (0..<(2 pow numOps)).map { i ->
-        (0..numOps).map {
-            operations[((i and (2 pow it)) > 0).compareTo(false)]
+    (0..<(operations.size pow numOps)).map { i ->
+        val digits = asBase(i, operations.size).toString()
+        (0..<numOps).map {
+            operations[getDigit(digits, it)]
         }
     }
 
