@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource
 class Day07Test {
 
     @ParameterizedTest
-    @CsvSource("1: 1, 1", "2: 2, 2", "3: 1, 0", "2: 1 1, 2", "6: 3 2, 6")
+    @CsvSource("1: 1, 1", "2: 2, 2", "3: 1, 0", "2: 1 1, 2", "6: 3 2, 6", "17: 5 3 2, 17")
     fun testCheck(equations: String, expectedResult: Int) {
         assertEquals(expectedResult, totalValidCalibrationResult(equations))
     }
