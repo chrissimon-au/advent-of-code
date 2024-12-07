@@ -3,6 +3,8 @@ package au.chrissimon
 class Day07(val equations: String) {
 
     fun totalValidCalibrationResult(): Int {
-        return 1;
+        val equationParts = equations.split(":")
+        val total = equationParts[0].toInt()
+        return total
     }
 }
