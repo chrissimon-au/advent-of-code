@@ -1,8 +1,13 @@
 import au.chrissimon.totalValidCalibrationResult
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.IOException
+import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Path
 
 
 class Day07Test {
@@ -20,14 +25,26 @@ class Day07Test {
                     17: 5 3 2
                     15: 3 2 3
                     10: 1 2 3
-                """.trimIndent(), 32)
+                """.trimIndent(), 32),
             )
         }
     }
 
     @ParameterizedTest()
     @MethodSource("testEquations")
-    fun testCheck(equations: String, expectedResult: Int) {
+    fun testCheck(equations: String, expectedResult: Long) {
         assertEquals(expectedResult, totalValidCalibrationResult(equations))
+    }
+
+    @ParameterizedTest
+    @CsvSource("sampledata.txt,sampledata.answer.txt","testdata.txt,testdata.answer.txt")
+    @Throws(
+        IOException::class
+    )
+    fun testAoCTest(dataFile: String, answerFile: String) {
+        val equations = Files.readString(Path.of("src/test/kotlin/$dataFile"), Charset.defaultCharset())
+        val expectedTotal =
+            Files.readString(Path.of("src/test/kotlin/$answerFile"), Charset.defaultCharset()).toLong()
+        assertEquals(expectedTotal, totalValidCalibrationResult(equations))
     }
 }
