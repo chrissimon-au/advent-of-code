@@ -5,6 +5,7 @@ class Day07(val equations: String) {
     fun totalValidCalibrationResult(): Int {
         val equationParts = equations.split(":")
         val total = equationParts[0].toInt()
-        return total
-    }
+        val equation = equationParts[1].trim().toInt();
+        return if (total == equation) { total } else { 0 }
+        }
 }
