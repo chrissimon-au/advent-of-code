@@ -15,7 +15,12 @@ class Day07Test {
                 Arguments.of("3: 1", 0),
                 Arguments.of("2: 1 1", 2),
                 Arguments.of("6: 3 2", 6),
-                Arguments.of("17: 5 3 2", 17)
+                Arguments.of("17: 5 3 2", 17),
+                Arguments.of("""
+                    17: 5 3 2
+                    15: 3 2 3
+                    10: 1 2 3
+                """.trimIndent(), 32)
             )
         }
     }
