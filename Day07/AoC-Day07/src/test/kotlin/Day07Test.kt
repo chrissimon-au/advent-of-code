@@ -1,4 +1,4 @@
-import au.chrissimon.totalValidCalibrationResult
+import au.chrissimon.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -34,7 +34,7 @@ class Day07Test {
     @ParameterizedTest()
     @MethodSource("testEquations")
     fun testCheck(equations: String, expectedResult: Long) {
-        assertEquals(expectedResult, totalValidCalibrationResult(equations))
+        assertEquals(expectedResult, totalValidCalibrationResult(equations, allOperations))
     }
 
     @ParameterizedTest
@@ -46,6 +46,6 @@ class Day07Test {
         val equations = Files.readString(Path.of("src/test/kotlin/$dataFile"), Charset.defaultCharset())
         val expectedTotal =
             Files.readString(Path.of("src/test/kotlin/$answerFile"), Charset.defaultCharset()).toLong()
-        assertEquals(expectedTotal, totalValidCalibrationResult(equations))
+        assertEquals(expectedTotal, totalValidCalibrationResult(equations, baseOperations))
     }
 }
