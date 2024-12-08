@@ -65,3 +65,9 @@ def countAntiNodeLocation(input: String): Int =
   val antennaMap = AntennaMap(input)
   val antiNodes = antennaMap.getAntiNodes(getPart1AntiNodes)
   antiNodes.size
+
+
+def countHarmonicAntiNodeLocation(input: String): Int =
+  val antennaMap = AntennaMap(input)
+  val antiNodes = antennaMap.getAntiNodes(getPart1AntiNodes)
+  antiNodes.size

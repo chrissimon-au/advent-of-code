@@ -54,4 +54,8 @@ class Day08 extends munit.FunSuite {
     assertEquals(answer, countAntiNodeLocation(grid))
   }
 
+  test("Simple Case with single frequency") {    
+    assertEquals(4, countHarmonicAntiNodeLocation("...o..o..."))
+  }
+
 }
