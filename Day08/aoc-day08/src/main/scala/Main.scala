@@ -1,14 +1,7 @@
-class Location(var col: Int, var frequency: Char) {
+case class Location(val col: Int, val frequency: Char) {
 }
 
-def factorial(n: Int): Int = {  
-    var f = 1
-    for(i <- 1 to n)
-    {
-        f = f * i;
-    }
-    return f
-}
+type Pair = List[Location]
 
 def getNodes(grid: String): List[Location] =
   grid
@@ -16,9 +9,18 @@ def getNodes(grid: String): List[Location] =
     .filter(_.frequency != '.')
     .toList
 
+def getPairs(nodes: List[Location]): List[Pair] = 
+  nodes.toSet.subsets(2).map(_.toList.sortBy(_.col)).toList
+
+def getAntiNodes(pairs: List[Pair]): List[Location] =
+  pairs.flatMap((p) => {
+    var delta = (p(0).col - p(1).col).abs
+    List(
+      Location(p(0).col - delta, p(0).frequency),
+      Location(p(1).col + delta, p(1).frequency)
+    )
+  })
 
 @main def countAntiNodeLocation(grid: String): Int =
-  var nodes = getNodes(grid)
-  var n = nodes.size
-  var divisor = if (n-2 > 0) factorial(n-2) else 1
-  factorial(n) / (factorial(2) * divisor) * 2
+  getAntiNodes(getPairs(getNodes(grid))).toSet.size
+  
