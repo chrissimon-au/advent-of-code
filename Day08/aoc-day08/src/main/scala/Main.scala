@@ -1,4 +1,3 @@
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 case class Vector(val col: Int, val row: Int) {
   def -(that: Vector): Vector =
@@ -10,25 +9,30 @@ case class Vector(val col: Int, val row: Int) {
   def <(that: Vector): Boolean = 
     this.col < that.col && this.row < that.row
   def isInMap(size: Vector): Boolean = 
-    this >= Origin && this < size  
+    this >= Vector.Origin && this < size  
 }
 
-def Origin = new Vector(0,0)  
+object Vector {
+  val Origin = new Vector(0,0)
+}
 
 type Frequency = Char
 
 case class Antenna(val location: Vector, val frequency: Frequency)
 
-class AntennaMap(val size: Vector, val pairs: Map[Frequency, List[Pair]]) {
-  
-  def getAntiNodes(antiNodeAlgorithm: (List[Pair], Vector) => List[Vector]): Set[Vector] =
-    pairs.flatMap((frequency, pairs) => antiNodeAlgorithm(pairs, size)).toSet
-  
+type FrequencyAntennas = Map[Frequency, List[Vector]]
+type Pair = List[Vector]
+type FrequencyAntennaPairs = Map[Frequency, List[Pair]]
+type AntiNodeAlgorithm = (List[Pair], Vector) => List[Vector]
+
+class AntennaMap(val size: Vector, val frequencyAntennaPairs: FrequencyAntennaPairs) {
+  def getAntiNodes(antiNodeAlgorithm: AntiNodeAlgorithm): Set[Vector] =
+    frequencyAntennaPairs.flatMap((frequency, antennaPairs) => antiNodeAlgorithm(antennaPairs, size)).toSet
 }
 
 object AntennaMap {
 
-  def antennas(map: Array[String]): Frequencies =
+  private def antennas(map: Array[String]): FrequencyAntennas =
     map.zipWithIndex.map((row, rowIdx) => {
       row
         .zipWithIndex.map((c, colIdx) => Antenna(Vector(colIdx, rowIdx), c))
@@ -38,21 +42,17 @@ object AntennaMap {
       .flatMap(a => a).toList
       .groupMap(_.frequency)(_.location)
 
-  def pairs(antennas: Frequencies): Map[Frequency, List[Pair]] = 
+  private def getPairs(nodes: List[Vector]): List[Pair] = 
+    nodes.toSet.subsets(2).map(_.toList).toList
+
+  private def frequencyPairs(antennas: FrequencyAntennas): FrequencyAntennaPairs = 
     antennas.map((frequency, locations) => (frequency, getPairs(locations)))
 
   def apply(input: String): AntennaMap =
     val map = input
       .split(System.lineSeparator())
-    new AntennaMap(Vector(map(0).size,map.size), pairs(antennas(map)))
+    new AntennaMap(Vector(map(0).size,map.size), frequencyPairs(antennas(map)))
 }
-
-type Frequencies = Map[Frequency, List[Vector]]
-
-type Pair = List[Vector]
-
-def getPairs(nodes: List[Vector]): List[Pair] = 
-  nodes.toSet.subsets(2).map(_.toList).toList
 
 def getAntiNodes(pairs: List[Pair], size: Vector): List[Vector] =
   pairs.flatMap((p) => {
@@ -62,7 +62,6 @@ def getAntiNodes(pairs: List[Pair], size: Vector): List[Vector] =
       p(1) + delta
     )
   }).filter(l => l.isInMap(size))
-
 
 def getHarmonicAntiNodes(pairs: List[Pair], size: Vector): List[Vector] =
   pairs.flatMap((p) => {
@@ -78,17 +77,19 @@ def getHarmonicAntiNodes(pairs: List[Pair], size: Vector): List[Vector] =
       l = l :+ n
       n = n + delta
     }
-    l.toList
-  }).filter(l => l.isInMap(size))
+    l
+  })
 
 @main
 def countAntiNodeLocation(input: String): Int =
   val antennaMap = AntennaMap(input)
-  val antiNodes = antennaMap.getAntiNodes(getAntiNodes)
-  antiNodes.size
+  antennaMap
+    .getAntiNodes(getAntiNodes)
+    .size
 
 
 def countHarmonicAntiNodeLocation(input: String): Int =
   val antennaMap = AntennaMap(input)
-  val antiNodes = antennaMap.getAntiNodes(getHarmonicAntiNodes)
-  antiNodes.size
+  antennaMap
+    .getAntiNodes(getHarmonicAntiNodes)
+    .size
