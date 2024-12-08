@@ -1,2 +1,2 @@
 @main def countAntiNodeLocation(grid: String): Int =
-  -1
+  0
