@@ -58,4 +58,16 @@ class Day08 extends munit.FunSuite {
     assertEquals(4, countHarmonicAntiNodeLocation("...o..o..."))
   }
 
+  test("AoC Sample Case - Part 2 - Harmonics") {
+    val grid = io.Source.fromFile("src/test/scala/sampledata.txt").mkString
+    val answer = io.Source.fromFile("src/test/scala/sampledata.answer2.txt").mkString.toInt
+    assertEquals(answer, countHarmonicAntiNodeLocation(grid))
+  }
+
+  test("AoC Test Case - Part 2 - Harmonics") {
+    val grid = io.Source.fromFile("src/test/scala/testdata.txt").mkString
+    val answer = io.Source.fromFile("src/test/scala/testdata.answer2.txt").mkString.toInt
+    assertEquals(answer, countHarmonicAntiNodeLocation(grid))
+  }
+
 }
