@@ -1,3 +1,4 @@
+
 // For more information on writing tests, see
 // https://scalameta.org/munit/docs/getting-started.html
 class Check extends munit.FunSuite {
@@ -39,4 +40,17 @@ class Check extends munit.FunSuite {
     ......o.......
     """.stripIndent.trim))
   }
+
+  test("AoC Sample Case") {
+    val grid = io.Source.fromFile("src/test/scala/sampledata.txt").mkString
+    val answer = io.Source.fromFile("src/test/scala/sampledata.answer.txt").mkString.toInt
+    assertEquals(answer, countAntiNodeLocation(grid))
+  }
+
+  test("AoC Test Case") {
+    val grid = io.Source.fromFile("src/test/scala/testdata.txt").mkString
+    val answer = io.Source.fromFile("src/test/scala/testdata.answer.txt").mkString.toInt
+    assertEquals(answer, countAntiNodeLocation(grid))
+  }
+
 }
