@@ -1,3 +1,5 @@
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 case class Vector(val col: Int, val row: Int) {
   def -(that: Vector): Vector =
     new Vector(this.col - that.col, this.row - that.row)
@@ -7,6 +9,8 @@ case class Vector(val col: Int, val row: Int) {
     this.col >= that.col && this.row >= that.row
   def <(that: Vector): Boolean = 
     this.col < that.col && this.row < that.row
+  def isInMap(size: Vector): Boolean = 
+    this >= Origin && this < size  
 }
 
 def Origin = new Vector(0,0)  
@@ -50,24 +54,41 @@ type Pair = List[Vector]
 def getPairs(nodes: List[Vector]): List[Pair] = 
   nodes.toSet.subsets(2).map(_.toList).toList
 
-def getPart1AntiNodes(pairs: List[Pair], gridSize: Vector): List[Vector] =
+def getAntiNodes(pairs: List[Pair], size: Vector): List[Vector] =
   pairs.flatMap((p) => {
     var delta = p(1) - p(0)
     List(
       p(0) - delta,
       p(1) + delta
     )
-  }).filter(l => l >= Origin && l < gridSize)
-  
+  }).filter(l => l.isInMap(size))
+
+
+def getHarmonicAntiNodes(pairs: List[Pair], size: Vector): List[Vector] =
+  pairs.flatMap((p) => {
+    val delta = p(1) - p(0)
+    var n = p(0)
+    var l = ListBuffer[Vector]()
+    while (n.isInMap(size)) {
+      l = l :+ n
+      n = n - delta
+    }
+    n = p(1)
+    while (n.isInMap(size)) {
+      l = l :+ n
+      n = n + delta
+    }
+    l.toList
+  }).filter(l => l.isInMap(size))
 
 @main
 def countAntiNodeLocation(input: String): Int =
   val antennaMap = AntennaMap(input)
-  val antiNodes = antennaMap.getAntiNodes(getPart1AntiNodes)
+  val antiNodes = antennaMap.getAntiNodes(getAntiNodes)
   antiNodes.size
 
 
 def countHarmonicAntiNodeLocation(input: String): Int =
   val antennaMap = AntennaMap(input)
-  val antiNodes = antennaMap.getAntiNodes(getPart1AntiNodes)
+  val antiNodes = antennaMap.getAntiNodes(getHarmonicAntiNodes)
   antiNodes.size
