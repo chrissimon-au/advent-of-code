@@ -1,2 +1,2 @@
-@main def check(): Boolean =
-  true
+@main def countAntiNodeLocation(grid: String): Int =
+  -1
