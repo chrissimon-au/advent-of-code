@@ -10,7 +10,7 @@ class Check extends munit.FunSuite {
   }
 
   test("Flat row with single frequency more than one pair, no overlapping antinodes") {    
-    assertEquals(12, countAntiNodeLocation(".....a..a.a..a....."))
+    assertEquals(12, countAntiNodeLocation("........a..a.a..a........"))
   }
 
   test("Flat row with single frequency more than one pair, overlapping antinodes") {    
