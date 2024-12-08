@@ -51,7 +51,7 @@ class Day08 extends munit.FunSuite {
   test("AoC Test Case") {
     val grid = io.Source.fromFile("src/test/scala/testdata.txt").mkString
     val answer = io.Source.fromFile("src/test/scala/testdata.answer.txt").mkString.toInt
-    assertNotEquals(397, countAntiNodeLocation(grid))
+    assertEquals(answer, countAntiNodeLocation(grid))
   }
 
 }
