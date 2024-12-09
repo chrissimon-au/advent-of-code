@@ -111,7 +111,7 @@ public static class Day09
             }
             return block switch
             {
-                File f => [movedFiles.Contains(f) ? new Empty(f.len) : f],
+                File f => [movedFiles.Add(f) ? f : new Empty(f.len)],
                 Empty e1 => [e1],
                 _ => throw new ArgumentOutOfRangeException(nameof(block), block, null)
             };
