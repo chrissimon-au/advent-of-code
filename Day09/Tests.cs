@@ -11,7 +11,7 @@ public class Tests
     [InlineData("101000000000000000001", 21)]
     public void test_FileCompaction(string diskMap, long expectedChecksum)
     {
-        Assert.Equal(expectedChecksum, Day09.CompactAndGetChecksum(diskMap));
+        Assert.Equal(expectedChecksum, Day09Part1.CompactAndGetChecksum(diskMap));
     }
 
     [Theory()]
@@ -21,7 +21,7 @@ public class Tests
     {
         var diskMap = System.IO.File.ReadAllText($"{fileBase}data.txt");
         var expectedChecksum = Convert.ToInt64(File.ReadAllText($"{fileBase}data.answer.txt"));
-        Assert.Equal(expectedChecksum, Day09.CompactAndGetChecksum(diskMap));
+        Assert.Equal(expectedChecksum, Day09Part1.CompactAndGetChecksum(diskMap));
     }
     
     [Theory()]
@@ -32,7 +32,7 @@ public class Tests
     [InlineData("151100000000000000005", 156)]
     public void test_FullFileCompaction(string diskMap, long expectedChecksum)
     {
-        Assert.Equal(expectedChecksum, Day09.CompactFullFilesAndGetChecksum(diskMap));
+        Assert.Equal(expectedChecksum, Day09Part2.CompactFullFilesAndGetChecksum(diskMap));
     }
     
     [Theory()]
@@ -42,6 +42,6 @@ public class Tests
     {
         var diskMap = System.IO.File.ReadAllText($"{fileBase}data.txt");
         var expectedChecksum = Convert.ToInt64(File.ReadAllText($"{fileBase}data.answer2.txt"));
-        Assert.Equal(expectedChecksum, Day09.CompactFullFilesAndGetChecksum(diskMap));
+        Assert.Equal(expectedChecksum, Day09Part2.CompactFullFilesAndGetChecksum(diskMap));
     }
 }
