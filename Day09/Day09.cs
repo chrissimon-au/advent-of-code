@@ -3,38 +3,45 @@ using System.Linq;
 
 public static class Day09
 {
+    private static String NormalizeLength(this String input) => input.Length % 2 == 1 ? input + "0" : input;
+    
     private static IEnumerable<char> ExpandDiskMap(string diskMap) {
-        if (diskMap.Length % 2 == 1)
-        {
-            diskMap += "0";
-        }
-        var files = diskMap.Where((_, i) => i % 2 == 0);
-        var fileAllocation = files.Select((fileSize, fileId) => Enumerable.Repeat(fileId.ToString()[0], fileSize-'0'));
-        var spaces = diskMap.Where((_, i) => i % 2 == 1);
-        var spaceAllocation = spaces.Select((spaceSize) => Enumerable.Repeat('.', spaceSize - '0'));
-        var expanededLayout = fileAllocation.Zip(spaceAllocation).SelectMany((entry) => entry.First.Concat(entry.Second));        
-        return expanededLayout;
+        var fileAllocation = diskMap
+            .Where((_, i) => i % 2 == 0)
+            .Select((fileSize, fileId) => Enumerable.Repeat(fileId.ToString()[0], fileSize-'0'));
+        var spaceAllocation = diskMap
+            .Where((_, i) => i % 2 == 1)
+            .Select((spaceSize) => Enumerable.Repeat('.', spaceSize - '0'));
+        var expandedLayout = fileAllocation.Zip(spaceAllocation).SelectMany((entry) => entry.First.Concat(entry.Second));        
+        return expandedLayout;
     }
-    public static long CompactAndGetChecksum(string diskMap)
+
+    private static IEnumerable<char> CompressDiskMap(this IEnumerable<char> input)
     {
-        var expandedDiskMap = ExpandDiskMap(diskMap).ToList();
-        var len = expandedDiskMap.Count;
+        var diskMap = input.ToList();
+        var len = diskMap.Count;
         var compressedBlocks = 0;
-        var compressedDiskMap = expandedDiskMap.Select((c, i) =>
+        var compressedDiskMap = diskMap.Select((c, i) =>
         {
             if (c == '.')
             {
                 compressedBlocks++;
-                return expandedDiskMap[len - compressedBlocks];
+                return diskMap[len - compressedBlocks];
             }
             else
             {
                 return c;
             }
         }).ToList();
-        var activeBlocks = compressedDiskMap.Take(len - compressedBlocks);
-        return activeBlocks.Where(c => c != '.')
+        return compressedDiskMap.Take(len - compressedBlocks);
+    }
+    
+    public static long CompactAndGetChecksum(string diskMap) => 
+    
+        ExpandDiskMap(diskMap.NormalizeLength())
+            .CompressDiskMap()
+            .Where(c => c != '.')
             .Select((fileNumber, idx) => idx * (fileNumber - '0'))
             .Sum();
-    }
+    
 }
