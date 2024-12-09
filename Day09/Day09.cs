@@ -108,9 +108,9 @@ public static class Day09
                 }
 
                 var b = diskMap[len - compressedBlocks - potentialCompressedBlocks];
-                if (BlockCanFitInEmpty(b, e2) && b is File f2 && f2 != null && idx < len - compressedBlocks - potentialCompressedBlocks - 1)
+                if (BlockCanFitInEmpty(b, e2) && b is File f2 && idx < len - compressedBlocks - potentialCompressedBlocks - 1)
                 {
-                    compressedBlocks -= potentialCompressedBlocks;
+                    compressedBlocks += potentialCompressedBlocks;
                     return
                         new List<BlockSpace>
                         {
