@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace AoC.Day09;
 using System.Linq;
 
@@ -23,21 +25,28 @@ public static class Day09
         var compressedBlocks = 0;
         var compressedDiskMap = diskMap.Select((c, i) =>
         {
+            if (i >= len - compressedBlocks)
+            {
+                return '.';
+            }
             if (c == '.')
             {
                 compressedBlocks++;
+                while (diskMap[len - compressedBlocks] == '.')
+                {
+                    compressedBlocks++;
+                }
                 return diskMap[len - compressedBlocks];
             }
             else
             {
                 return c;
             }
-        }).ToList();
-        return compressedDiskMap.Take(len - compressedBlocks);
+        });
+        return compressedDiskMap;//.Take(len - compressedBlocks);
     }
     
     public static long CompactAndGetChecksum(string diskMap) => 
-    
         ExpandDiskMap(diskMap.NormalizeLength())
             .CompressDiskMap()
             .Where(c => c != '.')
