@@ -26,6 +26,7 @@ public class Tests
     
     [Theory()]
     [InlineData("1", 0)]
+    [InlineData("112", 5)]
     public void test_FullFileCompaction(string diskMap, long expectedChecksum)
     {
         Assert.Equal(expectedChecksum, Day09.CompactFullFilesAndGetChecksum(diskMap));
