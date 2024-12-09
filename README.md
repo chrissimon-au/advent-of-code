@@ -4,7 +4,11 @@ https://adventofcode.com/2024
 
 Planning to do each day in a different language:
 
-Setup build environment by [Installing Nix](https://nixos.org/download/) and then running `nix-shell` in the root of the repo.  This should ensure all build tools and dependencies are available.  Then, within the Day folder, language/framework specific methods are used to install/run each program.
+Setup dev environment by [Installing devenv.sh](https://devenv.sh/getting-started/#installation) (involves installing [Nix](https://nixos.org/download/)) and then running `devenv up` in each `Day` folder.  This will:
+
+1. ensure all build tools and dependencies for that day are available
+2. launch any test watchers
+3. launch preferred editor for that language
 
 Typically, the Advent of Code sample & test data and answers are contained in ignored files typically (naming may vary between days depending on circumstances and variability between parts) named:
 
@@ -28,7 +32,7 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-07 - Day 07 in Kotlin](./Day07/)
 * [2024-12-08 - Day 08 in Scala](./Day08/)
 * [2024-12-09 - Day 09 in C#](./Day09/)
-* 2024-12-10 - Day 10 in pgSQL
+* [2024-12-10 - Day 10 in pgSQL](./Day10/)
 * 2024-12-11 - Day 11 in Haskell
 * 2024-12-12 - Day 12 in Clojure
 * 2024-12-13 - Day 13 in C

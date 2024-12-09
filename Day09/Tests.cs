@@ -5,6 +5,6 @@ public class Tests
     [Fact]
     public void test_Check()
     {
-        Assert.Equal(true, Day09.Check());
+        Assert.True(Day09.Check());
     }
 }
