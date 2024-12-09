@@ -28,6 +28,8 @@ public class Tests
     [InlineData("1", 0)]
     [InlineData("112", 5)]
     [InlineData("12302", 18)]
+    [InlineData("151000000000000000005", 156)]
+    [InlineData("151100000000000000005", 156)]
     public void test_FullFileCompaction(string diskMap, long expectedChecksum)
     {
         Assert.Equal(expectedChecksum, Day09.CompactFullFilesAndGetChecksum(diskMap));
