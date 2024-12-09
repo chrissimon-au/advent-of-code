@@ -1,4 +1,7 @@
+using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using Xunit.Sdk;
 
 namespace AoC.Day09;
 using System.Linq;
@@ -63,6 +66,73 @@ public static class Day09
         }).ToList();
         return compressedDiskMap;
     }
+
+    private static bool BlockCanFitInEmpty(BlockSpace block, Empty empty)
+    {
+        if (block is Empty)
+        {
+            return false;
+        }
+
+        if (block is File f)
+        {
+            return f.len <= empty.len;
+        }
+
+        return false;
+    } 
+
+    private static IEnumerable<BlockSpace> CompressDiskMap(this IEnumerable<BlockSpace> input)
+    {
+        var diskMap = input.ToList();
+        var len = diskMap.Count;
+        var compressedBlocks = 0;
+        var compressedDiskMap = diskMap.SelectMany((block, idx) =>
+        {
+            if (idx >= len - compressedBlocks)
+            {
+                return block switch
+                {
+                    File f => [new Empty(f.len)],
+                    Empty e1 => [e1],
+                    _ => throw new ArgumentOutOfRangeException(nameof(block), block, null)
+                };
+            }
+            if (block is Empty e2)
+            {
+                var potentialCompressedBlocks = 0;
+                potentialCompressedBlocks++;
+                while (!BlockCanFitInEmpty(diskMap[len - compressedBlocks - potentialCompressedBlocks], e2) && idx < len - compressedBlocks - potentialCompressedBlocks - 1)
+                {
+                    potentialCompressedBlocks++;
+                }
+
+                var b = diskMap[len - compressedBlocks - potentialCompressedBlocks];
+                if (BlockCanFitInEmpty(b, e2) && b is File f2 && f2 != null && idx < len - compressedBlocks - potentialCompressedBlocks - 1)
+                {
+                    compressedBlocks -= potentialCompressedBlocks;
+                    return
+                        new List<BlockSpace>
+                        {
+                            f2,
+                            new Empty(e2.len - (f2?.len ?? 0)),
+                        };
+                }
+
+                return [e2];
+            }
+            return [block];
+        }).ToList();
+        return compressedDiskMap;
+    }
+
+    private static IEnumerable<long> Flatten(this IEnumerable<BlockSpace> input) =>
+        input.SelectMany(b => b switch
+        {
+            File f => Enumerable.Repeat(f.id, f.len),
+            Empty e => Enumerable.Repeat(0L, e.len)
+        });
+    
     
     public static long CompactAndGetChecksum(string diskMap) => 
         ExpandDiskMap(diskMap.NormalizeLength())
@@ -72,9 +142,9 @@ public static class Day09
             .Sum();
 
     public static long CompactFullFilesAndGetChecksum(string diskMap) => 
-        ExpandDiskMap(diskMap.NormalizeLength())
+        ExpandIndexedDiskMap(diskMap.NormalizeLength())
             .CompressDiskMap()
-            .Select((fileNumber, idx) => idx * fileNumber)
+            .Flatten()
+            .Select((fileId, idx) => idx * fileId)
             .Sum();
-    
 }
