@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Xunit.Sdk;
@@ -80,48 +81,40 @@ public static class Day09
         }
 
         return false;
-    } 
+    }
+
+    private static IEnumerable<BlockSpace> ReplaceEmptyWithBlocks(Empty empty, List<File> reversedDiskMap, HashSet<File> movedFiles)
+    {
+        var movableFile = reversedDiskMap.FirstOrDefault(f => !movedFiles.Contains(f) && BlockCanFitInEmpty(f, empty));
+        if (movableFile is not null) {
+            movedFiles.Add(movableFile);
+            return
+                new List<BlockSpace>
+                {
+                    movableFile,
+                }.Concat(ReplaceEmptyWithBlocks(new Empty(empty.len - movableFile.len), reversedDiskMap, movedFiles));
+        }
+        return [empty];
+    }
 
     private static IEnumerable<BlockSpace> CompressDiskMap(this IEnumerable<BlockSpace> input)
     {
         var diskMap = input.ToList();
         var len = diskMap.Count;
-        var compressedBlocks = 0;
+        var movedFiles = new HashSet<File>();
+        var reversedDiskMap = diskMap.AsEnumerable().Reverse().OfType<File>().ToList();
         var compressedDiskMap = diskMap.SelectMany((block, idx) =>
         {
-            if (idx >= len - compressedBlocks)
-            {
-                return block switch
-                {
-                    File f => [new Empty(f.len)],
-                    Empty e1 => [e1],
-                    _ => throw new ArgumentOutOfRangeException(nameof(block), block, null)
-                };
-            }
             if (block is Empty e2)
             {
-                var potentialCompressedBlocks = 0;
-                potentialCompressedBlocks++;
-                while (!BlockCanFitInEmpty(diskMap[len - compressedBlocks - potentialCompressedBlocks], e2) && idx < len - compressedBlocks - potentialCompressedBlocks - 1)
-                {
-                    potentialCompressedBlocks++;
-                }
-
-                var b = diskMap[len - compressedBlocks - potentialCompressedBlocks];
-                if (BlockCanFitInEmpty(b, e2) && b is File f2 && idx < len - compressedBlocks - potentialCompressedBlocks - 1)
-                {
-                    compressedBlocks += potentialCompressedBlocks;
-                    return
-                        new List<BlockSpace>
-                        {
-                            f2,
-                            new Empty(e2.len - (f2?.len ?? 0)),
-                        };
-                }
-
-                return [e2];
+                return ReplaceEmptyWithBlocks(e2, reversedDiskMap, movedFiles);
             }
-            return [block];
+            return block switch
+            {
+                File f => [movedFiles.Contains(f) ? new Empty(f.len) : f],
+                Empty e1 => [e1],
+                _ => throw new ArgumentOutOfRangeException(nameof(block), block, null)
+            };
         }).ToList();
         return compressedDiskMap;
     }
