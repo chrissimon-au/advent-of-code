@@ -8,6 +8,7 @@ public class Tests
     [InlineData("10101", 5)]
     [InlineData("11101", 4)]
     [InlineData("131221", 9)]
+    [InlineData("101000000000000000001", 21)]
     public void test_FileCompaction(string diskMap, long expectedChecksum)
     {
         Assert.Equal(expectedChecksum, Day09.CompactAndGetChecksum(diskMap));
