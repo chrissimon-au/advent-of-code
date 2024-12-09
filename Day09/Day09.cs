@@ -52,5 +52,9 @@ public static class Day09
             .Where(c => c >= 0)
             .Select((fileNumber, idx) => idx * fileNumber)
             .Sum();
-    
+
+    public static long CompactFullFilesAndGetChecksum(string diskMap)
+    {
+        throw new NotImplementedException();
+    }
 }

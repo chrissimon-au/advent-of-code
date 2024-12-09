@@ -23,4 +23,11 @@ public class Tests
         var expectedChecksum = Convert.ToInt64(File.ReadAllText($"{fileBase}data.answer.txt"));
         Assert.Equal(expectedChecksum, Day09.CompactAndGetChecksum(diskMap));
     }
+    
+    [Theory()]
+    [InlineData("1", 0)]
+    public void test_FullFileCompaction(string diskMap, long expectedChecksum)
+    {
+        Assert.Equal(expectedChecksum, Day09.CompactFullFilesAndGetChecksum(diskMap));
+    }
 }
