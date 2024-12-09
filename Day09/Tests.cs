@@ -2,9 +2,10 @@
 
 public class Tests
 {
-    [Fact]
-    public void test_Check()
+    [Theory()]
+    [InlineData("1", 0)]
+    public void test_FileCompaction(string diskMap, long expectedChecksum)
     {
-        Assert.True(Day09.Check());
+        Assert.Equal(expectedChecksum, Day09.CompactAndGetChecksum(diskMap));
     }
 }
