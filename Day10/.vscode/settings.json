@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+
+        {
+            "previewLimit": 50,
+            "driver": "PostgreSQL",
+            "name": "devEnvPg",
+            "database": "day10",
+            "username": "chris",
+            "password": ""
+        }
+    ]
+}
