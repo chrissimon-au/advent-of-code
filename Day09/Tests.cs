@@ -16,6 +16,7 @@ public class Tests
 
     [Theory()]
     [InlineData("sample")]
+    [InlineData("test")]
     public void test_FileCompactionFromTestFiles(string fileBase)
     {
         var diskMap = System.IO.File.ReadAllText($"{fileBase}data.txt");
