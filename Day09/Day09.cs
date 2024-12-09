@@ -85,6 +85,10 @@ public static class Day09
 
     private static IEnumerable<BlockSpace> ReplaceEmptyWithBlocks(Empty empty, List<File> reversedDiskMap, HashSet<File> movedFiles)
     {
+        if (empty.len == 0)
+        {
+            return [];
+        }
         var movableFile = reversedDiskMap.FirstOrDefault(f => !movedFiles.Contains(f) && BlockCanFitInEmpty(f, empty));
         if (movableFile is not null) {
             movedFiles.Add(movableFile);
@@ -103,21 +107,22 @@ public static class Day09
         var len = diskMap.Count;
         var movedFiles = new HashSet<File>();
         var reversedDiskMap = diskMap.AsEnumerable().Reverse().OfType<File>().ToList();
-        var compressedDiskMap = diskMap.SelectMany((block, idx) =>
+        return diskMap.SelectMany((block, idx) =>
         {
             if (block is Empty e2)
             {
                 return ReplaceEmptyWithBlocks(e2, reversedDiskMap, movedFiles);
             }
+
             return block switch
             {
                 File f => [movedFiles.Add(f) ? f : new Empty(f.len)],
                 Empty e1 => [e1],
                 _ => throw new ArgumentOutOfRangeException(nameof(block), block, null)
             };
-        }).ToList();
-        return compressedDiskMap;
+        });
     }
+
 
     private static IEnumerable<long> Flatten(this IEnumerable<BlockSpace> input) =>
         input.SelectMany(b => b switch
