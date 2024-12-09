@@ -9,8 +9,9 @@
   languages.dotnet.package = pkgs.dotnetCorePackages.sdk_9_0;
 
   # https://devenv.sh/processes/
-  #processes.code.exec = "rider AoC.Day09.sln";
-  processes.code.exec = "'/Applications/Rider.app/Contents/MacOS/rider' AoC.Day09.sln";
+  processes.code.exec = "rider AoC.Day09.sln";
+
+  #processes.code.exec = ;
   
   cachix.enable = false;
 }
