@@ -18,6 +18,24 @@ public static class Day09
         return expandedLayout;
     }
 
+    private record BlockSpace();
+    private record File(long id, int len) : BlockSpace;
+
+    private record Empty(int len) : BlockSpace;
+
+    private static IEnumerable<BlockSpace> ExpandIndexedDiskMap(string diskMap)
+    {
+        IEnumerable<BlockSpace> fileAllocation = diskMap
+            .Where((_, i) => i % 2 == 0)
+            .Select((fileSize, fileId) => new File(fileId, fileSize - '0'));
+        IEnumerable<BlockSpace> spaceAllocation = diskMap
+            .Where((_, i) => i % 2 == 1)
+            .Select((spaceSize) => new Empty(spaceSize - '0'));
+        var expandedLayout = fileAllocation.Zip(spaceAllocation)
+            .SelectMany(entry => new List<BlockSpace> { entry.First, entry.Second });        
+        return expandedLayout;
+    }
+
     private static IEnumerable<long> CompressDiskMap(this IEnumerable<long> input)
     {
         var diskMap = input.ToList();
