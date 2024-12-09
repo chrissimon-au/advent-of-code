@@ -1,5 +1,5 @@
 select plan(1);
 
-select pass('yay');
+select pass('blergen!');
 
 select finish();
