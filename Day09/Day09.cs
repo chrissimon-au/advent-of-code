@@ -10,6 +10,7 @@ public static class Day09
     public static long CompactAndGetChecksum(string diskMap)
     {
         var expandedDiskMap = ExpandDiskMap(diskMap);
-        return expandedDiskMap.Select((c, i) => i * i).Sum();
+        var fileNumbers = expandedDiskMap.Select((c, i) => i);
+        return fileNumbers.Select((fileNumber, idx) => idx * fileNumber).Sum();
     }
 }
