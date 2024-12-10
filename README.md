@@ -33,7 +33,7 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-08 - Day 08 in Scala](./Day08/)
 * [2024-12-09 - Day 09 in C#](./Day09/)
 * [2024-12-10 - Day 10 in pgSQL](./Day10/)
-* 2024-12-11 - Day 11 in Haskell
+* [2024-12-11 - Day 11 in Haskell](./Day11/)
 * 2024-12-12 - Day 12 in Clojure
 * 2024-12-13 - Day 13 in C
 * 2024-12-14 - Day 14 in C++
