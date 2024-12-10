@@ -1,11 +1,12 @@
 { pkgs, lib, config, inputs, ... }:
 
 {
+  env.LANG="en-AU.UTF-8";
+  
   # https://devenv.sh/packages/
   packages = [
     pkgs.git
-    # waitexec
-    # shunit2
+    pkgs.watchexec
   ];
 
   # https://devenv.sh/languages/
@@ -13,7 +14,7 @@
 
   # https://devenv.sh/processes/
   processes.code.exec = "code .";
-  # processes.test-wait.exec = "waitexec -e txt ''";
+  processes.test-wait.exec = "cd AoC-Day11; watchexec -e hs --timings 'stack test'";
 
   cachix.enable = false;
 }
