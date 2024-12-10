@@ -1,7 +1,7 @@
 module Lib
     ( 
-      check
+      getValue
     ) where
 
-check :: Bool
-check = True
+getValue :: String -> Bool
+getValue s = length(s) > 0

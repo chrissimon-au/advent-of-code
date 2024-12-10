@@ -1,7 +1,10 @@
 import Lib
 import Test.HUnit
 
-tests = test [ "Checking Test Infra" ~: assertBool "Should be true" check
+tests :: Test
+tests = test [ (getValue "asdf") @? "Simple Bool Check",
+               (getValue "asd") @?= True,
+               (getValue "") @?= False
              ]
 
 main :: IO Counts
