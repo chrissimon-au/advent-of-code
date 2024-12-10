@@ -28,7 +28,7 @@ in
   };
 
   processes.watch-tests = {
-    exec = "watchexec -F ${db_name}.sql --timings 'psql -f ${db_name}.sql -d ${db_name}'";
+    exec = "watchexec -w ${db_name}.sql --timings 'psql -f ${db_name}.sql -d ${db_name} -t -A'";
     process-compose.depends_on.postgres.condition = "process_healthy";
     process-compose.depends_on.setup-pgtap.condition = "process_completed_successfully";
   };
