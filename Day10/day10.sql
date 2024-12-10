@@ -111,6 +111,12 @@ RETURN NEXT is(get_trailheadscore(
  ...9..2
  .....01'
         ), 3);
+-- RETURN NEXT is(get_trailheadscore(
+-- '<content excluded>'
+--         ), 0);
+-- RETURN NEXT is(get_trailheadscore(
+-- '<content excluded>'
+--         ), 0);
 END;
 $$ LANGUAGE plpgsql;
 
