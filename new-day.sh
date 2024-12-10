@@ -1,0 +1,1 @@
+cp template Day$1 -r
