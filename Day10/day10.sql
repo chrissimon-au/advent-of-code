@@ -182,6 +182,21 @@ BEGIN
  ..7..4.
  ..8765.
  ..9....'), 4);
+    RETURN NEXT is(get_trailheadrating(
+'.....0.
+ ..4321.
+ ..5432.
+ ..6543.
+ ..7..4.
+ ..8765.
+ ..9....'), 11);
+    RETURN NEXT is(get_trailheadrating(
+'012345
+ 123456
+ 234567
+ 345678
+ 4.6789
+ 56789.'), 227);
 END;
 $$ LANGUAGE plpgsql;
 
