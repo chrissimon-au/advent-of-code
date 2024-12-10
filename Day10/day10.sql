@@ -220,6 +220,10 @@ BEGIN
  345678
  4.6789
  56789.'), 227);
+--     RETURN NEXT is(get_trailheadrating(
+-- '<content excluded>'), 0);
+--     RETURN NEXT is(get_trailheadrating(
+-- '<content excluded>'), 0);
 END;
 $$ LANGUAGE plpgsql;
 
