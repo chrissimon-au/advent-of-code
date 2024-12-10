@@ -1,3 +1,4 @@
+DROP FUNCTION IF EXISTS create_tables;
 CREATE OR REPLACE FUNCTION create_tables(
 ) RETURNS integer AS $$
 BEGIN
@@ -16,12 +17,20 @@ CREATE OR REPLACE FUNCTION get_trailheadscore(
     map text
 ) RETURNS integer AS $$
 DECLARE ch char;
+DECLARE strRow varchar;
+DECLARE colI integer := 0;
+DECLARE rowI integer := 0;
 BEGIN
     PERFORM create_tables();    
-    FOREACH ch IN ARRAY regexp_split_to_array(map, '') LOOP
-        INSERT INTO map_positions (colIdx, rowIdx, height) VALUES (0, 0, CAST(ch AS INTEGER));
+    FOREACH strRow IN ARRAY regexp_split_to_array(map, '\n') LOOP
+        FOREACH ch IN ARRAY regexp_split_to_array(strRow, '') LOOP            
+            INSERT INTO map_positions (colIdx, rowIdx, height) VALUES (colI, rowI, CAST(ch AS INTEGER));
+            colI := colI + 1;
+        END LOOP;
+        rowI := rowI + 1;
+        colI := 0;
     END LOOP;
-    RETURN (SELECT COUNT(1) FROM map_positions WHERE height = 9);
+    RETURN (SELECT COUNT(1) FROM map_positions WHERE height = 9 AND rowIdx = 0);
 END;
 $$ LANGUAGE plpgsql;
 
