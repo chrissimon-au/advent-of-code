@@ -65,6 +65,10 @@ BEGIN
 '0123456789
  5555595555'
         ), 1);
+    RETURN NEXT is(get_trailheadscore(
+'0123456789
+ 5555987555'
+        ), 2);
 END;
 $$ LANGUAGE plpgsql;
 
