@@ -119,7 +119,7 @@ BEGIN
     PERFORM insert_map(map);
     PERFORM compute_trailheads();
     
-    RETURN (SELECT SUM(get_trailheadrating_by_trailhead(id)) FROM map_positions WHERE height = 0)
+    RETURN (SELECT SUM(get_trailheadrating_by_trailhead(id)) FROM map_positions WHERE height = 0);    
 END;
 $$ LANGUAGE plpgsql;
 
