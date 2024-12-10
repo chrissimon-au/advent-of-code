@@ -174,6 +174,14 @@ BEGIN
  ..7..4.
  ..8765.
  ..9....'), 3);
+    RETURN NEXT is(get_trailheadrating(
+'10...0.
+ 234321.
+ ..5..2.
+ ..6543.
+ ..7..4.
+ ..8765.
+ ..9....'), 4);
 END;
 $$ LANGUAGE plpgsql;
 
