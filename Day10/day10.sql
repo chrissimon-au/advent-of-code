@@ -12,8 +12,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS get_trailheadscore;
-CREATE OR REPLACE FUNCTION get_trailheadscore(
+
+DROP FUNCTION IF EXISTS insert_map;
+CREATE OR REPLACE FUNCTION insert_map(
     map text
 ) RETURNS integer AS $$
 DECLARE ch char;
@@ -24,13 +25,34 @@ BEGIN
     PERFORM create_tables();    
     FOREACH strRow IN ARRAY regexp_split_to_array(map, '\n') LOOP
         FOREACH ch IN ARRAY regexp_split_to_array(strRow, '') LOOP            
-            INSERT INTO map_positions (colIdx, rowIdx, height) VALUES (colI, rowI, CAST(ch AS INTEGER));
-            colI := colI + 1;
+            IF ch <> ' ' THEN
+                INSERT INTO map_positions (colIdx, rowIdx, height) VALUES (colI, rowI, CAST(ch AS INTEGER));
+                colI := colI + 1;
+            END IF;
         END LOOP;
         rowI := rowI + 1;
         colI := 0;
     END LOOP;
-    RETURN (SELECT COUNT(1) FROM map_positions WHERE height = 9 AND rowIdx = 0);
+    return 0;
+END;
+$$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION IF EXISTS get_trailheadscore;
+CREATE OR REPLACE FUNCTION get_trailheadscore(
+    map text
+) RETURNS integer AS $$
+DECLARE ch char;
+DECLARE strRow varchar;
+DECLARE colI integer := 0;
+DECLARE rowI integer := 0;
+BEGIN
+    PERFORM create_tables();    
+    PERFORM insert_map(map);
+
+    RETURN (SELECT COUNT(1) FROM map_positions 
+         WHERE height = 9 AND rowIdx = 0
+        );
 END;
 $$ LANGUAGE plpgsql;
 
@@ -41,7 +63,7 @@ BEGIN
     RETURN NEXT is(get_trailheadscore('0123456789'), 1);
     RETURN NEXT is(get_trailheadscore(
 '0123456789
-5555595555'
+ 5555595555'
         ), 1);
 END;
 $$ LANGUAGE plpgsql;
