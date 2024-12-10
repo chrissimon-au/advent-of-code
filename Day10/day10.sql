@@ -106,9 +106,9 @@ BEGIN
     PERFORM insert_map(map);
     PERFORM compute_trailheads();
     
-    RETURN COALESCE((SELECT SUM(cardinality(ARRAY(SELECT DISTINCT UNNEST(trail_head_ids)))) FROM map_positions 
-         WHERE height = 9
-        ),0);
+    RETURN COALESCE((SELECT MAX(num_paths) FROM
+        (SELECT height, COUNT(id) AS num_paths from map_positions mp WHERE 5 = ANY(mp.trail_head_ids) GROUP BY height)
+        AS paths),0);
 END;
 $$ LANGUAGE plpgsql;
 
