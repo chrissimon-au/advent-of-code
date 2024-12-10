@@ -75,17 +75,17 @@ BEGIN
     FOR heightIdx IN 2..9 LOOP
         UPDATE map_positions mp SET trail_head_ids =
         (
-            SELECT array_agg(trail_head_ids) FROM (
-                SELECT DISTINCT unnest(trail_head_ids) FROM map_positions mp_source
+            SELECT array_agg(mp_source_d.trail_head_ids) FROM (
+                SELECT DISTINCT unnest(mp_source.trail_head_ids) as trail_head_ids FROM map_positions mp_source
                     WHERE
                         mp_source.id = ANY (mp.path_source_ids)
-            ) 
+            ) AS mp_source_d
         ) WHERE mp.height = heightIdx;
     END LOOP;
 
-    RETURN (SELECT SUM(cardinality(ARRAY(SELECT DISTINCT UNNEST(trail_head_ids)))) FROM map_positions 
+    RETURN COALESCE((SELECT SUM(cardinality(ARRAY(SELECT DISTINCT UNNEST(trail_head_ids)))) FROM map_positions 
          WHERE height = 9
-        );
+        ),0);
 END;
 $$ LANGUAGE plpgsql;
 
