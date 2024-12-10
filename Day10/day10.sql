@@ -30,6 +30,10 @@ CREATE OR REPLACE FUNCTION test_day10(
 BEGIN        
     RETURN NEXT is(get_trailheadscore('0'), 0);
     RETURN NEXT is(get_trailheadscore('0123456789'), 1);
+    RETURN NEXT is(get_trailheadscore(
+'0123456789
+5555595555'
+        ), 1);
 END;
 $$ LANGUAGE plpgsql;
 
