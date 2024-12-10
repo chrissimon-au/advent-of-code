@@ -47,15 +47,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS get_trailheadscore;
-CREATE OR REPLACE FUNCTION get_trailheadscore(
-    map text
-) RETURNS integer AS $$
+DROP FUNCTION IF EXISTS compute_trailheads;
+CREATE OR REPLACE FUNCTION compute_trailheads() RETURNS integer AS $$
 DECLARE heightIdx integer := 0;
 BEGIN
-    PERFORM create_tables();    
-    PERFORM insert_map(map);
-
     UPDATE map_positions mp SET path_source_ids =
         (SELECT array_agg(mp_source.id) FROM map_positions mp_source
             WHERE
@@ -83,13 +78,26 @@ BEGIN
         ) WHERE mp.height = heightIdx;
     END LOOP;
 
+    RETURN 0;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS get_trailheadscore;
+CREATE OR REPLACE FUNCTION get_trailheadscore(
+    map text
+) RETURNS integer AS $$
+BEGIN
+    PERFORM create_tables();    
+    PERFORM insert_map(map);
+    PERFORM compute_trailheads();
+    
     RETURN COALESCE((SELECT SUM(cardinality(ARRAY(SELECT DISTINCT UNNEST(trail_head_ids)))) FROM map_positions 
          WHERE height = 9
         ),0);
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION test_day10(
+CREATE OR REPLACE FUNCTION test_day10_part1(
 ) RETURNS SETOF TEXT AS $$
 BEGIN        
     RETURN NEXT is(get_trailheadscore('0'), 0);
