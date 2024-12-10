@@ -97,6 +97,19 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS get_trailheadrating_by_trailhead;
+CREATE OR REPLACE FUNCTION get_trailheadrating_by_trailhead(
+    trail_head_id integer
+) RETURNS integer AS $$
+BEGIN
+    RETURN COALESCE(
+        (SELECT MAX(num_paths) FROM
+            (SELECT height, COUNT(id) AS num_paths from map_positions mp WHERE trail_head_id = ANY(mp.trail_head_ids) GROUP BY height)
+            AS paths)
+    ,0);
+END;
+$$ LANGUAGE plpgsql;
+
 DROP FUNCTION IF EXISTS get_trailheadrating;
 CREATE OR REPLACE FUNCTION get_trailheadrating(
     map text
@@ -106,9 +119,7 @@ BEGIN
     PERFORM insert_map(map);
     PERFORM compute_trailheads();
     
-    RETURN COALESCE((SELECT MAX(num_paths) FROM
-        (SELECT height, COUNT(id) AS num_paths from map_positions mp WHERE 5 = ANY(mp.trail_head_ids) GROUP BY height)
-        AS paths),0);
+    RETURN (SELECT SUM(get_trailheadrating_by_trailhead(id)) FROM map_positions WHERE height = 0)
 END;
 $$ LANGUAGE plpgsql;
 
