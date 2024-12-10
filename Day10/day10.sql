@@ -8,7 +8,8 @@ BEGIN
         colIdx integer,
         rowIDx integer,
         height integer,
-        paths integer[]
+        path_source_ids integer[],
+        trail_head_ids integer[]
     );
     return 0;
 END;
@@ -50,25 +51,40 @@ DROP FUNCTION IF EXISTS get_trailheadscore;
 CREATE OR REPLACE FUNCTION get_trailheadscore(
     map text
 ) RETURNS integer AS $$
+DECLARE heightIdx integer := 0;
 BEGIN
     PERFORM create_tables();    
     PERFORM insert_map(map);
 
-    UPDATE map_positions mp SET paths =
-        (SELECT array_agg(mp2.id) FROM map_positions mp2
+    UPDATE map_positions mp SET path_source_ids =
+        (SELECT array_agg(mp_source.id) FROM map_positions mp_source
             WHERE
-                     mp2.height = mp.height - 1
+                     mp_source.height = mp.height - 1
                 AND (
-                       (mp2.colIdx=mp.colIdx + 1 AND mp2.rowIdx=mp.rowIdx)
-                    OR (mp2.colIdx=mp.colIdx - 1 AND mp2.rowIdx=mp.rowIdx)
-                    OR (mp2.colIdx=mp.colIdx AND mp2.rowIdx=mp.rowIdx-1)
-                    OR (mp2.colIdx=mp.colIdx AND mp2.rowIdx=mp.rowIdx+1)
+                       (mp_source.colIdx=mp.colIdx + 1 AND mp_source.rowIdx=mp.rowIdx)
+                    OR (mp_source.colIdx=mp.colIdx - 1 AND mp_source.rowIdx=mp.rowIdx)
+                    OR (mp_source.colIdx=mp.colIdx AND mp_source.rowIdx=mp.rowIdx - 1)
+                    OR (mp_source.colIdx=mp.colIdx AND mp_source.rowIdx=mp.rowIdx + 1)
                 )
             GROUP BY mp.id
         );
 
-    RETURN (SELECT COUNT(1) FROM map_positions 
-         WHERE height = 9 AND cardinality(paths) > 0
+    -- INTIALIZE for height 1, which has the path_source_ids == trail_head_ids
+    UPDATE map_positions mp SET trail_head_ids = path_source_ids WHERE height = 1;
+
+    FOR heightIdx IN 2..9 LOOP
+        UPDATE map_positions mp SET trail_head_ids =
+        (
+            SELECT array_agg(trail_head_ids) FROM (
+                SELECT DISTINCT unnest(trail_head_ids) FROM map_positions mp_source
+                    WHERE
+                        mp_source.id = ANY (mp.path_source_ids)
+            ) 
+        ) WHERE mp.height = heightIdx;
+    END LOOP;
+
+    RETURN (SELECT SUM(cardinality(ARRAY(SELECT DISTINCT UNNEST(trail_head_ids)))) FROM map_positions 
+         WHERE height = 9
         );
 END;
 $$ LANGUAGE plpgsql;
