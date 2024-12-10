@@ -97,6 +97,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS get_trailheadrating;
+CREATE OR REPLACE FUNCTION get_trailheadrating(
+    map text
+) RETURNS integer AS $$
+BEGIN
+    PERFORM create_tables();    
+    PERFORM insert_map(map);
+    PERFORM compute_trailheads();
+    
+    RETURN COALESCE((SELECT SUM(cardinality(ARRAY(SELECT DISTINCT UNNEST(trail_head_ids)))) FROM map_positions 
+         WHERE height = 9
+        ),0);
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION test_day10_part1(
 ) RETURNS SETOF TEXT AS $$
 BEGIN        
@@ -125,6 +140,21 @@ RETURN NEXT is(get_trailheadscore(
 -- RETURN NEXT is(get_trailheadscore(
 -- '<content excluded>'
 --         ), 0);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION test_day10_part2(
+) RETURNS SETOF TEXT AS $$
+BEGIN        
+    RETURN NEXT is(get_trailheadrating('0'), 0);
+    RETURN NEXT is(get_trailheadrating(
+'.....0.
+ ..4321.
+ ..5..2.
+ ..6543.
+ ..7..4.
+ ..8765.
+ ..9....'), 3);
 END;
 $$ LANGUAGE plpgsql;
 
