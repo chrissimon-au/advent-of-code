@@ -11,6 +11,13 @@ BEGIN
         path_source_ids integer[],
         trail_head_ids integer[]
     );
+
+    DROP TABLE IF EXISTS paths;
+    CREATE TABLE paths (
+        position_id integer,
+        path_count integer,
+        trail_head_id integer
+    );
     return 0;
 END;
 $$ LANGUAGE plpgsql;
@@ -32,7 +39,7 @@ BEGIN
         FOREACH ch IN ARRAY regexp_split_to_array(strRow, '') LOOP            
             IF ch <> ' ' THEN
                 IF ch = '.' THEN
-                    heightVal := -1;
+                    heightVal := -10;
                 ELSE
                     heightVal := CAST(ch AS INTEGER);
                 END IF;
@@ -65,6 +72,7 @@ BEGIN
         );
 
     -- INTIALIZE for height 1, which has the path_source_ids == trail_head_ids
+    UPDATE map_positions mp SET trail_head_ids = ARRAY[id] WHERE height = 0;
     UPDATE map_positions mp SET trail_head_ids = path_source_ids WHERE height = 1;
 
     FOR heightIdx IN 2..9 LOOP
@@ -75,7 +83,20 @@ BEGIN
                     WHERE
                         mp_source.id = ANY (mp.path_source_ids)
             ) AS mp_source_d
-        ) WHERE mp.height = heightIdx;
+        )        
+        WHERE mp.height = heightIdx;
+    END LOOP;
+
+    INSERT INTO paths (position_id, path_count, trail_head_id) (SELECT id position_id, 1, id trail_head_id FROM map_positions WHERE height = 0);
+
+    FOR heightIdx IN 1..9 LOOP
+        INSERT INTO paths (position_id, path_count, trail_head_id) (
+            SELECT mp.id, SUM(path_count), paths.trail_head_id as path_count FROM  
+                map_positions mp
+                INNER JOIN paths on paths.position_id = ANY(mp.path_source_ids)
+                WHERE mp.height = heightIdx
+            GROUP BY mp.id, paths.trail_head_id
+        );
     END LOOP;
 
     RETURN 0;
@@ -99,14 +120,16 @@ $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_trailheadrating_by_trailhead;
 CREATE OR REPLACE FUNCTION get_trailheadrating_by_trailhead(
-    trail_head_id integer
+    th_id integer
 ) RETURNS integer AS $$
 BEGIN
+
     RETURN COALESCE(
-        (SELECT MAX(num_paths) FROM
-            (SELECT height, COUNT(id) AS num_paths from map_positions mp WHERE trail_head_id = ANY(mp.trail_head_ids) GROUP BY height)
-            AS paths)
+        (SELECT SUM(path_count) FROM paths
+            INNER JOIN map_positions mp on paths.position_id = mp.id
+            WHERE mp.height = 9 AND paths.trail_head_id = th_id)
     ,0);
+
 END;
 $$ LANGUAGE plpgsql;
 
