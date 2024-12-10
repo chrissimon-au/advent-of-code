@@ -23,13 +23,19 @@ DECLARE strRow varchar;
 DECLARE colI integer := 0;
 DECLARE rowI integer := 0;
 DECLARE width integer := 0;
+DECLARE heightVal integer:= 0;
 BEGIN
     PERFORM create_tables();    
     FOREACH strRow IN ARRAY regexp_split_to_array(map, '\n') LOOP
         width := LENGTH(strRow);
         FOREACH ch IN ARRAY regexp_split_to_array(strRow, '') LOOP            
             IF ch <> ' ' THEN
-                INSERT INTO map_positions (id, colIdx, rowIdx, height) VALUES (rowI * width + colI, colI, rowI, CAST(ch AS INTEGER));
+                IF ch = '.' THEN
+                    heightVal := -1;
+                ELSE
+                    heightVal := CAST(ch AS INTEGER);
+                END IF;
+                INSERT INTO map_positions (id, colIdx, rowIdx, height) VALUES (rowI * width + colI, colI, rowI, heightVal);
                 colI := colI + 1;
             END IF;
         END LOOP;
@@ -80,6 +86,15 @@ BEGIN
 '0123456789
  5555987555'
         ), 2);
+RETURN NEXT is(get_trailheadscore(
+'10..9..
+ 2...8..
+ 3...7..
+ 4567654
+ ...8..3
+ ...9..2
+ .....01'
+        ), 3);
 END;
 $$ LANGUAGE plpgsql;
 
