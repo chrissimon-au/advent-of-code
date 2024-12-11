@@ -15,6 +15,7 @@ blinkAtStone stone
         lenStoneStr = length(stoneStr)
         halfLen = div lenStoneStr 2
 
+-- Memoization to avoid recomputing output for the same numbers
 blinkAtStone' :: Int -> [Int]
 blinkAtStone' = memo blinkAtStone
 
@@ -23,6 +24,7 @@ blinkAtList stones = stones >>= blinkAtStone'
 
 
 numOfStones :: Int -> Int -> Int
+-- Precomputed Short Cuts
 numOfStones 0 _ = 1
 numOfStones 3 stone | stone >= 1 && stone <= 4 = 4
 numOfStones 2 stone | stone >= 1 && stone <= 4 = 2
@@ -64,13 +66,17 @@ numOfStones numOfBlinks 8
 
 numOfStones numOfBlinks 9
   | numOfBlinks >= 5 = numberOfStonesAfter [3, 6, 8, 6, 9, 1, 8, 4] (numOfBlinks-5)
+-- END Short Cuts
 
 numOfStones numOfBlinks stone = numberOfStonesAfter (blinkAtStone' stone) (numOfBlinks-1)
 
+-- Memoization to avoid recomputing output for the same numbers in the same generation
 numOfStones' :: Int -> Int -> Int
 numOfStones' = memo numOfStones
 
 numberOfStonesAfter :: [Int] -> Int -> Int
 numberOfStonesAfter stones 0 = length(stones)
 numberOfStonesAfter stones numOfBlinks = sum(map (numOfStones' numOfBlinks) stones)
+
+-- original naive algorithm:
 --numberOfStonesAfter stones numOfBlinks = length(iterate blinkAtList stones !! numOfBlinks)
