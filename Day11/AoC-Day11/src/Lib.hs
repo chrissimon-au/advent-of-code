@@ -17,4 +17,4 @@ blinkAtList :: [Int] -> [Int]
 blinkAtList stones = stones >>= blinkAtStone
 
 numberOfStonesAfter :: [Int] -> Int -> Int
-numberOfStonesAfter stones numOfBlinks = length(blinkAtList stones)
+numberOfStonesAfter stones numOfBlinks = length(iterate blinkAtList stones !! numOfBlinks)
