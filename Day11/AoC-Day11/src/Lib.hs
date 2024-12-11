@@ -4,4 +4,4 @@ module Lib
     ) where
 
 numberOfStonesAfter :: [Int] -> Int -> Int
-numberOfStonesAfter stones numOfBlinks = 0
+numberOfStonesAfter stones numOfBlinks = 1
