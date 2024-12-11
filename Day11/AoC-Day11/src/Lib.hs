@@ -4,6 +4,8 @@ module Lib
       blinkAtList
     ) where
 
+import Data.MemoTrie
+
 blinkAtStone :: Int -> [Int]
 blinkAtStone 0 = [1]
 blinkAtStone stone
@@ -12,10 +14,12 @@ blinkAtStone stone
   where stoneStr = show stone
         lenStoneStr = length(stoneStr)
         halfLen = div lenStoneStr 2
-  
+
+blinkAtStone' :: Int -> [Int]
+blinkAtStone' = memo blinkAtStone
 
 blinkAtList :: [Int] -> [Int]
-blinkAtList stones = stones >>= blinkAtStone
+blinkAtList stones = stones >>= blinkAtStone'
 
 
 numOfStones :: Int -> Int -> Int
@@ -56,15 +60,17 @@ numOfStones numOfBlinks 7
   | numOfBlinks >= 5 = numberOfStonesAfter [2, 8, 6, 7, 6, 0, 3, 2] (numOfBlinks-5)
 
 numOfStones numOfBlinks 8
-  | numOfBlinks >= 5 = (numOfStones (numOfBlinks-4) 8) + (numberOfStonesAfter [3, 2, 7, 7, 2, 6] (numOfBlinks-5))
+  | numOfBlinks >= 5 = (numOfStones' (numOfBlinks-4) 8) + (numberOfStonesAfter [3, 2, 7, 7, 2, 6] (numOfBlinks-5))
 
 numOfStones numOfBlinks 9
   | numOfBlinks >= 5 = numberOfStonesAfter [3, 6, 8, 6, 9, 1, 8, 4] (numOfBlinks-5)
 
-numOfStones numOfBlinks stone = numberOfStonesAfter (blinkAtStone stone) (numOfBlinks-1)
+numOfStones numOfBlinks stone = numberOfStonesAfter (blinkAtStone' stone) (numOfBlinks-1)
 
+numOfStones' :: Int -> Int -> Int
+numOfStones' = memo numOfStones
 
 numberOfStonesAfter :: [Int] -> Int -> Int
 numberOfStonesAfter stones 0 = length(stones)
-numberOfStonesAfter stones numOfBlinks = sum(map (numOfStones numOfBlinks) stones)
+numberOfStonesAfter stones numOfBlinks = sum(map (numOfStones' numOfBlinks) stones)
 --numberOfStonesAfter stones numOfBlinks = length(iterate blinkAtList stones !! numOfBlinks)

@@ -35,6 +35,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  dependencies:
+  - MemoTrie
 
 executables:
   AoC-Day11-exe:
@@ -45,7 +47,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - AoC-Day11
+    - AoC-Day11    
 
 tests:
   AoC-Day11-test:
