@@ -2,9 +2,7 @@ import Lib
 import Test.HUnit
 
 tests :: Test
-tests = test [ (getValue "asdf") @? "Simple Bool Check",
-               (getValue "asd") @?= True,
-               (getValue "") @?= False
+tests = test [ (numberOfStonesAfter [0] 1) @?= 1               
              ]
 
 main :: IO Counts

@@ -1,7 +1,7 @@
 module Lib
     ( 
-      getValue
+      numberOfStonesAfter
     ) where
 
-getValue :: String -> Bool
-getValue s = length(s) > 0
+numberOfStonesAfter :: [Int] -> Int -> Int
+numberOfStonesAfter stones numOfBlinks = 0
