@@ -8,6 +8,7 @@ blinkAtStone :: Int -> [Int]
 blinkAtStone 0 = [1]
 blinkAtStone stone
   | mod lenStoneStr 2 == 0 = [read (take (div lenStoneStr 2) stoneStr), read (drop (div lenStoneStr 2) stoneStr)]
+  | otherwise = [stone * 2024]
   where stoneStr = show stone
         lenStoneStr = length(stoneStr)
   
