@@ -9,4 +9,4 @@
 ; Calva: Create a “Getting Started” REPL project
 ; which creates a project with a an interactive Calva (and Clojure) guide.
 
-(defn fencing-price [_] 0)
+(defn fencing-price [_] 4)
