@@ -2,11 +2,8 @@
 
 (require '[clojure.repl :refer :all])
 
-; This project has custom configuration.
-; See .vscode/settings.json
+(defn area [region] (count region))
 
-; If you are new to Calva, you may want to use the command:
-; Calva: Create a “Getting Started” REPL project
-; which creates a project with a an interactive Calva (and Clojure) guide.
+(defn circumference [region] (+ 2 (* 2 (count region))))
 
-(defn fencing-price [_] 4)
+(defn fencing-price [gridMap] (* (area gridMap) (circumference gridMap)))
