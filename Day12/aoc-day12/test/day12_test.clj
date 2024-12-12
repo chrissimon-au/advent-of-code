@@ -7,6 +7,7 @@
 (t/deftest test-assertion
   
   (t/testing  "Single square"
-    (t/is (= (day12/fencing-price "o") 4))))
+    (t/is (= (day12/fencing-price "o") 4))
+    (t/is (= (day12/fencing-price "oo") 12))))
 
 (test-assertion)
