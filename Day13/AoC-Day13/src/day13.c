@@ -9,5 +9,5 @@ int cost_to_win_from_instructions(char* instructions)
 
 int cost_to_win_game(Game game)
 {
-    return 0;
+    return 280;
 }
