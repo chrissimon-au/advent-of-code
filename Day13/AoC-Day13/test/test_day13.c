@@ -44,4 +44,17 @@ void test_simple_game2()
     TEST_ASSERT_EQUAL(200, output);
 }
 
+void test_game_that_doesnt_solve()
+{
+    Game game;
+    game.deltaXA = 26;
+    game.deltaXB = 67;
+    game.deltaYA = 66;
+    game.deltaYB = 21;
+    game.targetX = 12748;
+    game.targetY = 12176;
+    int output = cost_to_win_game(game);
+    TEST_ASSERT_EQUAL(0, output);
+}
+
 #endif // TEST
