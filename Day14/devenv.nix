@@ -5,8 +5,7 @@
   packages = [
     pkgs.git
     pkgs.watchexec
-    pkgs.catch2
-    # pkgs.shunit2
+    pkgs.catch2_3
   ];
 
   # https://devenv.sh/languages/
@@ -14,7 +13,14 @@
 
   # https://devenv.sh/processes/
   processes.code.exec = "code .";
-  # processes.test-wait.exec = "waitexec -e txt ''";
+  process.managers.process-compose.settings = {
+    processes = {
+      test-wait = {
+        command = "watchexec -e cxx 'cd build; ./build.sh'";
+        is_tty = true;
+      };
+    };
+  };
 
   cachix.enable = false;
 }

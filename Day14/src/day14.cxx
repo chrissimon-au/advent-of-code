@@ -1,6 +1,10 @@
 #include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
-int main(int argc, char* argv[])
-{
-    std::cout << "Here!" << std::endl;
+bool check() {
+    return true;
+}
+
+TEST_CASE( "Checks", "[check]" ) {
+    REQUIRE( check() == true );
 }
