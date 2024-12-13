@@ -61,6 +61,24 @@
                                                "oo"
                                                "oA"
                                                "oo")))))
+  
+  (t/testing "more complex num of sides"
+    (t/is (= 368
+             (day12/fencing-price-using-sides (s
+                                               "AAAAAA"
+                                               "AAABBA"
+                                               "AAABBA"
+                                               "ABBAAA"
+                                               "ABBAAA"
+                                               "AAAAAA")))))
+  
+  (t/testing "AoC Part 2 Sample"
+    (t/is (= (Integer/parseInt (slurp "sampledata.answer2.txt"))
+             (day12/fencing-price-using-sides (slurp "sampledata.txt"))))) 
+    
+  ;; (t/testing "AoC Part 2 Test"
+  ;;   (t/is (= (Integer/parseInt (slurp "testdata.answer2.txt"))
+  ;;            (day12/fencing-price-using-sides (slurp "testdata.txt")))))
   )
 
 (test-assertion)
