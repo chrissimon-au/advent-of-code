@@ -16,9 +16,11 @@
 (defn indexedGrid [grid] (for [[i row] (map-indexed list grid)
                                [j cell] (map-indexed list row)
                                :when (not= "." cell)]
-                           {:col i :row j :value cell}))
+                           {:col i :row j :value (first (char-array cell))}))
 
-(defn area [iRegion] (count iRegion))
+(defn cells-in-region [iRegion regionId] (filter #(= (% :value) regionId) iRegion))
+
+(defn area [iRegion regionId] (count (cells-in-region iRegion regionId)))
 
 (defn nc [value neighbour] (if (not= value neighbour) 1 0))
 
@@ -32,32 +34,35 @@
                                           (+ (nc value east) (nc value west) (nc value south) (nc value north))))
 
 (defn circumference
-  [iRegion]
-  (reduce + (map (partial elem-circumference iRegion) iRegion)))
+  [iRegion regionId]
+  (reduce + (map (partial elem-circumference iRegion) (cells-in-region iRegion regionId))))
   
-(defn fencing-price-of-grid [iGrid] (* (area iGrid) (circumference iGrid)))
+(defn fencing-price-of-grid [iGrid regionId] (* (area iGrid regionId) (circumference iGrid regionId)))
+
+(defn region-ids [gridMap] (filter #(not= % \newline) (distinct gridMap)))
 
 (defn fencing-price [gridMap] (
-                               let [iGrid (indexedGrid (parse gridMap))]
-                               (fencing-price-of-grid iGrid)))
+                               let [
+                                    iGrid (indexedGrid (parse gridMap))
+                                    regionIds (region-ids gridMap)
+                                    ]
+                               (reduce + (map (partial fencing-price-of-grid iGrid) regionIds))
+                              ))
 
 
-(def ex "ooo\no.o\nooo")
+(def ex "ooo\noAo\nooo")
+
 (def exGrid (parse ex))
 (def iGrid (indexedGrid exGrid))
-(print iGrid)
-(def e (first iGrid))
-(print e)
-(if (= 0 (e :row)) 1 0)
-(+ 1 1 1)
 
-(get-pos exGrid 0 0)
-(.indexOf (get exGrid 0) "o")
-(get exGrid 0)
-(count (get exGrid 0))
 
-(area iGrid)
-(circumference iGrid)
+(region-ids ex)
+(cells-in-region iGrid "o")
+(area iGrid "A")
+(circumference iGrid "A")
+(= \a "a")
 
+(first (char-array "a"))
+(fencing-price-of-grid iGrid \o)
 (fencing-price ex)
 (count [ [1 2 3] [1 2]])
