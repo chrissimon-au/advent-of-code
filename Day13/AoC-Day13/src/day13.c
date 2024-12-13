@@ -20,20 +20,16 @@ void log_game(Game game)
 
 long cost_to_win_game(Game game)
 {
-    /*
-    numB = (YTarget - (XTarget * detlaYA / deltaXA)) / (deltaYB - (deltaXB * deltaYA / deltaXA))
-    numA = (YTarget - NumB * deltaYB) / deltaYA
-    */
-    printf("============\n");
     log_game(game);
-    double numB = ((double)game.targetY - ((double) game.targetX * game.deltaYA / game.deltaXA)) / ((double)game.deltaYB - ((double)game.deltaXB * game.deltaYA / game.deltaXA));
+    double numB = ((double)game.targetY - ((double) game.targetX * game.deltaYA / game.deltaXA)) /
+                  ((double)game.deltaYB - ((double)game.deltaXB * game.deltaYA / game.deltaXA));
     double numA = (game.targetY - (numB * game.deltaYB)) / game.deltaYA;
-    printf("numA = %f\n", numA);
-    printf("numB = %f\n", numB);
     long l_numA = round(numA);
     long l_numB = round(numB);
-    printf("i_numA = %ld\n", l_numA);
-    printf("i_numB = %ld\n", l_numB);
+    if (fabs(l_numA - numA) > 0.001 || fabs(l_numB - numB) > 0.001) {
+        return 0;
+    }
+    
     long cost = l_numB + (l_numA * 3);
     printf("cost = %ld\n", cost);
     return cost;
