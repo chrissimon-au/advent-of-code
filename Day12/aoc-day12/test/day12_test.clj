@@ -28,6 +28,12 @@
                                        "ooo"
                                        "o.o"
                                        "ooo")))))
+  
+  (t/testing "test with two regions"
+    (t/is (= 132 (day12/fencing-price (s
+                                       "ooo"
+                                       "oAo"
+                                       "ooo")))))
   )
 
 (test-assertion)
