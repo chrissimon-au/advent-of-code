@@ -18,6 +18,12 @@ void test_simple()
     TEST_ASSERT_EQUAL(280, output);
 }
 
+void test_simple2()
+{
+    int output = cost_to_win_from_instructions("Button A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450");
+    TEST_ASSERT_EQUAL(200, output);
+}
+
 void test_simple_game()
 {
     Game game;
