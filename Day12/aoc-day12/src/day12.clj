@@ -14,11 +14,11 @@
 (defn indexedGrid [grid] (for [[i row] (map-indexed list grid)
                                [j cell] (map-indexed list row)
                                :when (not= "." cell)]
-                           {:col i :row j :value (first (char-array cell))}))
+                           {:col j :row i :value (first (char-array cell))}))
 
 (defn area [iRegion] (count iRegion))
 
-(defn nc [value neighbour] (if (not= value neighbour) 1 0))
+(defn neighbour-in-region [value neighbour] (if (not= value neighbour) 1 0))
 
 (defn elem-circumference [iRegion cell] (let [col (cell :col)
                                               row (cell :row)
@@ -27,15 +27,80 @@
                                               west (get-cell-value iRegion (- col 1) row)
                                               north (get-cell-value iRegion col (- row 1))
                                               south (get-cell-value iRegion col (+ row 1))]
-                                          (+ (nc value east) (nc value west) (nc value south) (nc value north))))
+                                          (+
+                                           (neighbour-in-region value east)
+                                           (neighbour-in-region value west)
+                                           (neighbour-in-region value south)
+                                           (neighbour-in-region value north)
+                                           )
+                                          ))
 
 (defn circumference
   [iRegion]
   (reduce + (map (partial elem-circumference iRegion) iRegion)))
 
+(defn get-sides
+  [sides cell direction]
+  (first (filter (fn [side] (let
+                      [cells (side :cells)]
+                      (and (= (side :direction) direction) (contains? cells cell))
+                      )) sides)))
+
+(defn merge-sides 
+  [side1 side2]
+  (if (= nil side2)
+    side1
+    (if (= nil side1)
+      side2
+      {:direction (side1 :direction) :cells (concat (side1 :cells) (side2 :cells))}
+      )
+   ))
+
+(defn add-cell-to-side
+  [sides cell neighbour1 neighbour2 direction]
+  (let
+   [
+    neighbour1Side (get-sides sides neighbour1 direction)
+    neighbour2Side (get-sides sides neighbour2 direction)
+    neighbourSide (merge-sides neighbour1Side neighbour2Side)
+   ]
+  (if (= nil neighbourSide)
+    (conj sides {:direction direction :cells #{cell}})
+    (conj 
+     (remove #{neighbour2Side} (remove #{neighbour1Side} sides))
+     (assoc neighbourSide :cells (conj (neighbourSide :cells) cell))))
+  )
+)
+
+(defn add-cell-to-sides
+  [iRegion sides cell]
+  (let [col (cell :col)
+        row (cell :row)
+        east (get-cell iRegion (+ col 1) row)
+        west (get-cell iRegion (- col 1) row)
+        north (get-cell iRegion col (- row 1))
+        south (get-cell iRegion col (+ row 1))
+        newSides (if (= nil north) (add-cell-to-side sides cell east west :north) sides)
+        newSides (if (= nil south) (add-cell-to-side newSides cell east west :south) newSides)
+        newSides (if (= nil east) (add-cell-to-side newSides cell north south :east) newSides)
+        newSides (if (= nil west) (add-cell-to-side newSides cell north south :west) newSides)
+        ]
+    (println "east" east)
+    (println "west" west)
+    (println "north" north)
+    (println "south" south)
+    newSides
+))
+
 (defn num-sides
   [iRegion]
-  4)
+  (let
+   [
+    sides (reduce (fn [sides cell] (add-cell-to-sides iRegion sides cell)) '() iRegion)
+   ]
+    (count sides)
+  )
+  )
   
 (defn region-price [iRegion] (* (area iRegion) (circumference iRegion)))
 
