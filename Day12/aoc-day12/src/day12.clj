@@ -7,7 +7,6 @@
 
 (defn parse [gridMap] (mapv (fn [x] (string/split x #"")) (string/split gridMap #"\n")))
 
-;(defn get-pos [region col row] (get (get region row) col))
 (defn get-pos [iGrid col row] (filter #(and (= row (% :row)) (= col (% :col))) iGrid))
 
 (defn get-value [iGrid col row] (let [cell (first (get-pos iGrid col row))]
@@ -18,9 +17,9 @@
                                :when (not= "." cell)]
                            {:col i :row j :value (first (char-array cell))}))
 
-(defn cells-in-region [iRegion regionId] (filter #(= (% :value) regionId) iRegion))
+(defn cells-in-region [iGrid regionId] (filter #(= (% :value) regionId) iGrid))
 
-(defn area [iRegion regionId] (count (cells-in-region iRegion regionId)))
+(defn area [iRegion] (count iRegion))
 
 (defn nc [value neighbour] (if (not= value neighbour) 1 0))
 
@@ -34,10 +33,10 @@
                                           (+ (nc value east) (nc value west) (nc value south) (nc value north))))
 
 (defn circumference
-  [iRegion regionId]
-  (reduce + (map (partial elem-circumference iRegion) (cells-in-region iRegion regionId))))
+  [iRegion]
+  (reduce + (map (partial elem-circumference iRegion) iRegion)))
   
-(defn fencing-price-of-grid [iGrid regionId] (* (area iGrid regionId) (circumference iGrid regionId)))
+(defn fencing-price-of-grid [iRegion] (* (area iRegion) (circumference iRegion)))
 
 (defn region-ids [gridMap] (filter #(not= % \newline) (distinct gridMap)))
 
@@ -45,24 +44,13 @@
                                let [
                                     iGrid (indexedGrid (parse gridMap))
                                     regionIds (region-ids gridMap)
+                                    regions (map (partial cells-in-region iGrid) regionIds)
                                     ]
-                               (reduce + (map (partial fencing-price-of-grid iGrid) regionIds))
+                               (reduce + (map fencing-price-of-grid regions))
                               ))
 
-
-(def ex "ooo\noAo\nooo")
-
-(def exGrid (parse ex))
-(def iGrid (indexedGrid exGrid))
-
-
-(region-ids ex)
-(cells-in-region iGrid "o")
-(area iGrid "A")
-(circumference iGrid "A")
-(= \a "a")
-
-(first (char-array "a"))
-(fencing-price-of-grid iGrid \o)
-(fencing-price ex)
-(count [ [1 2 3] [1 2]])
+(def ex "o")
+(def iGrid (indexedGrid (parse ex)))
+(def regionIds (region-ids ex))
+(def regions (map (partial cells-in-region iGrid) regionIds))
+(print regions)
