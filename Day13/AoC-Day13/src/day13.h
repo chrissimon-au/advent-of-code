@@ -9,3 +9,4 @@ typedef struct Game {
 
 long cost_to_win_game(Game game);
 long cost_to_win_from_instructions(char *instructions);
+long cost_to_win_from_instructions_with_offset(char *instructions, long offset);
