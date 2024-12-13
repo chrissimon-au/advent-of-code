@@ -41,7 +41,15 @@
                                        "OXOXO"
                                        "OOOOO"
                                        "OXOXO"
-                                       "OOOOO")))))
+                                       "OOOOO"))))) 
+  
+  (t/testing "AoC Part 1 Sample"
+    (t/is (= (Integer/parseInt(slurp "sampledata.answer.txt"))
+             (day12/fencing-price (slurp "sampledata.txt"))))) 
+
+  (t/testing "AoC Part 1 Test"
+    (t/is (= (Integer/parseInt (slurp "testdata.answer.txt"))
+             (day12/fencing-price (slurp "testdata.txt"))))) 
   )
 
 (test-assertion)
