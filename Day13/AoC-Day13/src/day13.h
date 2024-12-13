@@ -4,7 +4,7 @@ typedef struct Game {
   long deltaYA;
   long deltaYB;
   long targetX;
-  long targetY;        
+  long targetY;
 } Game;
 
 long cost_to_win_game(Game game);

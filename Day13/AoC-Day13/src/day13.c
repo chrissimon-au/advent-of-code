@@ -1,14 +1,20 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include "day13.h"
 
 
-Game parse(char *instructions)
+Game parse(char *instructions, char **str_end)
 {
     Game game;
     char *end;
     char *ptr;
+    if (strlen(instructions) < 12)
+    {
+        printf("instructions are too short!\n");
+        return game;
+    }
     ptr = instructions + 12;
     game.deltaXA = strtol(ptr, &end, 10);
     ptr = ptr + 6;
@@ -21,23 +27,38 @@ Game parse(char *instructions)
     game.targetX = strtol(ptr, &end, 10);
     ptr = end + 4;
     game.targetY = strtol(ptr, &end, 10);
+    *str_end = end;
     return game;    
 }
 
 long cost_to_win_from_instructions(char *instructions)
 {
-    Game game = parse(instructions);
-    return cost_to_win_game(game);
+    printf("===============\n");
+    printf("Instructions:\n%s\n", instructions);
+    
+    long total_cost = 0;
+    char *ptr = instructions;
+
+    for (;;)
+    {
+        char *end;
+        Game game = parse(ptr, &end);
+        total_cost += cost_to_win_game(game);
+        if (*end == '\0')
+        {
+            break;
+        }
+        ptr = end + 2;
+    }
+    return total_cost;
 }
 
 void log_game(Game game)
 {
-    printf("deltaXA = %ld\n", game.deltaXA);
-    printf("deltaYA = %ld\n", game.deltaYA);
-    printf("deltaXB = %ld\n", game.deltaXB);
-    printf("deltaYB = %ld\n", game.deltaYB);
-    printf("targetX = %ld\n", game.targetX);
-    printf("targetY = %ld\n", game.targetY);
+    printf("----\n");
+    printf("deltaXA = %ld, deltaYA = %ld\n", game.deltaXA, game.deltaYA);
+    printf("deltaXB = %ld, deltaYB = %ld\n", game.deltaXB, game.deltaYB);
+    printf("targetX = %ld, targetY = %ld\n", game.targetX, game.targetY);
 }
 
 long cost_to_win_game(Game game)
@@ -49,6 +70,7 @@ long cost_to_win_game(Game game)
     long l_numA = round(numA);
     long l_numB = round(numB);
     if (fabs(l_numA - numA) > 0.001 || fabs(l_numB - numB) > 0.001) {
+        printf("no cost.\n");
         return 0;
     }
     
