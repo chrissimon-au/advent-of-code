@@ -8,4 +8,4 @@ typedef struct Game {
 } Game;
 
 long cost_to_win_game(Game game);
-long cost_to_win_from_instructions(char* instructions);
+long cost_to_win_from_instructions(char *instructions);

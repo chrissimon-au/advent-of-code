@@ -1,11 +1,33 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 #include "day13.h"
 
 
-long cost_to_win_from_instructions(char* instructions)
+Game parse(char *instructions)
 {
-    return 280;
+    Game game;
+    char *end;
+    char *ptr;
+    ptr = instructions + 12;
+    game.deltaXA = strtol(ptr, &end, 10);
+    ptr = ptr + 6;
+    game.deltaYA = strtol(ptr, &end, 10);
+    ptr = ptr + 15;
+    game.deltaXB = strtol(ptr, &end, 10);
+    ptr = ptr + 6;
+    game.deltaYB = strtol(ptr, &end, 10);
+    ptr = ptr + 12;
+    game.targetX = strtol(ptr, &end, 10);
+    ptr = end + 4;
+    game.targetY = strtol(ptr, &end, 10);
+    return game;    
+}
+
+long cost_to_win_from_instructions(char *instructions)
+{
+    Game game = parse(instructions);
+    return cost_to_win_game(game);
 }
 
 void log_game(Game game)
