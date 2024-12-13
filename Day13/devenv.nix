@@ -12,7 +12,7 @@
   languages.ruby.enable = true;
 
   # https://devenv.sh/processes/
-  processes.code.exec = "code .";
+  processes.code.exec = "code AoC-Day13";
   processes.ceedling-install.exec = "gem install ceedling;";
   processes.ceedling-fix = {
     exec = "./fix_ceedling.sh";
