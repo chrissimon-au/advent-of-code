@@ -34,6 +34,14 @@
                                        "ooo"
                                        "oAo"
                                        "ooo")))))
+  
+  (t/testing "test with multiple separate regions with same ID"
+    (t/is (= 772 (day12/fencing-price (s
+                                       "OOOOO"
+                                       "OXOXO"
+                                       "OOOOO"
+                                       "OXOXO"
+                                       "OOOOO")))))
   )
 
 (test-assertion)
