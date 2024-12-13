@@ -14,26 +14,26 @@ void tearDown(void)
 
 void test_simple()
 {
-    int output = cost_to_win_from_instructions("Button A: X+94, Y+34\nButton B: X+22, Y+67\nPrize: X=8400, Y=5400");
-    TEST_ASSERT_EQUAL(280, output);
+    unsigned long long output = cost_to_win_from_instructions("Button A: X+94, Y+34\nButton B: X+22, Y+67\nPrize: X=8400, Y=5400");
+    TEST_ASSERT_EQUAL_UINT64(280, output);
 }
 
 void test_simple2()
 {
-    int output = cost_to_win_from_instructions("Button A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450");
-    TEST_ASSERT_EQUAL(200, output);
+    unsigned long long output = cost_to_win_from_instructions("Button A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450");
+    TEST_ASSERT_EQUAL_UINT64(200, output);
 }
 
 void test_multiple()
 {
-    int output = cost_to_win_from_instructions("Button A: X+94, Y+34\nButton B: X+22, Y+67\nPrize: X=8400, Y=5400\n\nButton A: X+26, Y+66\nButton B: X+67, Y+21\nPrize: X=12748, Y=12176\n\nButton A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450\n\nButton A: X+69, Y+23\nButton B: X+27, Y+71\nPrize: X=18641, Y=10279");
-    TEST_ASSERT_EQUAL(480, output);
+    unsigned long long output = cost_to_win_from_instructions("Button A: X+94, Y+34\nButton B: X+22, Y+67\nPrize: X=8400, Y=5400\n\nButton A: X+26, Y+66\nButton B: X+67, Y+21\nPrize: X=12748, Y=12176\n\nButton A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450\n\nButton A: X+69, Y+23\nButton B: X+27, Y+71\nPrize: X=18641, Y=10279");
+    TEST_ASSERT_EQUAL_UINT64(480, output);
 }
 
 void test_multiple_with_offset()
 {
-    int output = cost_to_win_from_instructions_with_offset("Button A: X+94, Y+34\nButton B: X+22, Y+67\nPrize: X=8400, Y=5400\n\nButton A: X+26, Y+66\nButton B: X+67, Y+21\nPrize: X=12748, Y=12176\n\nButton A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450\n\nButton A: X+69, Y+23\nButton B: X+27, Y+71\nPrize: X=18641, Y=10279", 10000000000000);
-    TEST_ASSERT_EQUAL(480, output);
+    unsigned long long output = cost_to_win_from_instructions_with_offset("Button A: X+94, Y+34\nButton B: X+22, Y+67\nPrize: X=8400, Y=5400\n\nButton A: X+26, Y+66\nButton B: X+67, Y+21\nPrize: X=12748, Y=12176\n\nButton A: X+17, Y+86\nButton B: X+84, Y+37\nPrize: X=7870, Y=6450\n\nButton A: X+69, Y+23\nButton B: X+27, Y+71\nPrize: X=18641, Y=10279", 10000000000000);
+    TEST_ASSERT_EQUAL_UINT64(875318608908, output);
 }
 
 
@@ -46,8 +46,8 @@ void test_simple_game()
     game.deltaYB = 67;
     game.targetX = 8400;
     game.targetY = 5400;
-    int output = cost_to_win_game(game);
-    TEST_ASSERT_EQUAL(280, output);
+    unsigned long long output = cost_to_win_game(game);
+    TEST_ASSERT_EQUAL_UINT64(280, output);
 }
 
 void test_simple_game2()
@@ -59,8 +59,8 @@ void test_simple_game2()
     game.deltaYB = 37;
     game.targetX = 7870;
     game.targetY = 6450;
-    int output = cost_to_win_game(game);
-    TEST_ASSERT_EQUAL(200, output);
+    unsigned long long output = cost_to_win_game(game);
+    TEST_ASSERT_EQUAL_UINT64(200, output);
 }
 
 void test_game_that_doesnt_solve()
@@ -72,8 +72,8 @@ void test_game_that_doesnt_solve()
     game.deltaYB = 21;
     game.targetX = 12748;
     game.targetY = 12176;
-    int output = cost_to_win_game(game);
-    TEST_ASSERT_EQUAL(0, output);
+    unsigned long long output = cost_to_win_game(game);
+    TEST_ASSERT_EQUAL_UINT64(0, output);
 }
 
 #endif // TEST

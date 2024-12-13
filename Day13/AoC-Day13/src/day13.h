@@ -1,12 +1,12 @@
 typedef struct Game {   
-  long deltaXA;
-  long deltaXB;
-  long deltaYA;
-  long deltaYB;
-  long targetX;
-  long targetY;
+  unsigned long long deltaXA;
+  unsigned long long deltaXB;
+  unsigned long long deltaYA;
+  unsigned long long deltaYB;
+  unsigned long long targetX;
+  unsigned long long targetY;
 } Game;
 
-long cost_to_win_game(Game game);
-long cost_to_win_from_instructions(char *instructions);
-long cost_to_win_from_instructions_with_offset(char *instructions, long offset);
+unsigned long long cost_to_win_game(Game game);
+unsigned long long cost_to_win_from_instructions(char *instructions);
+unsigned long long cost_to_win_from_instructions_with_offset(char *instructions, unsigned long long offset);
