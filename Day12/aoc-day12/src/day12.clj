@@ -1,6 +1,6 @@
 (ns day12
   (:require
-   [clojure.repl :refer :all]
+   [clojure.repl :refer :all] 
    [clojure.string :as string]))
   
 
@@ -32,8 +32,14 @@
 (defn circumference
   [iRegion]
   (reduce + (map (partial elem-circumference iRegion) iRegion)))
+
+(defn num-sides
+  [iRegion]
+  4)
   
-(defn fencing-price-of-grid [iRegion] (* (area iRegion) (circumference iRegion)))
+(defn region-price [iRegion] (* (area iRegion) (circumference iRegion)))
+
+(defn region-price-using-sides [iRegion] (* (area iRegion) (num-sides iRegion)))
 
 (defn get-cell-if-in-region [iGrid cell col row] (
                                                   let [
@@ -79,4 +85,8 @@
 
 (defn fencing-price [gridMap] (let [iGrid (indexedGrid (parse gridMap))
                                     regions (split-into-regions iGrid)]
-                                (reduce + (map fencing-price-of-grid regions))))
+                                (reduce + (map region-price regions))))
+
+(defn fencing-price-using-sides [gridMap] (let [iGrid (indexedGrid (parse gridMap))
+                                    regions (split-into-regions iGrid)]
+                                (reduce + (map region-price-using-sides regions))))
