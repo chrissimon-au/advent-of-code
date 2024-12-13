@@ -54,6 +54,13 @@
   (t/testing "simple with sides"
     (t/is (= 8
              (day12/fencing-price-using-sides "oo"))))
+  
+    (t/testing "more complex num of sides"
+    (t/is (= (+ (* 5 8) (* 1 4))
+             (day12/fencing-price-using-sides (s
+                                               "oo"
+                                               "oA"
+                                               "oo")))))
   )
 
 (test-assertion)
