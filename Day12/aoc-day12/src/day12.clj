@@ -1,6 +1,7 @@
 (ns day12
   (:require
-   [clojure.repl :refer :all] 
+   [clojure.repl :refer :all]
+   [clojure.set :refer [union]]
    [clojure.string :as string]))
   
 
@@ -52,7 +53,7 @@
     side1
     (if (= nil side1)
       side2
-      {:direction (side1 :direction) :cells (concat (side1 :cells) (side2 :cells))}
+      {:direction (side1 :direction) :cells (union (side1 :cells) (side2 :cells))}
       )
    ))
 
@@ -85,10 +86,6 @@
         newSides (if (= nil east) (add-cell-to-side newSides cell north south :east) newSides)
         newSides (if (= nil west) (add-cell-to-side newSides cell north south :west) newSides)
         ]
-    (println "east" east)
-    (println "west" west)
-    (println "north" north)
-    (println "south" south)
     newSides
 ))
 
@@ -155,3 +152,9 @@
 (defn fencing-price-using-sides [gridMap] (let [iGrid (indexedGrid (parse gridMap))
                                     regions (split-into-regions iGrid)]
                                 (reduce + (map region-price-using-sides regions))))
+
+(def s1 #{6})
+(def s2 #{7})
+s1
+s2
+(union s1 s2)
