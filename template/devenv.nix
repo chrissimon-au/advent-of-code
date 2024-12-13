@@ -13,7 +13,14 @@
 
   # https://devenv.sh/processes/
   processes.code.exec = "code .";
-  processes.test-wait.exec = "waitexec -e txt ''";
+  process.managers.process-compose.settings = {
+    processes = {
+      test-wait = {
+        command = "watchexec -e txt './command.sh'";
+        is_tty = true;
+      };
+    };
+  };
 
   cachix.enable = false;
 }
