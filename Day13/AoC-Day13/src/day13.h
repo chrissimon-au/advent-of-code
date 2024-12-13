@@ -1,1 +1,1 @@
-int add(int x, int y);
+int cost_to_win(char* instructions);

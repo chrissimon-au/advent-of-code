@@ -1,6 +1,6 @@
 #include "day13.h"
 
-int add(int x, int y)
+int cost_to_win(char* instructions)
 {
-    return x + y;
+    return 0;
 }
