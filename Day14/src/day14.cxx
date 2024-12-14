@@ -125,11 +125,27 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
 }
 
 TEST_CASE( "Map can compute safety score" ) {
-    Map map = Map(Position(7,5));
-    map.add_robot(Robot(Position(0,0), Velocity(0,0)));
-    map.add_robot(Robot(Position(6,0), Velocity(0,0)));
-    map.add_robot(Robot(Position(0,4), Velocity(0,0)));
-    map.add_robot(Robot(Position(6,4), Velocity(0,0)));
+    SECTION( "1 Robot in each quadrant" ) {
+        Map map = Map(Position(7,5));
+        map.add_robot(Robot(Position(0,0), Velocity(0,0)));
+        map.add_robot(Robot(Position(6,0), Velocity(0,0)));
+        map.add_robot(Robot(Position(0,4), Velocity(0,0)));
+        map.add_robot(Robot(Position(6,4), Velocity(0,0)));
 
-    REQUIRE( map.safety_score() == 1 );
+        REQUIRE( map.safety_score() == 1 );
+    }
+
+    SECTION( "2 Robot in each quadrant" ) {
+        Map map = Map(Position(7,5));
+        map.add_robot(Robot(Position(0,0), Velocity(0,0)));
+        map.add_robot(Robot(Position(1,1), Velocity(0,0)));
+        map.add_robot(Robot(Position(6,0), Velocity(0,0)));
+        map.add_robot(Robot(Position(5,1), Velocity(0,0)));
+        map.add_robot(Robot(Position(0,4), Velocity(0,0)));
+        map.add_robot(Robot(Position(1,3), Velocity(0,0)));
+        map.add_robot(Robot(Position(6,4), Velocity(0,0)));
+        map.add_robot(Robot(Position(5,3), Velocity(0,0)));
+
+        REQUIRE( map.safety_score() == 16 );
+    }
 }
