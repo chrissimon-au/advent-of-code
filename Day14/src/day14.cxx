@@ -2,23 +2,34 @@
 #include <bits/stdc++.h>
 #include <string>
 
-struct Coordinates {
-    int x;
-    int y;
-    Coordinates(int x, int y) : x(x), y(y) {}
+class Coordinates {
+private:
+    int x_;
+    int y_;
+public:
+    Coordinates(int x, int y) : x_(x), y_(y) {}
+    const int x() const { return x_; }
+    const int y() const { return y_; }
 };
+
+struct Position : Coordinates {
+    Position(int x, int y) : Coordinates(x,y) {}
+};
+
 std::ostream & operator << (std::ostream & outs, const Coordinates & coords) {
-    return outs << "(" << coords.x << ", " << coords.y << ")";
+    return outs << "(" << coords.x() << ", " << coords.y() << ")";
 }
 
-int get_safety_score(std::string input, Coordinates size) {
+int get_safety_score(std::string input, Position size) {
     return 0;
 }
 
 
 TEST_CASE( "Single Robot, Single Dimension" ) {
-    std::string input = "p=0,4 v=1,0";
-    Coordinates size = Coordinates(7,5);
-    std::cout << size << std::endl;
-    REQUIRE( get_safety_score(input, size) == 0 );
+    SECTION( "From Input" ) {
+        std::string input = "p=0,4 v=1,0";
+        Position size = Position(7,5);
+        std::cout << size << std::endl;
+        REQUIRE( get_safety_score(input, size) == 0 );
+    }
 }
