@@ -1,6 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
-#include <bits/stdc++.h>
+#include <vector>
 #include <string>
+#include <iostream>
 
 class Coordinates {
 protected:
