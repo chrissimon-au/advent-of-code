@@ -12,11 +12,11 @@
   languages.cplusplus.enable = true;  
 
   # https://devenv.sh/processes/
-  processes.code.exec = "code .";
+  processes.code.exec = "code .;";
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e cxx 'cd build; ./build.sh'";
+        command = "watchexec -e cxx --timings 'cd build; ./build.sh'";
         is_tty = true;
       };
     };

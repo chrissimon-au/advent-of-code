@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <regex>
+#include <set>
 #include <filesystem>
 #include <fstream>
 
@@ -41,10 +42,15 @@ public:
     Coordinates(int x, int y) : x_(x), y_(y) {}
     int x() const { return x_; }
     int y() const { return y_; }
+    int sort_order() const { return ((y_+1) * 103) +  (x_+1); }
 };
 
 std::ostream & operator << (std::ostream & outs, const Coordinates& coords) {
     return outs << "(" << coords.x() << ", " << coords.y() << ")";
+}
+
+bool operator < (const Coordinates& c1, const Coordinates& c2) {
+    return c1.sort_order() < c2.sort_order();
 }
 
 class Velocity : public Coordinates {
@@ -63,6 +69,18 @@ public:
     void move_by(Velocity velocity, Position wrap_at) {
         x_ = mod((x_ + velocity.x()), wrap_at.x());
         y_ = mod((y_ + velocity.y()), wrap_at.y());
+    }
+    Position north() {
+        return Position(x_, y_-1);
+    }
+    Position south() {
+        return Position(x_, y_+1);
+    }
+    Position east() {
+        return Position(x_+1, y_);
+    }
+    Position west() {
+        return Position(x_-1, y_);
     }
 };
 
@@ -135,6 +153,91 @@ public:
     }
     void add_robot(Robot robot) {
         robots_.push_back(robot);
+    }
+
+    
+    static bool cluster_comp(const std::set<Position>& c1, const std::set<Position>& c2) {
+        return c1.size() > c2.size();
+    }
+
+    void print_tree_attempt(const std::set<Position>& cluster) {
+        std::string rows[size_.y()];
+        for (int y = 0; y < size_.y(); y++) {
+            rows[y] = std::string(size_.x(), '.');
+        }
+        for (auto &p : cluster) {
+            rows[p.y()][p.x()] = '*';
+        }
+        for (int y = 0; y < size_.y(); y++) {
+            std::cout << rows[y] << std::endl;
+        }
+    }
+
+    void pause() {
+        do
+        {
+            std::cout << '\n' << "Press a key to continue...";
+        } while (std::cin.get() != '\n');
+    }
+
+
+    void build_cluster(std::set<Position>& cluster, std::set<Position>& processed, std::set<Position>& unprocessed, Position pos) {
+        if (unprocessed.count(pos) == 0) {
+            return;
+        }
+        //std::cout << "   " << pos << " is in cluster!";
+        cluster.insert(pos);
+        processed.insert(pos);
+        unprocessed.erase(pos);
+        
+        build_cluster(cluster, processed, unprocessed, pos.north());
+        build_cluster(cluster, processed, unprocessed, pos.south());
+        build_cluster(cluster, processed, unprocessed, pos.east());
+        build_cluster(cluster, processed, unprocessed, pos.west());
+    }
+
+    bool robots_match_tree() {
+        std::vector<std::set<Position>> clusters = std::vector<std::set<Position>>();
+        std::set<Position> processed = std::set<Position>();
+        std::set<Position> all_positions = std::set<Position>();
+        std::set<Position> unprocessed = std::set<Position>();
+        for (auto &r : robots_)
+        {
+            all_positions.insert(r.position());
+            unprocessed.insert(r.position());
+        }
+
+        for (auto &pos : all_positions)
+        {
+            if (processed.count(pos) == 0) {
+                std::set<Position> cluster = std::set<Position>();
+                //std::cout << "Unprocessed position " << pos << " found searching for new cluster:" << std::endl;
+                build_cluster(cluster, processed, unprocessed, pos);
+                clusters.push_back(cluster);
+            }
+        }
+        
+        sort(clusters.begin(), clusters.end(), cluster_comp);
+
+        int largest_size = clusters[0].size();
+        if (largest_size > 20) {
+            std::cout << "Found cluster of size " << largest_size << std::endl;
+            print_tree_attempt(clusters[0]);
+            return true;
+        }
+
+        return false;
+    }
+
+    int seconds_until_xmas_tree() {
+        int seconds = 0;
+        do {
+            this->move_seconds(1);
+            seconds++;
+            // std::cout << "Testing at seconds " << seconds << std::endl;
+        } while (!robots_match_tree());
+        std::cout << "Exited at seconds: " << seconds;
+        return seconds;
     }
 };
 
@@ -291,3 +394,14 @@ TEST_CASE( "Map can compute safety score" ) {
         REQUIRE(map.safety_score() == answer);
     }
 }
+
+TEST_CASE( "Part 2" ) {
+    Map map = Map(Position(101,103));
+    std::string robot_definitions = readFile("../testdata.txt");
+    int answer = std::stoi(readFile("../testdata.answer2.txt"));
+
+    map.load_robots(robot_definitions);
+
+    REQUIRE(map.seconds_until_xmas_tree() == answer);
+}
+
