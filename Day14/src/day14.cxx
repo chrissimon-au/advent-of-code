@@ -56,14 +56,29 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
     }
 
     SECTION( "Direct Robot" ) {
-        Position map_size = Position(7,5);
-        Position position = Position(0,4);
-        Velocity velocity = Velocity(1,0);
-        Robot r = Robot(position, velocity, map_size);
 
-        r.move_seconds(1);
+        SECTION( "moving a single time unit" ) {
+            Position map_size = Position(7,5);
+            Position position = Position(0,4);
+            Velocity velocity = Velocity(1,0);
+            Robot r = Robot(position, velocity, map_size);
 
-        REQUIRE( r.position().x() == 1 );
-        REQUIRE( r.position().y() == 4 );
+            r.move_seconds(1);
+
+            REQUIRE( r.position().x() == 1 );
+            REQUIRE( r.position().y() == 4 );
+        }
+
+        SECTION( "moving multiple time units" ) {
+            Position map_size = Position(7,5);
+            Position position = Position(0,4);
+            Velocity velocity = Velocity(1,0);
+            Robot r = Robot(position, velocity, map_size);
+
+            r.move_seconds(4);
+
+            REQUIRE( r.position().x() == 4 );
+            REQUIRE( r.position().y() == 4 );
+        }
     }
 }
