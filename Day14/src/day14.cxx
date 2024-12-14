@@ -27,8 +27,8 @@ public:
 class Position : public Coordinates {
 public:
     Position(int x, int y) : Coordinates(x,y) {}
-    void move_by(Velocity velocity) {
-        x_ = x_ + velocity.x();
+    void move_by(Velocity velocity, Position wrap_at) {
+        x_ = (x_ + velocity.x()) % wrap_at.x();
     }
 };
 
@@ -42,7 +42,7 @@ public:
     const Position position() const { return position_; }
 
     void move_seconds(int seconds) { 
-        position_.move_by(velocity_ * seconds);
+        position_.move_by(velocity_ * seconds, map_size_);
     }
 };
 
