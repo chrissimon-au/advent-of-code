@@ -49,13 +49,36 @@ public:
 class Map {
 private:
     Position size_;
+    std::vector<Robot> robots_;
 public:
     Map(Position size) : size_(size) {}
     int safety_score() {
-        return 1;
+        int top_left = 0;
+        int top_right = 0;
+        int bottom_left = 0;
+        int bottom_right = 0;
+        int middle_x = (size_.x()-1) / 2;
+        int middle_y = (size_.y()-1) / 2;
+        for (auto r : robots_)
+        {
+            Position pos = r.position();
+            if (pos.x() < middle_x && pos.y() < middle_y) {
+                top_left++;
+            }
+            if (pos.x() < middle_x && pos.y() > middle_y) {
+                bottom_left++;
+            }
+            if (pos.x() > middle_x && pos.y() < middle_y) {
+                top_right++;
+            }
+            if (pos.x() > middle_x && pos.y() > middle_y) {
+                bottom_right++;
+            }
+        }
+        return top_left * top_right * bottom_left * bottom_right;
     }
     void add_robot(const Robot robot) {
-
+        robots_.push_back(robot);
     }
 };
 
