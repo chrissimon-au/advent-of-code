@@ -20,7 +20,7 @@ class Velocity : public Coordinates {
 public:
     Velocity(int x, int y) : Coordinates(x,y) {}
     Velocity operator*(int multiplier) {
-        return Velocity(x_ * multiplier, y_);
+        return Velocity(x_ * multiplier, y_ * multiplier);
     }
 };
 
@@ -29,6 +29,7 @@ public:
     Position(int x, int y) : Coordinates(x,y) {}
     void move_by(Velocity velocity, Position wrap_at) {
         x_ = (x_ + velocity.x()) % wrap_at.x();
+        y_ = (y_ + velocity.y()) % wrap_at.y();
     }
 };
 
