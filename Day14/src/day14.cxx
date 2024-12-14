@@ -3,7 +3,7 @@
 #include <string>
 
 class Coordinates {
-private:
+protected:
     int x_;
     int y_;
 public:
@@ -16,14 +16,17 @@ std::ostream & operator << (std::ostream & outs, const Coordinates & coords) {
     return outs << "(" << coords.x() << ", " << coords.y() << ")";
 }
 
-class Position : public Coordinates {
-public:
-    Position(int x, int y) : Coordinates(x,y) {}
-};
-
 class Velocity : public Coordinates {
 public:
     Velocity(int x, int y) : Coordinates(x,y) {}
+};
+
+class Position : public Coordinates {
+public:
+    Position(int x, int y) : Coordinates(x,y) {}
+    void move_by(Velocity velocity) {
+        
+    }
 };
 
 class Robot {
@@ -36,7 +39,7 @@ public:
     const Position position() const { return position_; }
 
     void move_seconds(int seconds) { 
-
+        position_.move_by(velocity_);
     }
 };
 
