@@ -167,15 +167,20 @@ public:
     }
 
     void print_tree_attempt(const Cluster& cluster) {
-        std::string rows[size_.y()];
-        for (int y = 0; y < size_.y(); y++) {
-            rows[y] = std::string(size_.x(), '.');
-        }
+        std::cout << "Printing 🤖 locations..." << std::endl;
+        int grid[size_.y()][size_.x()];
         for (auto &p : cluster) {
-            rows[p.y()][p.x()] = '*';
-        }
+            grid[p.y()][p.x()] = 1;
+        }        
         for (int y = 0; y < size_.y(); y++) {
-            std::cout << rows[y] << std::endl;
+            for (int x = 0; x < size_.x(); x++) {
+                if (grid[y][x] == 0) {
+                    std::cout << "◾";
+                } else {
+                    std::cout << "🤖";
+                }
+            }
+            std::cout << std::endl;
         }
     }
 
@@ -229,7 +234,7 @@ public:
         int largest_size = clusters[0].size();
         if (largest_size > 20) {
             std::cout << "Found cluster of size " << largest_size << std::endl;
-            print_tree_attempt(clusters[0]);
+            print_tree_attempt(all_positions);
             return true;
         }
 
