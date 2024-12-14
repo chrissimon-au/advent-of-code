@@ -52,7 +52,7 @@ private:
 public:
     Map(Position size) : size_(size) {}
     int safety_score() {
-        return 0;
+        return 1;
     }
     void add_robot(const Robot robot) {
 
