@@ -42,15 +42,19 @@ public:
     Coordinates(int x, int y) : x_(x), y_(y) {}
     int x() const { return x_; }
     int y() const { return y_; }
-    int sort_order() const { return ((y_+1) * 103) +  (x_+1); }
+    int sort_order(int x_max) const { return ((y_+1) * x_max) +  (x_+1); }
+};
+
+struct CoordinateComparer {
+    int x_max_;
+    CoordinateComparer(int x_max) : x_max_(x_max) {} 
+    bool operator() (const Coordinates& lhs, const Coordinates& rhs) const {        
+        return lhs.sort_order(x_max_) < rhs.sort_order(x_max_);
+    }
 };
 
 std::ostream & operator << (std::ostream & outs, const Coordinates& coords) {
     return outs << "(" << coords.x() << ", " << coords.y() << ")";
-}
-
-bool operator < (const Coordinates& c1, const Coordinates& c2) {
-    return c1.sort_order() < c2.sort_order();
 }
 
 class Velocity : public Coordinates {
@@ -107,6 +111,8 @@ public:
     }
 };
 
+using Cluster = std::set<Position, CoordinateComparer>;
+
 class Map {
 private:
     Position size_;
@@ -156,11 +162,11 @@ public:
     }
 
     
-    static bool cluster_comp(const std::set<Position>& c1, const std::set<Position>& c2) {
+    static bool cluster_comp(const Cluster& c1, const Cluster& c2) {
         return c1.size() > c2.size();
     }
 
-    void print_tree_attempt(const std::set<Position>& cluster) {
+    void print_tree_attempt(const Cluster& cluster) {
         std::string rows[size_.y()];
         for (int y = 0; y < size_.y(); y++) {
             rows[y] = std::string(size_.x(), '.');
@@ -181,7 +187,7 @@ public:
     }
 
 
-    void build_cluster(std::set<Position>& cluster, std::set<Position>& processed, std::set<Position>& unprocessed, Position pos) {
+    void build_cluster(Cluster& cluster, Cluster& processed, Cluster& unprocessed, Position pos) {
         if (unprocessed.count(pos) == 0) {
             return;
         }
@@ -197,10 +203,11 @@ public:
     }
 
     bool robots_match_tree() {
-        std::vector<std::set<Position>> clusters = std::vector<std::set<Position>>();
-        std::set<Position> processed = std::set<Position>();
-        std::set<Position> all_positions = std::set<Position>();
-        std::set<Position> unprocessed = std::set<Position>();
+        std::vector<Cluster> clusters = std::vector<Cluster>();
+        CoordinateComparer cmp = CoordinateComparer(size_.x());
+        Cluster processed = Cluster(cmp);
+        Cluster all_positions = Cluster(cmp);
+        Cluster unprocessed = Cluster(cmp);
         for (auto &r : robots_)
         {
             all_positions.insert(r.position());
@@ -210,7 +217,7 @@ public:
         for (auto &pos : all_positions)
         {
             if (processed.count(pos) == 0) {
-                std::set<Position> cluster = std::set<Position>();
+                Cluster cluster = Cluster(cmp);
                 //std::cout << "Unprocessed position " << pos << " found searching for new cluster:" << std::endl;
                 build_cluster(cluster, processed, unprocessed, pos);
                 clusters.push_back(cluster);
