@@ -145,6 +145,18 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             REQUIRE( r.position().y() == 3 );
         }
 
+        SECTION( "moving backwards" ) {
+            Position map_size = Position(7,5);
+            Position position = Position(0,4);
+            Velocity velocity = Velocity(-1,-3);
+            Robot r = Robot(position, velocity);
+
+            r.move_seconds(2, map_size);
+
+            REQUIRE( r.position().x() == 5 );
+            REQUIRE( r.position().y() == 3 );
+        }
+
     }
 }
 
