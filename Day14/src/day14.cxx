@@ -52,7 +52,6 @@ private:
 public:
     Robot(Position position, Velocity velocity) : position_(position), velocity_(velocity) {}
     Robot(std::string definition) {
-        // p=6,3 v=-1,-3
         std::regex const re("p=(\\d+),(\\d+) v=([-\\d]+),([-\\d]+)");
         std::smatch m;
         if(std::regex_match(definition, m, re))
@@ -75,6 +74,9 @@ private:
     std::vector<Robot> robots_;
 public:
     Map(Position size) : size_(size) {}
+    void load_robots(std::string definitions) {
+        
+    }
     void move_seconds(int seconds) {
         for (auto &r : robots_)
         {
@@ -197,6 +199,13 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
 }
 
 TEST_CASE( "Map can compute safety score" ) {
+
+    SECTION( "Parsing robots into map" ) {
+        Map map = Map(Position(7,5));
+        map.load_robots("p=0,0 v=0,0\np=6,0 v=0,0\np=0,4 v=0,0\np=6,4 v=0,0");
+        REQUIRE( map.safety_score() == 1 );
+    }
+
     SECTION( "1 Robot in each quadrant" ) {
         Map map = Map(Position(7,5));
         map.add_robot(Robot(Position(0,0), Velocity(0,0)));
