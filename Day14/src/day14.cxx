@@ -75,7 +75,11 @@ private:
 public:
     Map(Position size) : size_(size) {}
     void load_robots(std::string definitions) {
-        
+        std::istringstream iss(definitions);
+        for (std::string line; std::getline(iss, line); )
+        {
+            this->add_robot(Robot(line));
+        }
     }
     void move_seconds(int seconds) {
         for (auto &r : robots_)
