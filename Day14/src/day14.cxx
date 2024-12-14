@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <regex>
 
 int mod(int a, int b)
 {
@@ -50,7 +51,16 @@ private:
     Velocity velocity_;
 public:
     Robot(Position position, Velocity velocity) : position_(position), velocity_(velocity) {}
-    Robot(std::string definition) {};
+    Robot(std::string definition) {
+        // p=6,3 v=-1,-3
+        std::regex const re("p=(\\d+),(\\d+) v=([-\\d]+),([-\\d]+)");
+        std::smatch m;
+        if(std::regex_match(definition, m, re))
+        {
+            position_ = Position(std::stoi(m[1].str()), std::stoi(m[2].str()));
+            velocity_ = Velocity(std::stoi(m[3].str()), std::stoi(m[4].str()));
+        }
+    };
     Position position() { return position_; }
     Velocity velocity() { return velocity_; }
 
