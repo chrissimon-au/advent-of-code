@@ -36,8 +36,8 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-11 - Day 11 in Haskell](./Day11/)
 * [2024-12-12 - Day 12 in Clojure](./Day12/)
 * [2024-12-13 - Day 13 in C](./Day13/)
-* 2024-12-14 - Day 14 in C++
-* 2024-12-15 - Day 15 in Ruby
+* [2024-12-14 - Day 14 in C++](./Day14/)
+* [2024-12-15 - Day 15 in Ruby](./Day15/)
 * 2024-12-16 - Day 16 in Pharo/GToolkit
 * 2024-12-17 - Day 17 in Go
 * 2024-12-18 - Day 18 in Rust
