@@ -3,6 +3,27 @@
 #include <string>
 #include <iostream>
 #include <regex>
+#include <filesystem>
+#include <fstream>
+
+namespace fs = std::filesystem;
+
+std::string readFile(fs::path path)
+{
+    // Open the stream to 'lock' the file.
+    std::ifstream f(path, std::ios::in | std::ios::binary);
+
+    // Obtain the size of the file.
+    const auto sz = fs::file_size(path);
+
+    // Create a buffer.
+    std::string result(sz, '\0');
+
+    // Read the whole file into the buffer.
+    f.read(result.data(), sz);
+
+    return result;
+}
 
 int mod(int a, int b)
 {
@@ -250,20 +271,23 @@ TEST_CASE( "Map can compute safety score" ) {
 
     SECTION( "AoC Sample Case" ) {
         Map map = Map(Position(11,7));
-        map.add_robot(Robot(Position(0,4), Velocity(3,-3)));
-        map.add_robot(Robot(Position(6,3), Velocity(-1,-3)));
-        map.add_robot(Robot(Position(10,3), Velocity(-1,2)));
-        map.add_robot(Robot(Position(2,0), Velocity(2,-1)));
-        map.add_robot(Robot(Position(0,0), Velocity(1,3)));
-        map.add_robot(Robot(Position(3,0), Velocity(-2,-2)));
-        map.add_robot(Robot(Position(7,6), Velocity(-1,-3)));
-        map.add_robot(Robot(Position(3,0), Velocity(-1,-2)));
-        map.add_robot(Robot(Position(9,3), Velocity(2,3)));
-        map.add_robot(Robot(Position(7,3), Velocity(-1,2)));
-        map.add_robot(Robot(Position(2,4), Velocity(2,-3)));
-        map.add_robot(Robot(Position(9,5), Velocity(-3,-3)));
+        std::string robot_definitions = readFile("../sampledata.txt");
+        int answer = std::stoi(readFile("../sampledata.answer.txt"));
+
+        map.load_robots(robot_definitions);
         map.move_seconds(100);
-        int score = map.safety_score();
-        REQUIRE(score == 12);
+
+        REQUIRE(map.safety_score() == answer);
+    }
+
+    SECTION( "AoC Test Case" ) {
+        Map map = Map(Position(101,103));
+        std::string robot_definitions = readFile("../testdata.txt");
+        int answer = std::stoi(readFile("../testdata.answer.txt"));
+
+        map.load_robots(robot_definitions);
+        map.move_seconds(100);
+
+        REQUIRE(map.safety_score() == answer);
     }
 }
