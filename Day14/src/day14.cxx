@@ -83,5 +83,17 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             REQUIRE( r.position().x() == 4 );
             REQUIRE( r.position().y() == 4 );
         }
+
+        SECTION( "moving multiple time units and wrapping" ) {
+            Position map_size = Position(7,5);
+            Position position = Position(0,4);
+            Velocity velocity = Velocity(1,0);
+            Robot r = Robot(position, velocity, map_size);
+
+            r.move_seconds(8);
+
+            REQUIRE( r.position().x() == 1 );
+            REQUIRE( r.position().y() == 4 );
+        }
     }
 }
