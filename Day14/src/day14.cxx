@@ -95,5 +95,18 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             REQUIRE( r.position().x() == 1 );
             REQUIRE( r.position().y() == 4 );
         }
+
+        SECTION( "moving in both directions and wrapping" ) {
+            Position map_size = Position(7,5);
+            Position position = Position(0,4);
+            Velocity velocity = Velocity(1,3);
+            Robot r = Robot(position, velocity, map_size);
+
+            r.move_seconds(8);
+
+            REQUIRE( r.position().x() == 1 );
+            REQUIRE( r.position().y() == 3 );
+        }
+
     }
 }
