@@ -37,13 +37,12 @@ class Robot {
 private:
     Position position_;
     Velocity velocity_;
-    Position map_size_;
 public:
-    Robot(Position position, Velocity velocity, Position map_size) : position_(position), velocity_(velocity), map_size_(map_size) {}
+    Robot(Position position, Velocity velocity) : position_(position), velocity_(velocity) {}
     const Position position() const { return position_; }
 
-    void move_seconds(int seconds) { 
-        position_.move_by(velocity_ * seconds, map_size_);
+    void move_seconds(int seconds, Position map_size) { 
+        position_.move_by(velocity_ * seconds, map_size);
     }
 };
 
@@ -65,9 +64,9 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             Position map_size = Position(7,5);
             Position position = Position(0,4);
             Velocity velocity = Velocity(1,0);
-            Robot r = Robot(position, velocity, map_size);
+            Robot r = Robot(position, velocity);
 
-            r.move_seconds(1);
+            r.move_seconds(1, map_size);
 
             REQUIRE( r.position().x() == 1 );
             REQUIRE( r.position().y() == 4 );
@@ -77,9 +76,9 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             Position map_size = Position(7,5);
             Position position = Position(0,4);
             Velocity velocity = Velocity(1,0);
-            Robot r = Robot(position, velocity, map_size);
+            Robot r = Robot(position, velocity);
 
-            r.move_seconds(4);
+            r.move_seconds(4, map_size);
 
             REQUIRE( r.position().x() == 4 );
             REQUIRE( r.position().y() == 4 );
@@ -89,9 +88,9 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             Position map_size = Position(7,5);
             Position position = Position(0,4);
             Velocity velocity = Velocity(1,0);
-            Robot r = Robot(position, velocity, map_size);
+            Robot r = Robot(position, velocity);
 
-            r.move_seconds(8);
+            r.move_seconds(8, map_size);
 
             REQUIRE( r.position().x() == 1 );
             REQUIRE( r.position().y() == 4 );
@@ -101,9 +100,9 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
             Position map_size = Position(7,5);
             Position position = Position(0,4);
             Velocity velocity = Velocity(1,3);
-            Robot r = Robot(position, velocity, map_size);
+            Robot r = Robot(position, velocity);
 
-            r.move_seconds(8);
+            r.move_seconds(8, map_size);
 
             REQUIRE( r.position().x() == 1 );
             REQUIRE( r.position().y() == 3 );
