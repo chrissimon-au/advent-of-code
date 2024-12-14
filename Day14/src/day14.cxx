@@ -171,4 +171,18 @@ TEST_CASE( "Map can compute safety score" ) {
 
         REQUIRE( map.safety_score() == 16 );
     }
+
+    SECTION( "Robot on centre line don't count" ) {
+        Map map = Map(Position(7,5));
+        map.add_robot(Robot(Position(0,0), Velocity(0,0)));
+        map.add_robot(Robot(Position(3,1), Velocity(0,0)));
+        map.add_robot(Robot(Position(6,0), Velocity(0,0)));
+        map.add_robot(Robot(Position(3,1), Velocity(0,0)));
+        map.add_robot(Robot(Position(0,4), Velocity(0,0)));
+        map.add_robot(Robot(Position(1,2), Velocity(0,0)));
+        map.add_robot(Robot(Position(6,4), Velocity(0,0)));
+        map.add_robot(Robot(Position(5,2), Velocity(0,0)));
+
+        REQUIRE( map.safety_score() == 1 );
+    }
 }
