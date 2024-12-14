@@ -3,6 +3,13 @@
 #include <string>
 #include <iostream>
 
+int mod(int a, int b)
+{
+  int i = a%b;
+  if(i<0) i+=b;
+  return i;
+}
+
 class Coordinates {
 protected:
     int x_;
@@ -29,8 +36,8 @@ class Position : public Coordinates {
 public:
     Position(int x, int y) : Coordinates(x,y) {}
     void move_by(Velocity velocity, Position wrap_at) {
-        x_ = (x_ + velocity.x()) % wrap_at.x();
-        y_ = (y_ + velocity.y()) % wrap_at.y();
+        x_ = mod((x_ + velocity.x()), wrap_at.x());
+        y_ = mod((y_ + velocity.y()), wrap_at.y());
     }
 };
 
