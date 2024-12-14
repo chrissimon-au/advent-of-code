@@ -46,6 +46,19 @@ public:
     }
 };
 
+class Map {
+private:
+    Position size_;
+public:
+    Map(Position size) : size_(size) {}
+    int safety_score() {
+        return 0;
+    }
+    void add_robot(const Robot robot) {
+
+    }
+};
+
 int get_safety_score(std::string input, Position size) {
     return 0;
 }
@@ -109,4 +122,14 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
         }
 
     }
+}
+
+TEST_CASE( "Map can compute safety score" ) {
+    Map map = Map(Position(7,5));
+    map.add_robot(Robot(Position(0,0), Velocity(0,0)));
+    map.add_robot(Robot(Position(6,0), Velocity(0,0)));
+    map.add_robot(Robot(Position(0,4), Velocity(0,0)));
+    map.add_robot(Robot(Position(6,4), Velocity(0,0)));
+
+    REQUIRE( map.safety_score() == 1 );
 }
