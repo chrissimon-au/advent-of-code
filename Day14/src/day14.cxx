@@ -1,10 +1,11 @@
-#include <iostream>
 #include <catch2/catch_test_macros.hpp>
+#include <string>
 
-bool check() {
-    return true;
+int get_safety_score(std::string input) {
+    return -1;
 }
 
-TEST_CASE( "Checks", "[check]" ) {
-    REQUIRE( check() == true );
+TEST_CASE( "Single Robot, Single Dimension" ) {
+    std::string input = "p=0,4 v=1,0";    
+    REQUIRE( get_safety_score(input) == 0 );
 }
