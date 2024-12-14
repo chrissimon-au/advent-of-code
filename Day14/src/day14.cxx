@@ -15,6 +15,7 @@ protected:
     int x_;
     int y_;
 public:
+    Coordinates() {}
     Coordinates(int x, int y) : x_(x), y_(y) {}
     int x() const { return x_; }
     int y() const { return y_; }
@@ -27,6 +28,7 @@ std::ostream & operator << (std::ostream & outs, const Coordinates& coords) {
 class Velocity : public Coordinates {
 public:
     Velocity(int x, int y) : Coordinates(x,y) {}
+    Velocity() : Coordinates(0,0) {}
     Velocity operator*(int multiplier) {
         return Velocity(x_ * multiplier, y_ * multiplier);
     }
@@ -35,6 +37,7 @@ public:
 class Position : public Coordinates {
 public:
     Position(int x, int y) : Coordinates(x,y) {}
+    Position() : Coordinates(0,0) {}
     void move_by(Velocity velocity, Position wrap_at) {
         x_ = mod((x_ + velocity.x()), wrap_at.x());
         y_ = mod((y_ + velocity.y()), wrap_at.y());
@@ -47,7 +50,9 @@ private:
     Velocity velocity_;
 public:
     Robot(Position position, Velocity velocity) : position_(position), velocity_(velocity) {}
+    Robot(std::string definition) {};
     Position position() { return position_; }
+    Velocity velocity() { return velocity_; }
 
     void move_seconds(int seconds, Position map_size) { 
         position_.move_by(velocity_ * seconds, map_size);
@@ -167,6 +172,15 @@ TEST_CASE( "Single Robot, Single Dimension" ) {
 
             REQUIRE( r.position().x() == 5 );
             REQUIRE( r.position().y() == 3 );
+        }
+
+        SECTION( "Parsing from definition" ) {
+            Robot r = Robot("p=6,3 v=-1,-3");
+
+            REQUIRE( r.position().x() == 6 );
+            REQUIRE( r.position().y() == 3 );
+            REQUIRE( r.velocity().x() == -1 );
+            REQUIRE( r.velocity().y() == -3 );
         }
 
     }
