@@ -2,7 +2,7 @@
 #include <string>
 
 int get_safety_score(std::string input) {
-    return -1;
+    return 0;
 }
 
 TEST_CASE( "Single Robot, Single Dimension" ) {
