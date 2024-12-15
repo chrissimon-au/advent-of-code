@@ -69,10 +69,18 @@ class MyTest < Test::Unit::TestCase
     grid = Grid.new(size, robot)
 
     assert_equal(2, grid.robot.x)
-
+    assert_equal(4, grid.robot.y)
     grid.move_robot(">")
-
     assert_equal(3, grid.robot.x)
+    assert_equal(4, grid.robot.y)
+    grid.move_robot("v")
+    assert_equal(3, grid.robot.x)
+    assert_equal(5, grid.robot.y)
+    grid.move_robot("<")
+    assert_equal(2, grid.robot.x)
+    assert_equal(5, grid.robot.y)
+    grid.move_robot("^")
+    assert_equal(2, grid.robot.x)
     assert_equal(4, grid.robot.y)
   end
 end
