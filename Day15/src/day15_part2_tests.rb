@@ -13,6 +13,8 @@ class MyTest < Test::Unit::TestCase
                     #...O..#
                     #......#
                     ########
+
+                    >>>>
                         EOS
         grid = Grid.parse(map_input, true)
 
@@ -22,6 +24,8 @@ class MyTest < Test::Unit::TestCase
         assert(grid.is_wall_at(Coordinates.new(1,1)))
         assert(grid.is_box_at(Coordinates.new(6,1)))
         assert(grid.is_box_at(Coordinates.new(7,1)))
+
+        assert(grid.is_box_at(Coordinates.new(10,2)))
         assert_equal(4, grid.robot.x)
         assert_equal(2, grid.robot.y)
     end
