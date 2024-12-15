@@ -16,14 +16,17 @@ class Coordinates
     @x == other.x && @y == other.y
   end
   alias :== eql?
-  def hash()
-    "#{@x},#{@y}".hash
+  def hash
+    to_s.hash
   end
   def test_move(coords)
     Coordinates.new(coords.x+@x, coords.y+@y)
   end
   def within(boundary)
     @x>=0 && @y>=0 && @x<boundary.x && @y<boundary.y
+  end
+  def to_s
+    "(#{@x},#{@y})"
   end
 end
 
@@ -43,6 +46,22 @@ class Grid
     @robot
   end
 
+  def is_pos_free(pos)
+    (!@walls.include?(pos)) &&
+    (!@boxes.include?(pos)) &&
+    pos.within(size)
+  end
+
+  def gather_boxes_until_space(movement)
+    boxes_until_space=Set[]
+    test_pos = robot.test_move(movement)
+    while (!is_pos_free(test_pos) && @boxes.include?(test_pos))
+      boxes_until_space.add(test_pos)
+      test_pos = test_pos.test_move(movement)
+    end
+    return boxes_until_space    
+  end
+
   def move_robot_single(movement_instruction)
     movement =
       case movement_instruction
@@ -55,9 +74,21 @@ class Grid
       when "^"
         Coordinates.new(0,-1)
       end
+
     test_new_pos = robot.test_move(movement)
-    if (!@walls.include?(test_new_pos)) && test_new_pos.within(size) then
+    if is_pos_free(test_new_pos) then
       @robot = test_new_pos
+    else
+      boxes_in_way = gather_boxes_until_space(movement)
+      if !boxes_in_way.empty? then
+        @robot = test_new_pos
+        boxes_in_way.each do |box|
+          @boxes.delete(box)
+        end
+        boxes_in_way.each do |box|
+          @boxes.add(box.test_move(movement))
+        end
+      end
     end
   end
 
@@ -72,9 +103,11 @@ class Grid
   end
 
   def add_box(box)
+    @boxes.add(box)
   end
 
   def is_box_at(coords)
+    @boxes.include?(coords)
   end
 end
    
@@ -184,7 +217,7 @@ class MyTest < Test::Unit::TestCase
     assert_false(grid.is_box_at(new_box_pos))
 
     grid.move_robot(">")
-    
+
     assert_equal(3, grid.robot.x)
     assert_equal(4, grid.robot.y)
     assert(grid.is_box_at(new_box_pos))
