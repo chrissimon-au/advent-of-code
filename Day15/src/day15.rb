@@ -1,9 +1,10 @@
 require 'set'
 
 class Coordinates
-  def initialize(x, y)
+  def initialize(x, y, item=nil)
     @x=x
     @y=y
+    @item=item
   end
   def x
     @x
@@ -19,10 +20,13 @@ class Coordinates
     to_s.hash
   end
   def test_move(coords)
-    Coordinates.new(coords.x+@x, coords.y+@y)
+    Coordinates.new(coords.x+@x, coords.y+@y, @item)
   end
   def within(boundary)
     @x>=0 && @y>=0 && @x<boundary.x && @y<boundary.y
+  end
+  def item
+    @item
   end
   def to_s
     "(#{@x},#{@y})"
@@ -30,18 +34,63 @@ class Coordinates
   def gps
     @y*100 + @x
   end
-  def normalize(width_factor)
-    Coordinates.new((@x / width_factor).floor * width_factor, @y)
+end
+
+class Item
+
+  def initialize(coords, width=1)
+    @coords = []
+    for x in 0...width do
+      @coords.push(Coordinates.new(coords.x+x, coords.y, self))
+    end
+  end
+
+  def add_to_grid(grid)
+    @coords.each do |coords|
+      grid.add_item(coords)
+    end
+  end
+
+  def to_s
+    "#{self.class}: #{@coords.join("; ")}"
   end
 end
+
+class Box < Item
+
+  def remove_from_grid(grid)
+    @coords.each do |coords|
+      grid.remove_item(coords)
+    end
+  end
+
+  def move(movement)
+    new_coords = []
+    puts "moving by #{movement}"
+    puts "starting with #{@coords}"
+    @coords.each do |coords|
+      new_coords.push(coords.test_move(movement))
+    end
+    @coords = new_coords
+    puts "ending with #{@coords}"
+  end
+
+  def gps
+    @coords[0].gps
+  end
+
+end
+
+class Wall < Item
+end
+
 
 class Grid
   
   def initialize(size, robot=nil, width_factor=1)
     @size=size
     @robot=robot
-    @walls = Set[]
-    @boxes = Set[]
+    @items = {}
     @width_factor=width_factor
   end
   
@@ -60,11 +109,13 @@ class Grid
       row.split("").each.with_index do |cell, cellIdx|
         case cell
         when "#"
-          grid.add_wall(Coordinates.new(cellIdx * width_factor, rowIdx))
+          wall = Wall.new(Coordinates.new(cellIdx, rowIdx), width_factor)
+          wall.add_to_grid(grid)
         when "@"
           grid.set_robot(Coordinates.new(cellIdx * width_factor, rowIdx))
         when "O"
-          grid.add_box(Coordinates.new(cellIdx * width_factor, rowIdx))
+          box = Box.new(Coordinates.new(cellIdx, rowIdx), width_factor)
+          box.add_to_grid(grid)
         end
       end
     end
@@ -88,20 +139,20 @@ class Grid
   end
 
   def is_pos_free(pos)
-    (!@walls.include?(pos)) &&
-    (!@boxes.include?(pos)) &&
+    (!@items.include?(pos)) &&
     pos.within(size)
   end
 
   def gather_boxes_until_space(movement)
-    boxes_until_space=Set[]
+    boxes_until_space=[]
     test_pos = robot.test_move(movement)
-    while (!is_pos_free(test_pos) && @boxes.include?(test_pos))
-      boxes_until_space.add(test_pos)
+    while (!is_pos_free(test_pos) && is_box_at(test_pos))
+      item = item_at(test_pos)
+      boxes_until_space.push(item)
       test_pos = test_pos.test_move(movement)
     end
     if (!is_pos_free(test_pos)) then
-      return Set[]
+      return []
     end
     return boxes_until_space    
   end
@@ -130,10 +181,11 @@ class Grid
       if !boxes_in_way.empty? then
         @robot = test_new_pos
         boxes_in_way.each do |box|
-          @boxes.delete(box)
+          box.remove_from_grid(self)
         end
         boxes_in_way.each do |box|
-          @boxes.add(box.test_move(movement))
+          box.move(movement)
+          box.add_to_grid(self)
         end
       end
     end
@@ -145,26 +197,41 @@ class Grid
     end    
   end
 
-  def add_wall(wall)
-    @walls.add(wall)
+  # part 1 compatibility
+  def add_wall(coords)
+    wall = Wall.new(coords)
+    wall.add_to_grid(self)
   end
 
-  def add_box(box)
-    @boxes.add(box)
+  def add_box(coords)
+    box = Box.new(coords)
+    box.add_to_grid(self)
+  end
+  # end part 1 compatibility
+
+  def add_item(item_coords)
+    @items[item_coords] = item_coords
+  end
+  def remove_item(item_coords)
+    @items.delete(item_coords)
+  end
+
+  def item_at(coords)
+    @items[coords]&.item
   end
 
   def is_box_at(coords)
-    @boxes.include?(coords.normalize(@width_factor))
+    !!(item_at(coords)&.is_a? Box)
   end
 
   def is_wall_at(coords)
-    @walls.include?(coords.normalize(@width_factor))
+    !!(item_at(coords)&.is_a? Wall)
   end
 
   def gps
     total_gps=0
-    @boxes.each do |box|
-      total_gps+=box.gps
+    boxes = @items.select { |k, item | item.item&.is_a? Box }.each do |k, item|
+      total_gps+=item.gps
     end
     total_gps
   end

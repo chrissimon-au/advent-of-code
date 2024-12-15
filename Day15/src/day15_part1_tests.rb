@@ -204,7 +204,7 @@ class MyTest < Test::Unit::TestCase
         assert_equal(expected, grid.gps)
     end
 
-    def test_aoc_sample
+    def test_aoc_test
         map_input = File.read("../testdata.txt")
         expected = Integer(File.read("../testdata.answer.txt"))
 
