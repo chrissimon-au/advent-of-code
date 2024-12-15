@@ -63,6 +63,13 @@ class Grid
         end
       end
     end
+
+    if instructions then
+      puts "attempting to move with: "
+      puts instructions
+      grid.move_robot(instructions)
+    end
+
     grid
   end
 
@@ -108,6 +115,9 @@ class Grid
       when "^"
         Coordinates.new(0,-1)
       end
+    if !movement then
+      return
+    end
 
     test_new_pos = robot.test_move(movement)
     if is_pos_free(test_new_pos) then
