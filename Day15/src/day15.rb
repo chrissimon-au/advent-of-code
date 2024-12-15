@@ -41,12 +41,40 @@ class Grid
     @walls = Set[]
     @boxes = Set[]
   end
+  
+  def self.parse(map_input)
+    parts = map_input.split("\n\n")
+    map = parts[0]
+    instructions = parts[1]
+    
+    rows = map.split("\n")
+    size = Coordinates.new(rows[0].length, rows.length)
+    grid = Grid.new(size)
+
+    rows.each.with_index do |row, rowIdx|
+      row.split("").each.with_index do |cell, cellIdx|
+        case cell
+        when "#"
+          grid.add_wall(Coordinates.new(cellIdx, rowIdx))
+        when "@"
+          grid.set_robot(Coordinates.new(cellIdx, rowIdx))
+        when "O"
+          grid.add_box(Coordinates.new(cellIdx, rowIdx))
+        end
+      end
+    end
+    grid
+  end
 
   def size
     @size
   end
   def robot
     @robot
+  end
+
+  def set_robot(robot)
+    @robot = robot
   end
 
   def is_pos_free(pos)
@@ -114,6 +142,10 @@ class Grid
 
   def is_box_at(coords)
     @boxes.include?(coords)
+  end
+
+  def is_wall_at(coords)
+    @walls.include?(coords)
   end
 
   def gps
