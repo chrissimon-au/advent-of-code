@@ -1,7 +1,7 @@
 require 'set'
 
 class Coordinates
-  def initialize(x, y)    
+  def initialize(x, y)
     @x=x
     @y=y
   end
@@ -30,15 +30,19 @@ class Coordinates
   def gps
     @y*100 + @x
   end
+  def normalize(width_factor)
+    Coordinates.new((@x / width_factor).floor * width_factor, @y)
+  end
 end
 
 class Grid
   
-  def initialize(size, robot=nil)
+  def initialize(size, robot=nil, width_factor=1)
     @size=size
     @robot=robot
     @walls = Set[]
     @boxes = Set[]
+    @width_factor=width_factor
   end
   
   def self.parse(map_input, double=false)
@@ -46,27 +50,21 @@ class Grid
     map = parts[0]
     instructions = parts[1]
     
-    x_multiplier = if double then 2 else 1 end
+    width_factor = if double then 2 else 1 end
 
     rows = map.split("\n")
-    size = Coordinates.new(rows[0].length * x_multiplier, rows.length)
-    grid = Grid.new(size)
+    size = Coordinates.new(rows[0].length * width_factor, rows.length)
+    grid = Grid.new(size, nil, width_factor)
 
     rows.each.with_index do |row, rowIdx|
       row.split("").each.with_index do |cell, cellIdx|
         case cell
         when "#"
-          grid.add_wall(Coordinates.new(cellIdx * x_multiplier, rowIdx))
-          if double then
-            grid.add_wall(Coordinates.new(cellIdx * x_multiplier + 1, rowIdx))
-          end
+          grid.add_wall(Coordinates.new(cellIdx * width_factor, rowIdx))
         when "@"
-          grid.set_robot(Coordinates.new(cellIdx * x_multiplier, rowIdx))
+          grid.set_robot(Coordinates.new(cellIdx * width_factor, rowIdx))
         when "O"
-          grid.add_box(Coordinates.new(cellIdx * x_multiplier, rowIdx))
-          if double then
-            grid.add_box(Coordinates.new(cellIdx * x_multiplier + 1, rowIdx))
-          end
+          grid.add_box(Coordinates.new(cellIdx * width_factor, rowIdx))
         end
       end
     end
@@ -156,11 +154,11 @@ class Grid
   end
 
   def is_box_at(coords)
-    @boxes.include?(coords)
+    @boxes.include?(coords.normalize(@width_factor))
   end
 
   def is_wall_at(coords)
-    @walls.include?(coords)
+    @walls.include?(coords.normalize(@width_factor))
   end
 
   def gps
