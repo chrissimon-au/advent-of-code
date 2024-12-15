@@ -65,8 +65,6 @@ class Grid
     end
 
     if instructions then
-      puts "attempting to move with: "
-      puts instructions
       grid.move_robot(instructions)
     end
 
@@ -367,5 +365,23 @@ class MyTest < Test::Unit::TestCase
     grid = Grid.parse(map_input)
 
     assert_equal(2028, grid.gps)
+  end
+
+  def test_aoc_sample
+    map_input = File.read("../sampledata.txt")
+    expected = Integer(File.read("../sampledata.answer.txt"))
+
+    grid = Grid.parse(map_input)
+
+    assert_equal(expected, grid.gps)
+  end
+
+  def test_aoc_sample
+    map_input = File.read("../testdata.txt")
+    expected = Integer(File.read("../testdata.answer.txt"))
+
+    grid = Grid.parse(map_input)
+
+    assert_equal(expected, grid.gps)
   end
 end
