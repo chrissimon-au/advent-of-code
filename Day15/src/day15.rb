@@ -11,6 +11,9 @@ class Coordinates
   def y
     @y
   end
+  def move(coords)
+    @x+=coords.x
+  end
 end
 
 class Grid
@@ -27,6 +30,10 @@ class Grid
   end
 
   def move_robot(instructions)
+    case instructions
+    when ">"
+      robot.move(Coordinates.new(1,0))
+    end    
   end
 end
    
