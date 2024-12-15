@@ -2,18 +2,21 @@ require 'test/unit'
 
 class Coordinates
   def initialize(x, y)    
+    @x=x
   end
   def x
+    @x
   end
 end
 
 class Grid
   @size
   def initialize(size)
+    @size=size
   end
 
   def size
-    Coordinates.new(0, 0)
+    @size
   end
 end
    
