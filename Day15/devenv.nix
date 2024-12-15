@@ -15,8 +15,8 @@
   processes.code.exec = "code .";
   process.managers.process-compose.settings = {
     processes = {
-      test-wait = {
-        command = "watchexec -e rb,txt 'ruby day15.rb'";
+      test-wait= {
+        command = "watchexec -e rb,txt 'ruby day15_part1_tests.rb && ruby day15_part2_tests.rb'";
         is_tty = true;
         working_dir = "src";
       };
