@@ -41,7 +41,7 @@ class Item
   def initialize(coords, width=1)
     @coords = []
     for x in 0...width do
-      @coords.push(Coordinates.new(coords.x+x, coords.y, self))
+      @coords.push(Coordinates.new((coords.x*width)+x, coords.y, self))
     end
   end
 
@@ -94,13 +94,11 @@ class Grid
     @width_factor=width_factor
   end
   
-  def self.parse(map_input, double=false)
+  def self.parse(map_input, width_factor=1)
     parts = map_input.split("\n\n")
     map = parts[0]
     instructions = parts[1]
     
-    width_factor = if double then 2 else 1 end
-
     rows = map.split("\n")
     size = Coordinates.new(rows[0].length * width_factor, rows.length)
     grid = Grid.new(size, nil, width_factor)

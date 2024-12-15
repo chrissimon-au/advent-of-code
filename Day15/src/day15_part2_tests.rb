@@ -16,7 +16,7 @@ class MyTest < Test::Unit::TestCase
 
                     >>>>
                         EOS
-        grid = Grid.parse(map_input, true)
+        grid = Grid.parse(map_input, 2)
 
         assert_equal(16, grid.size.x)
         assert_equal(8, grid.size.y)
@@ -24,9 +24,8 @@ class MyTest < Test::Unit::TestCase
         assert(grid.is_wall_at(Coordinates.new(1,1)))
         assert(grid.is_box_at(Coordinates.new(6,1)))
         assert(grid.is_box_at(Coordinates.new(7,1)))
-
         assert(grid.is_box_at(Coordinates.new(10,2)))
-        assert_equal(4, grid.robot.x)
+        assert_equal(8, grid.robot.x)
         assert_equal(2, grid.robot.y)
     end
 end
