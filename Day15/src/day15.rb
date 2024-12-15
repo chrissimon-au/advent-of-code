@@ -40,6 +40,7 @@ class Item
 
   def initialize(coords, width=1)
     @coords = []
+    @width=width
     for x in 0...width do
       @coords.push(Coordinates.new((coords.x*width)+x, coords.y, self))
     end
@@ -51,8 +52,20 @@ class Item
     end
   end
 
+  def eql?(other)
+    to_s() == other.to_s()
+  end
+  alias :== eql?
+  def hash
+    to_s.hash
+  end
+
   def to_s
     "#{self.class}: #{@coords.join("; ")}"
+  end
+
+  def free_to_move(_, _)
+    false
   end
 end
 
@@ -64,15 +77,27 @@ class Box < Item
     end
   end
 
-  def move(movement)
+  def free_to_move(grid, movement)
+    new_coords = test_move(movement)
+    item = grid.item_at(new_coords[0])
+    item.nil? || (item.is_a? Box)
+  end
+
+  def new_position(movement)
     new_coords = []
-    puts "moving by #{movement}"
-    puts "starting with #{@coords}"
     @coords.each do |coords|
       new_coords.push(coords.test_move(movement))
     end
-    @coords = new_coords
-    puts "ending with #{@coords}"
+    new_coords
+  end
+
+  def test_move(movement)    
+    test_movement = Coordinates.new(movement.x*@width,movement.y)    
+    new_position(test_movement)
+  end
+
+  def move(movement)
+    @coords = new_position(movement)
   end
 
   def gps
@@ -92,6 +117,9 @@ class Grid
     @robot=robot
     @items = {}
     @width_factor=width_factor
+    # puts "=============="
+    # puts "NEW GRID: #{@size}, #{@width_factor}"
+    # puts self
   end
   
   def self.parse(map_input, width_factor=1)
@@ -142,14 +170,18 @@ class Grid
   end
 
   def gather_boxes_until_space(movement)
-    boxes_until_space=[]
+    boxes_until_space=Set[]
     test_pos = robot.test_move(movement)
-    while (!is_pos_free(test_pos) && is_box_at(test_pos))
+    item = item_at(test_pos)
+    # puts "Found #{item} at #{test_pos}, which is free to move: #{item&.free_to_move(self, movement)}"
+    while (!item.nil? && item&.free_to_move(self, movement))
+      # puts "Adding #{item} to #{boxes_until_space}"
+      boxes_until_space.add(item)
+      test_pos = item.test_move(movement)[0]      
       item = item_at(test_pos)
-      boxes_until_space.push(item)
-      test_pos = test_pos.test_move(movement)
+      # puts "Found #{item} at #{test_pos}, which is free to move: #{item&.free_to_move(self, movement)}"
     end
-    if (!is_pos_free(test_pos)) then
+    if !item.nil? or !test_pos.within(@size) then
       return []
     end
     return boxes_until_space    
@@ -191,7 +223,9 @@ class Grid
 
   def move_robot(instructions)
     instructions.split("").each do |movement|
+      # puts "Moving by #{movement}"
       move_robot_single(movement)
+      # puts self
     end    
   end
 
@@ -232,5 +266,29 @@ class Grid
       total_gps+=item.gps
     end
     total_gps
+  end
+
+  def to_s
+    puts ""
+    puts size
+    for row in 0...size.y
+      for col in 0...size.x
+        pos = Coordinates.new(col, row)
+        item = item_at(pos)
+        case item
+        when nil
+          if (robot == pos) then
+            print "@"
+          else
+            print "."
+          end
+        when Box
+          print "O"
+        when Wall
+          print "#"        
+        end
+      end
+      puts ""
+    end
   end
 end
