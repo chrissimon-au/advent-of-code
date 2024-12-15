@@ -48,6 +48,9 @@ class Grid
       move_robot_single(movement)
     end    
   end
+
+  def add_wall(wall)
+  end
 end
    
 
@@ -107,5 +110,16 @@ class MyTest < Test::Unit::TestCase
     grid.move_robot(">v>>v<^")
     assert_equal(4, grid.robot.x)
     assert_equal(5, grid.robot.y)    
+  end
+
+  def test_wall_blocks_robot
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(2, 4)
+    grid = Grid.new(size, robot)
+    grid.add_wall(Coordinates.new(3,4))
+    
+    grid.move_robot(">")
+    assert_equal(2, grid.robot.x)
+    assert_equal(4, grid.robot.y)
   end
 end
