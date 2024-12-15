@@ -28,6 +28,9 @@ class Coordinates
   def to_s
     "(#{@x},#{@y})"
   end
+  def gps
+    @y*100 + @x
+  end
 end
 
 class Grid
@@ -114,7 +117,11 @@ class Grid
   end
 
   def gps
-    0
+    total_gps=0
+    @boxes.each do |box|
+      total_gps+=box.gps
+    end
+    total_gps
   end
 end
    
