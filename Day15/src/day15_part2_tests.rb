@@ -63,10 +63,9 @@ class MyTest < Test::Unit::TestCase
                     #......#
                     ########
 
+                    >>^>v
                     EOS
         grid = Grid.parse(map_input, 2)
-
-        grid.move_robot(">>^>v", true)
 
         assert(grid.is_box_at(Coordinates.new(9,3)))
         assert(grid.is_box_at(Coordinates.new(10,3)))

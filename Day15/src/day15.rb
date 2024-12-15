@@ -171,20 +171,31 @@ class Grid
     pos.within(size)
   end
 
-  def gather_boxes_until_space(movement)
+  def gather_boxes_until_space(start_pos, movement)
     boxes_until_space=Set[]
-    test_pos = robot.test_move(movement)
-    item = item_at(test_pos)
-    # puts "Found #{item} at #{test_pos}, which is free to move: #{item&.free_to_move(self, movement)}"
-    while (!item.nil? && item&.free_to_move(self, movement))
-      # puts "Adding #{item} to #{boxes_until_space}"
+    item = item_at(start_pos)
+    #puts "Found #{item} at #{start_pos}, which is free to move: #{item&.free_to_move(self, movement)}"
+    free_to_move = item.nil? || item&.free_to_move(self, movement)
+    if !item.nil? && free_to_move then
+      #puts "   Adding #{item} to #{boxes_until_space}"
       boxes_until_space.add(item)
-      test_pos = item.test_move(movement)[0]      
-      item = item_at(test_pos)
-      # puts "Found #{item} at #{test_pos}, which is free to move: #{item&.free_to_move(self, movement)}"
+      new_positions = item.test_move(movement)
+      #puts "   new_positions: #{new_positions.join ","}"
+      new_positions.each do |test_pos|
+        #puts "   Starting to gather from #{test_pos}"
+        next_boxes = gather_boxes_until_space(test_pos, movement)
+        if next_boxes.nil? then
+          #puts "   ...None found"
+          return nil
+        end
+        #puts "   Some found, adding #{next_boxes.size} boxes to set"
+        boxes_until_space = boxes_until_space | next_boxes
+    
+      end      
     end
-    if !item.nil? or !test_pos.within(@size) then
-      return []
+    if !free_to_move or !start_pos.within(@size) then
+      #puts "   returning nil as free #{!free_to_move} or #{start_pos} within map: #{!start_pos.within(@size)}"
+      return nil
     end
     return boxes_until_space    
   end
@@ -209,8 +220,8 @@ class Grid
     if is_pos_free(test_new_pos) then
       @robot = test_new_pos
     else
-      boxes_in_way = gather_boxes_until_space(movement)
-      if !boxes_in_way.empty? then
+      boxes_in_way = gather_boxes_until_space(robot.test_move(movement), movement)
+      if !boxes_in_way.nil? && !boxes_in_way.empty? then
         @robot = test_new_pos
         boxes_in_way.each do |box|
           box.remove_from_grid(self)
