@@ -59,6 +59,9 @@ class Grid
       boxes_until_space.add(test_pos)
       test_pos = test_pos.test_move(movement)
     end
+    if (!is_pos_free(test_pos)) then
+      return Set[]
+    end
     return boxes_until_space    
   end
 
