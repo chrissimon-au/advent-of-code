@@ -14,13 +14,16 @@ class Coordinates
 end
 
 class Grid
-  @size
-  def initialize(size)
+  def initialize(size, robot=nil)
     @size=size
+    @robot=robot
   end
 
   def size
     @size
+  end
+  def robot
+    @robot
   end
 end
    
