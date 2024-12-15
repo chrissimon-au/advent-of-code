@@ -79,8 +79,10 @@ class Box < Item
 
   def free_to_move(grid, movement)
     new_coords = test_move(movement)
-    item = grid.item_at(new_coords[0])
-    item.nil? || (item.is_a? Box)
+    new_coords.all? do | coords |
+      item = grid.item_at(coords)
+      item.nil? || (item.is_a? Box)  
+    end
   end
 
   def new_position(movement)
@@ -221,11 +223,11 @@ class Grid
     end
   end
 
-  def move_robot(instructions)
+  def move_robot(instructions, log=false)
     instructions.split("").each do |movement|
-      # puts "Moving by #{movement}"
+      if log then puts "Moving by #{movement}" end
       move_robot_single(movement)
-      # puts self
+      if log then puts self end
     end    
   end
 
