@@ -30,8 +30,8 @@ class Grid
     @robot
   end
 
-  def move_robot(instructions)
-    case instructions
+  def move_robot_single(movement)
+    case movement
     when ">"
       robot.move(Coordinates.new(1,0))
     when "v"
@@ -40,6 +40,12 @@ class Grid
       robot.move(Coordinates.new(-1,0))
     when "^"
       robot.move(Coordinates.new(0,-1))
+    end    
+  end
+
+  def move_robot(instructions)
+    instructions.split("").each do |movement|
+      move_robot_single(movement)
     end    
   end
 end
