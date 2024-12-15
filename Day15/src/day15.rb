@@ -282,4 +282,30 @@ class MyTest < Test::Unit::TestCase
 
     assert_equal(104, grid.gps)
   end
+
+  def test_parse_map
+    map_input = <<~EOS
+                  ########
+                  #..O.O.#
+                  ##@.O..#
+                  #...O..#
+                  #.#.O..#
+                  #...O..#
+                  #......#
+                  ########
+                EOS
+    grid = Grid.parse(map_input)
+
+    assert_equal(2, grid.robot.x)
+    assert_equal(2, grid.robot.y)
+    assert(grid.is_wall_at(Coordinates.new(0, 0)))
+    assert(grid.is_wall_at(Coordinates.new(1, 2)))
+    assert(grid.is_wall_at(Coordinates.new(2, 4)))
+    assert(grid.is_box_at(Coordinates.new(3,1)))
+    assert(grid.is_box_at(Coordinates.new(5,1)))
+    assert(grid.is_box_at(Coordinates.new(4,2)))
+    assert(grid.is_box_at(Coordinates.new(4,3)))
+    assert(grid.is_box_at(Coordinates.new(4,4)))
+    assert(grid.is_box_at(Coordinates.new(4,5)))
+  end
 end
