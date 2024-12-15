@@ -208,18 +208,20 @@ class MyTest < Test::Unit::TestCase
     robot=Coordinates.new(2, 4)
     grid = Grid.new(size, robot)
 
-    box = Coordinates.new(3,4)
-    grid.add_box(box)
+    grid.add_box(Coordinates.new(3,4))
+    grid.add_box(Coordinates.new(4,4))
 
-    assert(grid.is_box_at(box))
-
-    new_box_pos = Coordinates.new(4,4)
-    assert_false(grid.is_box_at(new_box_pos))
+    assert(grid.is_box_at(Coordinates.new(3,4)))
+    assert(grid.is_box_at(Coordinates.new(4,4)))    
+    assert_false(grid.is_box_at(Coordinates.new(5,4)))
 
     grid.move_robot(">")
 
     assert_equal(3, grid.robot.x)
     assert_equal(4, grid.robot.y)
-    assert(grid.is_box_at(new_box_pos))
+    
+    assert_false(grid.is_box_at(Coordinates.new(3,4)))
+    assert(grid.is_box_at(Coordinates.new(4,4)))    
+    assert(grid.is_box_at(Coordinates.new(5,4)))
   end
 end
