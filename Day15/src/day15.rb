@@ -33,6 +33,7 @@ class Grid
     @size=size
     @robot=robot
     @walls = Set[]
+    @boxes = Set[]
   end
 
   def size
@@ -68,6 +69,12 @@ class Grid
 
   def add_wall(wall)
     @walls.add(wall)
+  end
+
+  def add_box(box)
+  end
+
+  def is_box_at(coords)
   end
 end
    
@@ -161,5 +168,25 @@ class MyTest < Test::Unit::TestCase
     grid.move_robot(">>>vvv<<<<<<<<^^^^^^^^^^>>>>>>>>>")
     assert_equal(5, grid.robot.x)
     assert_equal(0, grid.robot.y)
+  end
+
+  def test_boxes_are_moved
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(2, 4)
+    grid = Grid.new(size, robot)
+
+    box = Coordinates.new(3,4)
+    grid.add_box(box)
+
+    assert(grid.is_box_at(box))
+
+    new_box_pos = Coordinates.new(4,4)
+    assert_false(grid.is_box_at(new_box_pos))
+
+    grid.move_robot(">")
+    
+    assert_equal(3, grid.robot.x)
+    assert_equal(4, grid.robot.y)
+    assert(grid.is_box_at(new_box_pos))
   end
 end
