@@ -149,4 +149,14 @@ class MyTest < Test::Unit::TestCase
     assert_equal(3, grid.robot.x)
     assert_equal(5, grid.robot.y)
   end
+
+  def test_edges_block_robot
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(5, 4)
+    grid = Grid.new(size, robot)
+    
+    grid.move_robot(">>>vvv<<<<<<<<^^^^^^^^^^>>>>>>>>>")
+    assert_equal(5, grid.robot.x)
+    assert_equal(0, grid.robot.y)
+  end
 end
