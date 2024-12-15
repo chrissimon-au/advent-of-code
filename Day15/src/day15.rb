@@ -1,4 +1,5 @@
 require 'test/unit'
+require 'set'
 
 class Coordinates
   def initialize(x, y)    
@@ -11,16 +12,24 @@ class Coordinates
   def y
     @y
   end
-  def move(coords)
-    @x+=coords.x
-    @y+=coords.y
+  def eql?(other)
+    @x == other.x && @y == other.y
+  end
+  alias :== eql?
+  def hash()
+    "#{@x},#{@y}".hash
+  end
+  def test_move(coords)
+    Coordinates.new(coords.x+@x, coords.y+@y)
   end
 end
 
 class Grid
+  
   def initialize(size, robot=nil)
     @size=size
     @robot=robot
+    @walls = Set[]
   end
 
   def size
@@ -30,17 +39,22 @@ class Grid
     @robot
   end
 
-  def move_robot_single(movement)
-    case movement
-    when ">"
-      robot.move(Coordinates.new(1,0))
-    when "v"
-      robot.move(Coordinates.new(0,1))
-    when "<"
-      robot.move(Coordinates.new(-1,0))
-    when "^"
-      robot.move(Coordinates.new(0,-1))
-    end    
+  def move_robot_single(movement_instruction)
+    movement =
+      case movement_instruction
+      when ">"
+        Coordinates.new(1,0)
+      when "v"
+        Coordinates.new(0,1)
+      when "<"
+        Coordinates.new(-1,0)
+      when "^"
+        Coordinates.new(0,-1)
+      end
+    test_new_pos = robot.test_move(movement)
+    if (!@walls.include?(test_new_pos)) then
+      @robot = test_new_pos
+    end
   end
 
   def move_robot(instructions)
@@ -50,6 +64,7 @@ class Grid
   end
 
   def add_wall(wall)
+    @walls.add(wall)
   end
 end
    
