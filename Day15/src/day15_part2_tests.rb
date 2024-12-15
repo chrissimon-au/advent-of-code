@@ -51,4 +51,30 @@ class MyTest < Test::Unit::TestCase
         assert_equal(9, grid.robot.x)
         assert_equal(2, grid.robot.y)
     end
+
+    def test_double_width_boxes_move_multiple_boxes
+        map_input = <<~EOS
+                    ########
+                    #......#
+                    ##.@O..#
+                    #...OO.#
+                    #.#....#
+                    #......#
+                    #......#
+                    ########
+
+                    EOS
+        grid = Grid.parse(map_input, 2)
+
+        grid.move_robot(">>^>v", true)
+
+        assert(grid.is_box_at(Coordinates.new(9,3)))
+        assert(grid.is_box_at(Coordinates.new(10,3)))
+        assert(grid.is_box_at(Coordinates.new(8,4)))
+        assert(grid.is_box_at(Coordinates.new(9,4)))
+        assert(grid.is_box_at(Coordinates.new(10,4)))
+        assert(grid.is_box_at(Coordinates.new(11,4)))
+        assert_equal(9, grid.robot.x)
+        assert_equal(2, grid.robot.y)
+    end
 end
