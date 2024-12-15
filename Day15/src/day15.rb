@@ -112,6 +112,10 @@ class Grid
   def is_box_at(coords)
     @boxes.include?(coords)
   end
+
+  def gps
+    0
+  end
 end
    
 
@@ -261,5 +265,14 @@ class MyTest < Test::Unit::TestCase
     assert_equal(4, grid.robot.y)
     
     assert(grid.is_box_at(Coordinates.new(5,4)))
+  end
+
+  def test_get_gps_of_grid
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(4, 4)
+    grid = Grid.new(size, robot)
+    grid.add_box(Coordinates.new(4,1))
+
+    assert_equal(104, grid.gps)
   end
 end
