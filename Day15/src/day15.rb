@@ -25,6 +25,9 @@ class Grid
   def robot
     @robot
   end
+
+  def move_robot(instructions)
+  end
 end
    
 
@@ -51,5 +54,18 @@ class MyTest < Test::Unit::TestCase
 
     assert_equal(2, grid.robot.x)
     assert_equal(3, grid.robot.y)
+  end
+
+  def test_move_robot
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(2, 4)
+    grid = Grid.new(size, robot)
+
+    assert_equal(2, grid.robot.x)
+
+    grid.move_robot(">")
+
+    assert_equal(3, grid.robot.x)
+    assert_equal(4, grid.robot.y)
   end
 end
