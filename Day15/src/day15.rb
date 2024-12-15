@@ -137,4 +137,16 @@ class MyTest < Test::Unit::TestCase
     assert_equal(2, grid.robot.x)
     assert_equal(4, grid.robot.y)
   end
+
+  def test_multiple_walls_blocks_robot
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(2, 4)
+    grid = Grid.new(size, robot)
+    grid.add_wall(Coordinates.new(3,4))
+    grid.add_wall(Coordinates.new(4,5))
+    
+    grid.move_robot(">v>>^")
+    assert_equal(3, grid.robot.x)
+    assert_equal(5, grid.robot.y)
+  end
 end
