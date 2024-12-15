@@ -13,6 +13,7 @@ class Coordinates
   end
   def move(coords)
     @x+=coords.x
+    @y+=coords.y
   end
 end
 
@@ -33,6 +34,12 @@ class Grid
     case instructions
     when ">"
       robot.move(Coordinates.new(1,0))
+    when "v"
+      robot.move(Coordinates.new(0,1))
+    when "<"
+      robot.move(Coordinates.new(-1,0))
+    when "^"
+      robot.move(Coordinates.new(0,-1))
     end    
   end
 end
