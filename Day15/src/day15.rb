@@ -245,4 +245,21 @@ class MyTest < Test::Unit::TestCase
     
     assert(grid.is_box_at(Coordinates.new(3,4)))
   end
+
+  def test_box_movement_blocked_by_wall
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(4, 4)
+    grid = Grid.new(size, robot)
+
+    grid.add_box(Coordinates.new(5,4))
+
+    assert(grid.is_box_at(Coordinates.new(5,4)))
+
+    grid.move_robot(">")
+
+    assert_equal(4, grid.robot.x)
+    assert_equal(4, grid.robot.y)
+    
+    assert(grid.is_box_at(Coordinates.new(5,4)))
+  end
 end
