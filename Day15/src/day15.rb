@@ -34,7 +34,8 @@ class MyTest < Test::Unit::TestCase
   # end
 
   def test_grid_layout
-    grid = Grid.new(Coordinates.new(6, 7))
+    size=Coordinates.new(6, 7)
+    grid = Grid.new(size)
 
     assert_equal(6, grid.size.x)
     assert_equal(7, grid.size.y)
