@@ -28,4 +28,27 @@ class MyTest < Test::Unit::TestCase
         assert_equal(8, grid.robot.x)
         assert_equal(2, grid.robot.y)
     end
+
+    def test_double_width_boxes_block_when_mis_aligned
+        map_input = <<~EOS
+                    ########
+                    #......#
+                    ##.@O..#
+                    #...O..#
+                    #.#.O..#
+                    #...O..#
+                    #......#
+                    ########
+
+                    ">>^>v"
+                    EOS
+        grid = Grid.parse(map_input, 2)
+
+        assert(grid.is_box_at(Coordinates.new(9,3)))
+        assert(grid.is_box_at(Coordinates.new(10,3)))
+        assert(grid.is_box_at(Coordinates.new(8,6)))
+        assert(grid.is_box_at(Coordinates.new(9,6)))
+        assert_equal(9, grid.robot.x)
+        assert_equal(2, grid.robot.y)
+    end
 end
