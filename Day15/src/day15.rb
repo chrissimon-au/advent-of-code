@@ -22,6 +22,9 @@ class Coordinates
   def test_move(coords)
     Coordinates.new(coords.x+@x, coords.y+@y)
   end
+  def within(boundary)
+    @x>=0 && @y>=0 && @x<boundary.x && @y<boundary.y
+  end
 end
 
 class Grid
@@ -52,7 +55,7 @@ class Grid
         Coordinates.new(0,-1)
       end
     test_new_pos = robot.test_move(movement)
-    if (!@walls.include?(test_new_pos)) then
+    if (!@walls.include?(test_new_pos)) && test_new_pos.within(size) then
       @robot = test_new_pos
     end
   end
