@@ -289,7 +289,7 @@ class MyTest < Test::Unit::TestCase
     assert(grid.is_box_at(Coordinates.new(3,4)))
   end
 
-  def test_box_movement_blocked_by_wall
+  def test_box_movement_blocked_by_edge
     size=Coordinates.new(6, 7)
     robot=Coordinates.new(4, 4)
     grid = Grid.new(size, robot)
@@ -339,5 +339,23 @@ class MyTest < Test::Unit::TestCase
     assert(grid.is_box_at(Coordinates.new(4,3)))
     assert(grid.is_box_at(Coordinates.new(4,4)))
     assert(grid.is_box_at(Coordinates.new(4,5)))
+  end
+
+  def test_process_instructions
+    map_input = <<~EOS
+                  ########
+                  #..O.O.#
+                  ##@.O..#
+                  #...O..#
+                  #.#.O..#
+                  #...O..#
+                  #......#
+                  ########
+
+                  <^^>>>vv<v>>v<<
+                EOS
+    grid = Grid.parse(map_input)
+
+    assert_equal(2028, grid.gps)
   end
 end
