@@ -46,19 +46,27 @@ class Grid
     map = parts[0]
     instructions = parts[1]
     
+    x_multiplier = if double then 2 else 1 end
+
     rows = map.split("\n")
-    size = Coordinates.new(rows[0].length, rows.length)
+    size = Coordinates.new(rows[0].length * x_multiplier, rows.length)
     grid = Grid.new(size)
 
     rows.each.with_index do |row, rowIdx|
       row.split("").each.with_index do |cell, cellIdx|
         case cell
         when "#"
-          grid.add_wall(Coordinates.new(cellIdx, rowIdx))
+          grid.add_wall(Coordinates.new(cellIdx * x_multiplier, rowIdx))
+          if double then
+            grid.add_wall(Coordinates.new(cellIdx * x_multiplier + 1, rowIdx))
+          end
         when "@"
-          grid.set_robot(Coordinates.new(cellIdx, rowIdx))
+          grid.set_robot(Coordinates.new(cellIdx * x_multiplier, rowIdx))
         when "O"
-          grid.add_box(Coordinates.new(cellIdx, rowIdx))
+          grid.add_box(Coordinates.new(cellIdx * x_multiplier, rowIdx))
+          if double then
+            grid.add_box(Coordinates.new(cellIdx * x_multiplier + 1, rowIdx))
+          end
         end
       end
     end
