@@ -39,6 +39,14 @@ class MyTest < Test::Unit::TestCase
 
     assert_equal(6, grid.size.x)
     assert_equal(7, grid.size.y)
-    
+  end
+
+  def test_robot_position
+    size=Coordinates.new(6, 7)
+    robot=Coordinates.new(2, 3)
+    grid = Grid.new(size, robot)
+
+    assert_equal(2, grid.robot.x)
+    assert_equal(3, grid.robot.y)
   end
 end
