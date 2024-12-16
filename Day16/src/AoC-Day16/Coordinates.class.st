@@ -9,6 +9,12 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+Coordinates >> + other [
+	|res|
+	^{ col + (other col) . row + (other row) } asCoordinates.
+]
+
+{ #category : #'as yet unclassified' }
 Coordinates >> = anOther [
 	anOther class = self class
 		ifFalse: [ ^ false ].
@@ -17,7 +23,7 @@ Coordinates >> = anOther [
 
 { #category : #'as yet unclassified' }
 Coordinates >> asString [
-	^'(', col asString, ', ', row asString, ')'.
+	^'(', col asString, ',', row asString, ')'.
 ]
 
 { #category : #accessing }
@@ -39,6 +45,11 @@ Coordinates >> gtDisplayOn: aStream [
 Coordinates >> hash [
 	^col hash bitXor: row hash.
 	
+]
+
+{ #category : #'as yet unclassified' }
+Coordinates >> printOn: aStream [
+	aStream nextPutAll: (self asString) 
 ]
 
 { #category : #accessing }

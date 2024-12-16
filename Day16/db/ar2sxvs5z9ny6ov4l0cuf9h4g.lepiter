@@ -218,6 +218,43 @@
 				"code" : "MazeExamples parsed."
 			},
 			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T21:58:26.428665+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T22:01:04.560387+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "S1EDzMLlDQCJc5VWAb9IGQ=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "Start to work on pathfinding algorithm with another simple proceed and turn option."
+			},
+			{
 				"__type" : "pharoSnippet",
 				"children" : {
 					"__type" : "snippets",
@@ -231,7 +268,7 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T20:59:30.738938+11:00"
+						"dateAndTimeString" : "2024-12-16T21:58:42.574817+11:00"
 					}
 				},
 				"editEmail" : {
@@ -242,14 +279,48 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T21:51:31.061418+11:00"
+						"dateAndTimeString" : "2024-12-16T22:02:09.826477+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
-					"uidString" : "XgZF+cHlDQCDqgHOAb9IGQ=="
+					"uidString" : "P7v5zMLlDQCKNR9aAb9IGQ=="
 				},
-				"code" : "m := Maze parse: ('\r#####\r#S#E#\r#####\r') trim."
+				"code" : "maze := Maze parse: ('\r###############\r#............E#\r#.............#\r#S............#\r###############\r') trim.\r{maze lowestScore . 1014 }."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T22:44:35.090153+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T22:47:32.39258+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "ascJccPlDQCXtvrLAb9IGQ=="
+				},
+				"code" : "n1 := #(4 5) asCoordinates.\rn2 := #(3 1) asCoordinates.\rn1 + n2 ."
 			},
 			{
 				"__type" : "textSnippet",
@@ -265,7 +336,7 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T20:27:26.201667+11:00"
+						"dateAndTimeString" : "2024-12-16T22:23:13.562135+11:00"
 					}
 				},
 				"editEmail" : {
@@ -276,17 +347,153 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T20:27:26.201667+11:00"
+						"dateAndTimeString" : "2024-12-16T22:23:20.648385+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
-					"uidString" : "t9SKhcHlDQCCNTA2Ab9IGQ=="
+					"uidString" : "ADmnJMPlDQCPZWG7Ab9IGQ=="
 				},
 				"paragraphStyle" : {
 					"__type" : "textStyle"
 				},
-				"string" : ""
+				"string" : "Experiments with using Pharo's AI/Graph libraries"
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T22:23:23.669333+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T00:49:40.427906+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "13BBJcPlDQCQXrCrAb9IGQ=="
+				},
+				"code" : "maze := MazeExamples singleTurn.\r(maze graph) reconstructPath asArray ."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T00:31:50.570984+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T00:32:04.338801+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "c22f8MTlDQCML9QaANOaDQ=="
+				},
+				"code" : "maze := MazeExamples parsed.\rmaze wallAt:"
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T00:52:31.005687+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T00:56:11.210859+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "EPWOOsXlDQCSks8BANOaDQ=="
+				},
+				"code" : "maze := Maze parse: ('\r###############\r#.......#....E#\r#.#.###.#.###.#\r#.....#.#...#.#\r#.###.#####.#.#\r#.#.#.......#.#\r#.#.#####.###.#\r#...........#.#\r###.#.#####.#.#\r#...#.....#.#.#\r#.#.#.###.#.#.#\r#.....#...#.#.#\r#.###.#.#.#.#.#\r#S..#.....#...#\r###############\r' trim).\rmaze lowestScore."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T01:02:45.469364+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T01:03:33.273636+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "lu0uX8XlDQCUyF/5ANOaDQ=="
+				},
+				"code" : "(Maze parse: ('\r#################\n#...#...#...#..E#\n#.#.#.#.#.#.#.#.#\n#.#.#.#...#...#.#\n#.#.#.#.###.#.#.#\n#...#.#.#.....#.#\n#.#.#.#.#.#####.#\n#.#...#.#.#.....#\n#.#.#####.#.###.#\n#.#.#.......#...#\n#.#.###.#####.###\n#.#.#...#.....#.#\n#.#.#.#####.###.#\n#.#.#.........#.#\n#.#.#.#########.#\n#S#.............#\n#################\r' trim)) lowestScore."
 			}
 		]
 	},

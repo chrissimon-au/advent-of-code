@@ -30,7 +30,7 @@ MazeExamples class >> singleTurn [
 	<gtExample>
 	| maze |
 	maze := Maze new size: #(8 4) asCoordinates; start: #(2 2) asCoordinates; end: #(7 3) asCoordinates.
-	self assert: maze lowestScore equals: (7 + 1000).
+	self assert: maze lowestScore equals: (6 + 1000).
 	^maze
 ]
 
