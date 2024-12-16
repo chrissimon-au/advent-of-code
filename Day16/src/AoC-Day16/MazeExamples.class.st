@@ -6,20 +6,21 @@ Class {
 
 { #category : #accessing }
 MazeExamples class >> parsed [
+	<gtExample>
 	| maze |
 	maze := Maze parse: ('
 ########
 #.S.#..#
-#......#
+#.....E#
 ########
 ') trim.
 	self assert: maze size row equals: 4.
 	self assert: maze size col equals: 8.
-	self assert: maze reindeer position row equals: 2.
 	self assert: maze reindeer position col equals: 3.
+	self assert: maze reindeer position row equals: 2.
 	self assert: maze reindeer direction equals: #east.
-	self assert: maze end row equals: 2.
-	self assert: maze end col equals: 3.
+	self assert: maze end col equals: 7.
+	self assert: maze end row equals: 3.
 	^ maze.
 ]
 

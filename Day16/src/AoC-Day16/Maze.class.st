@@ -10,6 +10,35 @@ Class {
 }
 
 { #category : #accessing }
+Maze class >> parse: input [
+	| maze rows currentPos |
+	rows := input splitOn: Character cr.
+	
+	maze := Maze new 
+		size: {(rows at: 1) size . rows size } asCoordinates.
+	
+	rows doWithIndex: [ :row :rowIdx |
+		row doWithIndex: [ :cell :colIdx |
+			currentPos := {colIdx . rowIdx } asCoordinates.
+			(cell = $S)
+				ifTrue: [ 
+					maze start: currentPos.
+				].
+			(cell = $E)
+				ifTrue: [
+					maze end: currentPos.
+				]
+		]
+	].
+	^maze.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> end [
+	^end.
+]
+
+{ #category : #accessing }
 Maze >> end: pos [
 	end := pos
 ]

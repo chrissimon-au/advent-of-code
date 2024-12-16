@@ -216,6 +216,40 @@
 					"uidString" : "mWALrMDlDQCrL2BNAw+bvg=="
 				},
 				"code" : "MazeExamples parsed."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T19:36:59.893896+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T19:44:16.122298+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "oB0t0sDlDQCqAiV3CRMeqg=="
+				},
+				"code" : "rows := '####\r####' splitOn: (Character cr).\r{(rows at: 1) size .  height := rows size} asCoordinates."
 			}
 		]
 	},
