@@ -77,14 +77,6 @@ class Box < Item
     end
   end
 
-  def free_to_move(grid, movement)
-    new_coords = test_move(movement)
-    new_coords.all? do | coords |
-      item = grid.item_at(coords)
-      item.nil? || (item.is_a? Box)  
-    end
-  end
-
   def new_position(movement)
     new_coords = []
     @coords.each do |coords|
@@ -94,8 +86,21 @@ class Box < Item
   end
 
   def test_move(movement)    
-    test_movement = Coordinates.new(movement.x*@width,movement.y)    
-    new_position(test_movement)
+    new_coords = new_position(movement)
+    if (movement.x > 0) then
+      return [new_coords[@width-1]]
+    elsif (movement.x < 0) then
+      return [new_coords[0]]
+    end
+    return new_coords
+  end
+
+  def free_to_move(grid, movement)
+    new_coords = test_move(movement)
+    new_coords.all? do | coords |
+      item = grid.item_at(coords)
+      item.nil? || (item.is_a? Box)  
+    end
   end
 
   def move(movement)
@@ -106,6 +111,16 @@ class Box < Item
     @coords[0].gps
   end
 
+  def visualise(pos)
+    if @coords.length == 0 then
+      print "O"
+    elsif @coords[0] == pos then
+      print "["
+    else
+      print "]"
+    end
+  end
+
 end
 
 class Wall < Item
@@ -114,24 +129,25 @@ end
 
 class Grid
   
-  def initialize(size, robot=nil, width_factor=1)
+  def initialize(size, robot=nil, width_factor=1, log_output=false)
     @size=size
     @robot=robot
     @items = {}
     @width_factor=width_factor
+    @log_output=log_output
     # puts "=============="
     # puts "NEW GRID: #{@size}, #{@width_factor}"
     # puts self
   end
   
-  def self.parse(map_input, width_factor=1)
+  def self.parse(map_input, width_factor=1, log_output=false)
     parts = map_input.split("\n\n")
     map = parts[0]
     instructions = parts[1]
     
     rows = map.split("\n")
     size = Coordinates.new(rows[0].length * width_factor, rows.length)
-    grid = Grid.new(size, nil, width_factor)
+    grid = Grid.new(size, nil, width_factor, log_output)
 
     rows.each.with_index do |row, rowIdx|
       row.split("").each.with_index do |cell, cellIdx|
@@ -148,8 +164,13 @@ class Grid
       end
     end
 
-    if instructions then
-      grid.move_robot(instructions)
+    if log_output then
+      puts "====="
+      puts "NEW GRID, #{size} x #{width_factor}"
+      puts grid
+    end
+    if instructions then      
+      grid.move_robot(instructions, log_output)
     end
 
     grid
@@ -174,27 +195,27 @@ class Grid
   def gather_boxes_until_space(start_pos, movement)
     boxes_until_space=Set[]
     item = item_at(start_pos)
-    #puts "Found #{item} at #{start_pos}, which is free to move: #{item&.free_to_move(self, movement)}"
+    if @log_output then puts "Found #{item} at #{start_pos}, which is free to move: #{item&.free_to_move(self, movement)}" end
     free_to_move = item.nil? || item&.free_to_move(self, movement)
     if !item.nil? && free_to_move then
-      #puts "   Adding #{item} to #{boxes_until_space}"
+      if @log_output then puts "   Adding #{item} to #{boxes_until_space}" end
       boxes_until_space.add(item)
       new_positions = item.test_move(movement)
-      #puts "   new_positions: #{new_positions.join ","}"
+      if @log_output then puts "   new_positions: #{new_positions.join ","}" end
       new_positions.each do |test_pos|
-        #puts "   Starting to gather from #{test_pos}"
+        if @log_output then puts "   Starting to gather from #{test_pos}" end
         next_boxes = gather_boxes_until_space(test_pos, movement)
         if next_boxes.nil? then
-          #puts "   ...None found"
+          if @log_output then puts "   ...None found" end
           return nil
         end
-        #puts "   Some found, adding #{next_boxes.size} boxes to set"
+        if @log_output then puts "   Some found, adding #{next_boxes.size} boxes to set" end
         boxes_until_space = boxes_until_space | next_boxes
     
       end      
     end
     if !free_to_move or !start_pos.within(@size) then
-      #puts "   returning nil as free #{!free_to_move} or #{start_pos} within map: #{!start_pos.within(@size)}"
+      if @log_output then puts "   returning nil as free #{!free_to_move} or #{start_pos} within map: #{!start_pos.within(@size)}" end
       return nil
     end
     return boxes_until_space    
@@ -235,8 +256,9 @@ class Grid
   end
 
   def move_robot(instructions, log=false)
-    instructions.split("").each do |movement|
-      if log then puts "Moving by #{movement}" end
+    instructions.split("").each do |movement|      
+      if log then puts "\nMoving by #{movement}" end
+      @old_robot = @robot
       move_robot_single(movement)
       if log then puts self end
     end    
@@ -275,14 +297,13 @@ class Grid
 
   def gps
     total_gps=0
-    boxes = @items.select { |k, item | item.item&.is_a? Box }.each do |k, item|
-      total_gps+=item.gps
+    boxes = @items.select { |k, item | item.item&.is_a? Box }.map { |k, item | item.item }.uniq.each do |box|
+      total_gps+=box.gps
     end
     total_gps
   end
 
   def to_s
-    puts ""
     puts size
     for row in 0...size.y
       for col in 0...size.x
@@ -292,13 +313,15 @@ class Grid
         when nil
           if (robot == pos) then
             print "@"
+          elsif (@old_robot == pos) then
+            print "$"
           else
             print "."
           end
-        when Box
-          print "O"
+        when Box          
+          print item.visualise(pos)
         when Wall
-          print "#"        
+          print "#"
         end
       end
       puts ""
