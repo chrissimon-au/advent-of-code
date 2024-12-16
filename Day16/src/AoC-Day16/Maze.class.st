@@ -11,14 +11,14 @@ Class {
 
 { #category : #accessing }
 Maze class >> parse: input [
-	| maze rows currentPos |
+	| maze rows |
 	rows := input splitOn: Character cr.
 	
 	maze := Maze new 
 		size: {(rows at: 1) size . rows size } asCoordinates.
 	
 	rows doWithIndex: [ :row :rowIdx |
-		row doWithIndex: [ :cell :colIdx |
+		row doWithIndex: [ :cell :colIdx | | currentPos |
 			currentPos := {colIdx . rowIdx } asCoordinates.
 			(cell = $S)
 				ifTrue: [ 
@@ -68,4 +68,32 @@ Maze >> size: s [
 { #category : #accessing }
 Maze >> start: pos [
 	reindeer := Vector new position: pos; direction: #east.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> viewMaze: aView [
+	<gtView>
+	| renderedMaze |
+	renderedMaze := Character cr join: ((1 to: size row) collect: [ :r |
+		'' join: ((1 to: (size col)) collect: [ :c | | cell |
+			cell := $..
+			cell := (r = 1 | (r = size row))
+				ifTrue: $#
+				ifFalse: cell.
+			cell := (c = 1 | (c = size col))
+				ifTrue: $#
+				ifFalse: cell.
+			cell := (c = reindeer position col & (r = reindeer position row))
+				ifTrue: $S
+				ifFalse: cell.
+			cell := (c = end col & (r = end row))
+				ifTrue: $E
+				ifFalse: cell.
+			cell
+		]).
+	]).	
+	^ aView textEditor
+		title: 'Maze';
+		fontName: 'Courier';
+		text: renderedMaze.
 ]
