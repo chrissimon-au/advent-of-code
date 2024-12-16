@@ -21,6 +21,7 @@ MazeExamples class >> parsed [
 	self assert: maze reindeer direction equals: #east.
 	self assert: maze end col equals: 7.
 	self assert: maze end row equals: 3.
+	self assert: (maze wallAt: #(5 2) asCoordinates).
 	^ maze.
 ]
 

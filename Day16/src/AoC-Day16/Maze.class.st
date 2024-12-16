@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'reindeer',
 		'end',
-		'size'
+		'size',
+		'walls'
 	],
 	#category : #'AoC-Day16-Model'
 }
@@ -27,10 +28,19 @@ Maze class >> parse: input [
 			(cell = $E)
 				ifTrue: [
 					maze end: currentPos.
+				].
+			(cell = $#)
+				ifTrue: [
+					maze addWall: currentPos.
 				]
 		]
 	].
 	^maze.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> addWall: wallPos [
+	walls add: wallPos.
 ]
 
 { #category : #'as yet unclassified' }
@@ -41,6 +51,12 @@ Maze >> end [
 { #category : #accessing }
 Maze >> end: pos [
 	end := pos
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> initialize [
+	super initialize.
+	walls := Set new.
 ]
 
 { #category : #'as yet unclassified' }
@@ -62,7 +78,16 @@ Maze >> size [
 
 { #category : #accessing }
 Maze >> size: s [
-	size := s
+	size := s.
+	1 to: (size col) do: [ :c |
+		self addWall: {c . 1} asCoordinates.
+		self addWall: {c . (size row)} asCoordinates.
+	].
+	1 to: size row do: [ :r |
+		self addWall: {1 . r} asCoordinates.
+		self addWall: {(size col) . r} asCoordinates.
+	].
+
 ]
 
 { #category : #accessing }
@@ -75,19 +100,17 @@ Maze >> viewMaze: aView [
 	<gtView>
 	| renderedMaze |
 	renderedMaze := Character cr join: ((1 to: size row) collect: [ :r |
-		'' join: ((1 to: (size col)) collect: [ :c | | cell |
+		'' join: ((1 to: (size col)) collect: [ :c | | cell currentPos |
+			currentPos := {c . r} asCoordinates.
 			cell := $..
-			cell := (r = 1 | (r = size row))
-				ifTrue: $#
-				ifFalse: cell.
-			cell := (c = 1 | (c = size col))
-				ifTrue: $#
-				ifFalse: cell.
-			cell := (c = reindeer position col & (r = reindeer position row))
+			cell := (reindeer position = currentPos)
 				ifTrue: $S
 				ifFalse: cell.
-			cell := (c = end col & (r = end row))
+			cell := (end = currentPos)
 				ifTrue: $E
+				ifFalse: cell.
+			cell := (self wallAt: currentPos)
+				ifTrue: $#
 				ifFalse: cell.
 			cell
 		]).
@@ -96,4 +119,14 @@ Maze >> viewMaze: aView [
 		title: 'Maze';
 		fontName: 'Courier';
 		text: renderedMaze.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> wallAt: coords [
+	^ walls includes: coords.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> walls [
+	^walls.
 ]

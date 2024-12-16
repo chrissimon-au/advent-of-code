@@ -242,14 +242,14 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T21:04:18.936339+11:00"
+						"dateAndTimeString" : "2024-12-16T21:51:31.061418+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
 					"uidString" : "XgZF+cHlDQCDqgHOAb9IGQ=="
 				},
-				"code" : "true & false."
+				"code" : "m := Maze parse: ('\r#####\r#S#E#\r#####\r') trim."
 			},
 			{
 				"__type" : "textSnippet",
