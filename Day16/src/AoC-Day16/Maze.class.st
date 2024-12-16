@@ -5,7 +5,8 @@ Class {
 		'reindeer',
 		'end',
 		'size',
-		'walls'
+		'walls',
+		'graph'
 	],
 	#category : #'AoC-Day16-Model'
 }
@@ -47,6 +48,34 @@ Maze >> addWall: wallPos [
 	walls add: wallPos.
 ]
 
+{ #category : #accessing }
+Maze >> countSeatingTiles [
+	^self seatingTiles size.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> edges [
+	^(self nodes flatCollect: [ :n | | next e |
+		(n class = Vector)
+			ifTrue: [
+				e := 
+				{
+					{n . n rotateLeft . 1000}.
+					{n . n rotateRight . 1000}.
+				} asOrderedCollection.
+				next := n next.	
+				(self wallAt: next position)
+					ifFalse:
+						[ e add: ({n . next . 1}) ].
+				( end = next position)
+					ifTrue:
+						[ e add: ({n . end . 1}) ].
+				e
+			]
+			ifFalse: {}
+	]) asOrderedCollection.
+]
+
 { #category : #'as yet unclassified' }
 Maze >> edges [
 	^(self nodes flatCollect: [ :n | | next e |
@@ -82,20 +111,7 @@ Maze >> end: pos [
 
 { #category : #'as yet unclassified' }
 Maze >> graph [
-	| algo |
-	
-	algo := AIBellmanFord new.
-	algo nodes: self nodes.
-	algo
-		edges: self edges
-		from: #first
-		to: #second
-		weight: #third.
-
-	algo start: reindeer.
-	algo end: end.
-	algo run.
-	^algo.
+	^graph.
 ]
 
 { #category : #'as yet unclassified' }
@@ -104,8 +120,40 @@ Maze >> initialize [
 	walls := Set new.
 ]
 
+{ #category : #accessing }
+Maze >> isBranchPoint: position [ | east west south north countFree |
+    east := position + (#(1 0) asCoordinates).
+	west := position + (#(-1 0) asCoordinates).
+	north := position + (#(0 -1) asCoordinates).
+	south := position + (#(0 1) asCoordinates).
+	countFree := 0.
+"	Transcript crShow: ('      Counting free at ', position asString, ' looking at', north asString, east asString, south asString, west asString)."
+	(self wallAt: east) ifFalse: [countFree := countFree +1].
+	(self wallAt: west) ifFalse: [countFree := countFree +1].
+	(self wallAt: north) ifFalse: [countFree := countFree +1].
+	(self wallAt: south) ifFalse: [countFree := countFree +1].
+"	Transcript crShow: ('         Free: ', countFree asString)."
+	^(countFree > 2).
+]
+
+{ #category : #accessing }
+Maze >> isPotentialBlockerAt: position [ | east west south north |
+	east := position + (#(1 0) asCoordinates).
+	west := position + (#(-1 0) asCoordinates).
+	north := position + (#(0 -1) asCoordinates).
+	south := position + (#(0 1) asCoordinates).
+"	Transcript crShow: ('   Checking if ', position asString, ' is a blocker, looking at', north asString, east asString, south asString, west asString)."
+	^((self isBranchPoint: east)
+		or: [(self isBranchPoint: west)
+		or: [(self isBranchPoint: north)
+		or: [self isBranchPoint: south]]]).
+	
+]
+
 { #category : #'as yet unclassified' }
 Maze >> lowestScore [
+	(graph = nil)
+		ifTrue: [self run].
 	^(self graph findNode:  end) pathDistance.
 ]
 
@@ -130,9 +178,69 @@ Maze >> nodes [
 	^n.
 ]
 
+{ #category : #accessing }
+Maze >> path [
+	(graph = nil)
+		ifTrue: [self run].
+	^ self graph reconstructPath asArray.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> positionsInPath [
+	^ (self path
+		collect: [ :p | p class = Vector ifTrue: [ p position ] ifFalse: [ p ] ]) asSet.
+]
+
 { #category : #'as yet unclassified' }
 Maze >> reindeer [
 	^ reindeer
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> removeWall: wallPos [
+	walls remove: wallPos.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> reset [
+	graph := nil.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> run [
+	graph := AIBellmanFord new.
+	graph nodes: self nodes.
+	graph
+		edges: self edges
+		from: #first
+		to: #second
+		weight: #third.
+
+	graph start: reindeer.
+	graph end: end.
+	graph run.
+	^graph.
+]
+
+{ #category : #accessing }
+Maze >> seatingTiles [
+	| nodes positions lowestScore |
+	positions := self positionsInPath.
+	lowestScore := self lowestScore.
+	nodes := self path.
+	nodes
+		do: [ :n | 
+			| ls |
+			(n class = Vector
+				and: [ (n position = self reindeer position) not
+						and: [ self isPotentialBlockerAt: n position ] ])
+				ifTrue: [ self addWall: n position.
+"					Transcript crShow: 'Trying wall in position' , n asString."
+					self reset.
+					ls := self lowestScore.
+					ls = lowestScore ifTrue: [ positions := positions | self positionsInPath ].
+					self removeWall: n position ] ].
+	^ positions.
 ]
 
 { #category : #'as yet unclassified' }
@@ -162,11 +270,15 @@ Maze >> start: pos [
 { #category : #'as yet unclassified' }
 Maze >> viewMaze: aView [
 	<gtView>
-	| renderedMaze |
+	| renderedMaze seatingTiles |
+	seatingTiles := self seatingTiles.
 	renderedMaze := Character cr join: ((1 to: size row) collect: [ :r |
 		'' join: ((1 to: (size col)) collect: [ :c | | cell currentPos |
 			currentPos := {c . r} asCoordinates.
 			cell := $..
+			cell := (seatingTiles includes: currentPos)
+				ifTrue: $O
+				ifFalse: cell.
 			cell := (reindeer position = currentPos)
 				ifTrue: $S
 				ifFalse: cell.
