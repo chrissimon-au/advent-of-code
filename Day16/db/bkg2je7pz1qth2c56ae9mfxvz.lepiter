@@ -142,6 +142,74 @@
 					"uidString" : "VTDtWLzlDQCBEX93BXjR6g=="
 				},
 				"code" : "#lucky hash = #lucky hash. \"This will always be true\""
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:25:55.018461+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:26:14.143674+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "R7qpebzlDQCRXR2yAJQSrQ=="
+				},
+				"code" : "#('talk' 'a' 'little' 'louder') collect: [ :word | word asCamelCase ]"
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T15:03:10.929708+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T15:24:43.614921+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "hgnv/rzlDQCiotxGCWbXsg=="
+				},
+				"code" : "day16 := Day16 new.\rday16 checkTrue."
 			}
 		]
 	},
