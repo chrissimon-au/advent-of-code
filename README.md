@@ -48,12 +48,3 @@ It's up to each language's test runner to load the data and pass to the test sui
 * 2024-12-23 - Day 23 in Elixir
 * 2024-12-24 - Day 24 in Gleam
 * 2024-12-25 - Day 25 in zig
-
-## Installation
-
-```st
-Metacello new
-	repository: 'github://chrissimon-au/advent-of-code-2024:main/Day16/src';
-	baseline: 'AoCDay16';
-	load
-```
