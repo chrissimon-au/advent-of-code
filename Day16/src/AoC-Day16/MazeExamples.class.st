@@ -8,7 +8,7 @@ Class {
 MazeExamples class >> singleTurn [
 	<gtExample>
 	| maze |
-	maze := Maze new width: 8; height: 4; start: (Position new col: 2; row: 2); end: (Position new col: 7; row: 3).
+	maze := Maze new size: #(8 4) asCoordinates; start: #(2 2) asCoordinates; end: #(7 3) asCoordinates.
 	self assert: maze lowestScore equals: (7 + 1000).
 	^maze
 ]
@@ -17,10 +17,9 @@ MazeExamples class >> singleTurn [
 MazeExamples class >> straightLine [
 	<gtExample>
 	| maze |
-	maze := Maze new width: 8; height: 3; start: (Position new col: 2; row: 2); end: (Position new col: 7; row: 2).
-	Transcript crShow: maze width.
-	self assert: maze width equals: 8.
-	self assert: maze height equals: 3.
+	maze := Maze new size: #(8 3) asCoordinates; start: #(2 2) asCoordinates; end:#(7 2) asCoordinates.
+	self assert: maze size col equals: 8.
+	self assert: maze size row equals: 3.
 	self assert: maze lowestScore equals: 5.
 	^maze
 ]

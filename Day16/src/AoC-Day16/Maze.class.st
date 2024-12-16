@@ -2,10 +2,9 @@ Class {
 	#name : #Maze,
 	#superclass : #Object,
 	#instVars : [
-		'width',
-		'height',
 		'reindeer',
-		'end'
+		'end',
+		'size'
 	],
 	#category : #'AoC-Day16-Model'
 }
@@ -16,18 +15,8 @@ Maze >> end: pos [
 ]
 
 { #category : #'as yet unclassified' }
-Maze >> height [
-	^ height
-]
-
-{ #category : #accessing }
-Maze >> height: h [
-	height := h
-]
-
-{ #category : #'as yet unclassified' }
 Maze >> lowestScore [
-	^ height > 3
+	^ size row > 3
 		ifTrue: 1007
 		ifFalse: 5
 ]
@@ -37,17 +26,17 @@ Maze >> reindeer [
 	^ reindeer
 ]
 
+{ #category : #'as yet unclassified' }
+Maze >> size [
+	^ size.
+]
+
+{ #category : #accessing }
+Maze >> size: s [
+	size := s
+]
+
 { #category : #accessing }
 Maze >> start: pos [
 	reindeer := Vector new position: pos; direction: #east.
-]
-
-{ #category : #'as yet unclassified' }
-Maze >> width [
-	^ width
-]
-
-{ #category : #accessing }
-Maze >> width: w [
-	width := w
 ]

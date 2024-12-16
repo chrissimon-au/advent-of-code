@@ -145,6 +145,40 @@
 					"uidString" : "ZkhSnb/lDQC+dTAuBv9eBw=="
 				},
 				"code" : "MazeExamples singleTurn."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T18:51:37.526841+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T19:09:52.098388+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "thjpL8DlDQC0RSkpA0rbCw=="
+				},
+				"code" : "#(5 6) ."
 			}
 		]
 	},
