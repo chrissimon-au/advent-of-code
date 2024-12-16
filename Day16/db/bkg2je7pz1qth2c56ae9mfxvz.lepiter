@@ -1,0 +1,178 @@
+{
+	"__schema" : "4.1",
+	"__type" : "page",
+	"children" : {
+		"__type" : "snippets",
+		"items" : [
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:18:55.411029+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:19:30.638752+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "vTbTX7zlDQCNeZWqAJQSrQ=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "This page contains examples from following along with the [Tutorial](https://ceronio.net/2017/07/first-steps-with-pharo-smalltalk/) found here"
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:06:21.676363+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:11:26.037472+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "j/C5M7zlDQCWJr+LCIxlww=="
+				},
+				"code" : "Transcript show: 'Hello Pharo!'; cr.\rTranscript show: 5 factorial; cr.\r2+5."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:16:00.485452+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:16:01.314901+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "W945VrzlDQCBCKU6BXjR6g=="
+				},
+				"code" : "page := ZnClient new get: 'https://ceronio.net'.\nTranscript show: page."
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:16:45.792+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T14:17:09.410952+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "VTDtWLzlDQCBEX93BXjR6g=="
+				},
+				"code" : "#lucky hash = #lucky hash. \"This will always be true\""
+			}
+		]
+	},
+	"createEmail" : {
+		"__type" : "email",
+		"emailString" : "<unknown>"
+	},
+	"createTime" : {
+		"__type" : "time",
+		"time" : {
+			"__type" : "dateAndTime",
+			"dateAndTimeString" : "2024-12-16T14:18:35.951867+11:00"
+		}
+	},
+	"editEmail" : {
+		"__type" : "email",
+		"emailString" : "<unknown>"
+	},
+	"editTime" : {
+		"__type" : "time",
+		"time" : {
+			"__type" : "dateAndTime",
+			"dateAndTimeString" : "2024-12-16T14:18:35.951867+11:00"
+		}
+	},
+	"pageType" : {
+		"__type" : "namedPage",
+		"title" : "Pharo Tutorial"
+	},
+	"uid" : {
+		"__type" : "uuid",
+		"uuid" : "4f534a33-bce5-0d00-961e-fc80088c65c3"
+	}
+}
