@@ -27,7 +27,9 @@ Maze >> height: h [
 
 { #category : #'as yet unclassified' }
 Maze >> lowestScore [
-	^ 5
+	^ height > 3
+		ifTrue: 1007
+		ifFalse: 5
 ]
 
 { #category : #'as yet unclassified' }
