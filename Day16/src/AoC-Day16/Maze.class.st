@@ -77,29 +77,6 @@ Maze >> edges [
 ]
 
 { #category : #'as yet unclassified' }
-Maze >> edges [
-	^(self nodes flatCollect: [ :n | | next e |
-		(n class = Vector)
-			ifTrue: [
-				e := 
-				{
-					{n . n rotateLeft . 1000}.
-					{n . n rotateRight . 1000}.
-				} asOrderedCollection.
-				next := n next.	
-				(self wallAt: next position)
-					ifFalse:
-						[ e add: ({n . next . 1}) ].
-				( end = next position)
-					ifTrue:
-						[ e add: ({n . end . 1}) ].
-				e
-			]
-			ifFalse: {}
-	]) asOrderedCollection.
-]
-
-{ #category : #'as yet unclassified' }
 Maze >> end [
 	^end.
 ]
@@ -202,13 +179,32 @@ Maze >> removeWall: wallPos [
 ]
 
 { #category : #'as yet unclassified' }
+Maze >> render: path [
+	^ Character cr
+		join: ((1 to: size row)
+				collect: [ :r | 
+					''
+						join: ((1 to: size col)
+								collect: [ :c | 
+									| cell currentPos |
+									currentPos := {c.
+											r} asCoordinates.
+									cell := $..
+									cell := (path includes: currentPos) ifTrue: $O ifFalse: cell.
+									cell := reindeer position = currentPos ifTrue: $S ifFalse: cell.
+									cell := end = currentPos ifTrue: $E ifFalse: cell.
+									cell := (self wallAt: currentPos) ifTrue: $# ifFalse: cell.
+									cell ]) ])
+]
+
+{ #category : #'as yet unclassified' }
 Maze >> reset [
 	graph := nil.
 ]
 
 { #category : #'as yet unclassified' }
 Maze >> run [
-	graph := AIBellmanFord new.
+	graph := AIDijkstra new.
 	graph nodes: self nodes.
 	graph
 		edges: self edges
@@ -270,31 +266,19 @@ Maze >> start: pos [
 { #category : #'as yet unclassified' }
 Maze >> viewMaze: aView [
 	<gtView>
-	| renderedMaze seatingTiles |
-	seatingTiles := self seatingTiles.
-	renderedMaze := Character cr join: ((1 to: size row) collect: [ :r |
-		'' join: ((1 to: (size col)) collect: [ :c | | cell currentPos |
-			currentPos := {c . r} asCoordinates.
-			cell := $..
-			cell := (seatingTiles includes: currentPos)
-				ifTrue: $O
-				ifFalse: cell.
-			cell := (reindeer position = currentPos)
-				ifTrue: $S
-				ifFalse: cell.
-			cell := (end = currentPos)
-				ifTrue: $E
-				ifFalse: cell.
-			cell := (self wallAt: currentPos)
-				ifTrue: $#
-				ifFalse: cell.
-			cell
-		]).
-	]).	
 	^ aView textEditor
 		title: 'Maze';
 		fontName: 'Courier';
-		text: renderedMaze.
+		text: (self render: (Set new))
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> viewSolvedMaze: aView [
+	<gtView>
+	^ aView textEditor
+		title: 'Solved Maze';
+		fontName: 'Courier';
+		text: (self render: (self positionsInPath))
 ]
 
 { #category : #'as yet unclassified' }
