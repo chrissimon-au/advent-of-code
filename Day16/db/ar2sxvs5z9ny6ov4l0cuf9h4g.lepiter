@@ -66,14 +66,14 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T17:42:05.58315+11:00"
+						"dateAndTimeString" : "2024-12-16T18:10:34.327324+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
 					"uidString" : "E6coGr7lDQCQq23LBPGdtQ=="
 				},
-				"code" : "maze := MazeExamples straightLine."
+				"code" : "MazeExamples straightLine."
 			},
 			{
 				"__type" : "textSnippet",
@@ -100,7 +100,7 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T16:14:04.141734+11:00"
+						"dateAndTimeString" : "2024-12-16T18:10:24.870088+11:00"
 					}
 				},
 				"uid" : {
@@ -110,7 +110,41 @@
 				"paragraphStyle" : {
 					"__type" : "textStyle"
 				},
-				"string" : ""
+				"string" : "Next example will require turning at a wall"
+			},
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T18:10:38.169251+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-16T18:10:46.448384+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "ZkhSnb/lDQC+dTAuBv9eBw=="
+				},
+				"code" : "MazeExamples singleTurn."
 			}
 		]
 	},
