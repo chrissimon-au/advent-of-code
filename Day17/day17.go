@@ -21,12 +21,18 @@ func bxl(registers Registers, operand int) (Registers, int) {
 	return registers, registers.B ^ operand
 }
 
+func bst(registers Registers, operand int) (Registers, int) {
+	return registers, operand
+}
+
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 	switch opcode {
 	case 0:
 		return adv(registers, operand)
 	case 1:
 		return bxl(registers, operand)
+	case 2:
+		return bst(registers, operand)
 	}
 	return registers, 0
 }
