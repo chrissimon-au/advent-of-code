@@ -74,6 +74,14 @@ Register B: 0
 Register C: 0
 
 Program: 2,1,5,5`, "1"},
+
+		{"bst: nums >= 8 return modulo",
+			`
+Register A: 10
+Register B: 0
+Register C: 0
+
+Program: 2,4,5,5`, "2"},
 	}
 
 	for _, tt := range tests {
