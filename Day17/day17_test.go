@@ -114,6 +114,14 @@ Register B: 3
 Register C: 1
 
 Program: 4,0,5,5`, "2"},
+
+		{"out: out simple value",
+			`
+Register A: 1
+Register B: 1
+Register C: 1
+
+Program: 5,1`, "1"},
 	}
 
 	for _, tt := range tests {
