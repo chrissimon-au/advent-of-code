@@ -46,6 +46,10 @@ func bxc(registers Registers) (Registers, int) {
 	return registers, registers.B ^ registers.C
 }
 
+func out(registers Registers, operand int) (Registers, int) {
+	return registers, operand
+}
+
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 	switch opcode {
 	case 0:
@@ -56,6 +60,8 @@ func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 		return bst(registers, operand)
 	case 4:
 		return bxc(registers)
+	case 5:
+		return out(registers, operand)
 	}
 	panic("undefined opcode")
 }
