@@ -8,8 +8,13 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+MultiPathNode >> clearPreviousNodes [
+	previousNodes := OrderedCollection new.
+]
+
+{ #category : #'as yet unclassified' }
 MultiPathNode >> previousNodes [
 	(previousNodes = nil) ifTrue:
-		[previousNodes := OrderedCollection new.].
+		[self clearPreviousNodes].
 	^previousNodes.
 ]

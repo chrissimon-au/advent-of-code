@@ -77,5 +77,6 @@ MazeAlgorithm >> shortestPath [
 { #category : #accessing }
 MazeAlgorithm >> updateDistance: newDistance of: aNode previousNode: previousNode [
 	super updateDistance: newDistance of: aNode previousNode: previousNode.
+	aNode clearPreviousNodes.
 	self addPreviousNodeTo: aNode previousNode: previousNode.
 ]
