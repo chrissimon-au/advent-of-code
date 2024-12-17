@@ -18,7 +18,7 @@ func adv(registers Registers, operand int) (Registers, int) {
 }
 
 func bxl(registers Registers, _ int) (Registers, int) {
-	return registers, 0
+	return registers, registers.B
 }
 
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
@@ -36,11 +36,13 @@ func ExecuteProgram(input string) string {
 	registerStrs := strings.Split(inputParts[0], "\n")
 	instructions := strings.Split(strings.Replace(inputParts[1], "Program: ", "", -1), ",")
 	registerAStr := strings.Replace(registerStrs[0], "Register A: ", "", -1)
+	registerBStr := strings.Replace(registerStrs[1], "Register B: ", "", -1)
 	registerA, _ := strconv.Atoi(registerAStr)
+	registerB, _ := strconv.Atoi(registerBStr)
 	opcode, _ := strconv.Atoi(instructions[0])
 	operand, _ := strconv.Atoi(instructions[1])
 
-	registers := Registers{registerA, 0, 0}
+	registers := Registers{registerA, registerB, 0}
 	// fmt.Println("====")
 	// fmt.Printf("%s\n", input)
 	// fmt.Printf("%s: %s\n", registerAStr, instructions)
