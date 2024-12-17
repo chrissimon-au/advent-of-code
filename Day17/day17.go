@@ -1,13 +1,9 @@
-package main
+package day17
 
 import (
-	"fmt"
+
 )
 
-func Check() bool {
-	return true
-}
-
-func main() {
-    fmt.Println("Hello, World!")
+func ExecuteProgram(input string) string {
+	return ""
 }
