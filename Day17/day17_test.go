@@ -50,6 +50,14 @@ Register B: 0
 Register C: 0
 
 Program: 1,0,5,5`, "0"},
+
+		{"bxl: Bitwise xor with 0 returns input",
+			`
+Register A: 15
+Register B: 3
+Register C: 0
+
+Program: 1,0,5,5`, "3"},
 	}
 
 	for _, tt := range tests {
