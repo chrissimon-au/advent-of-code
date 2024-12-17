@@ -66,6 +66,14 @@ Register B: 3
 Register C: 0
 
 Program: 1,1,5,5`, "2"},
+
+		{"bst: nums < 8 return input",
+			`
+Register A: 0
+Register B: 0
+Register C: 0
+
+Program: 2,1,5,5`, "1"},
 	}
 
 	for _, tt := range tests {
