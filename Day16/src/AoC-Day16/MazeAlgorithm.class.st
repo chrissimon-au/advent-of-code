@@ -6,15 +6,14 @@ Class {
 		'start',
 		'end',
 		'allNodesInShortestPaths',
-		'shortestPath',
-		'nodeAccumulator'
+		'shortestPath'
 	],
 	#category : #'AoC-Day16-Graph'
 }
 
 { #category : #'as yet unclassified' }
 MazeAlgorithm >> allNodesInShortestPaths [
-	^allNodesInShortestPaths.
+	^(allPaths flatCollect: [:p | p at: #path]) asSet.
 ]
 
 { #category : #'as yet unclassified' }
@@ -79,15 +78,15 @@ MazeAlgorithm >> nodeClass [
 ]
 
 { #category : #'as yet unclassified' }
-MazeAlgorithm >> reconstructPathEdges [
+MazeAlgorithm >> reconstructPathEdges: graph [
 	| path previous previousEdge|
 	"If no path exists between the start and the end node"
-	end pathDistance = Float infinity ifTrue: [ ^ #(  ) ].
+	graph pathDistance = Float infinity ifTrue: [ ^ #(  ) ].
 	path := LinkedList empty.
-	previous := end.
+	previous := graph end.
 	previousEdge := self findEdgeBetween: previous previousNode and: previous.
 	path addFirst: previousEdge.
-	[ previous previousNode = start ] whileFalse: [
+	[ previous previousNode = graph start ] whileFalse: [
 		previous := previous previousNode.
 		previousEdge := self findEdgeBetween: previous previousNode and: previous.
 		path addFirst: previousEdge ].
@@ -95,27 +94,49 @@ MazeAlgorithm >> reconstructPathEdges [
 ]
 
 { #category : #'as yet unclassified' }
-MazeAlgorithm >> run [ | graph shortestPathDistance|
+MazeAlgorithm >> run [ | graph pathEdges shortestPathDistance |
+	allPaths := OrderedCollection new.
+
 	graph := AIDijkstra new.
 	graph nodes: (self nodes collect: [:n | n model]).
 	graph
-		edges: (self edges collect: [:e | e model])
+		edges: (self edges  collect: [:e | e model])
 		from: #first
 		to: #second
 		weight: #third.
-
-	graph start: start model.
-	graph end: end model.
+	graph start: (start model).
+	graph end: (end model).
 	graph run.
 	
-	shortestPathDistance := graph pathDistance.
-	shortestPath := graph reconstructPath.
-	nodeAccumulator := OrderedCollection new.
+	shortestPathDistance := graph pathDistance.	
 	
-	Transcript crShow: ('Found shortest path with {1}' format: { shortestPathDistance }).
+	shortestPath:=graph reconstructPath.
+	allPaths add: {#path -> (graph reconstructPath) . #distance -> shortestPathDistance} asDictionary.
 	
-	self findPathsFrom: start distance: 0 maxLength: shortestPathDistance.
-	
+	pathEdges := self reconstructPathEdges: graph.
+		
+	Transcript crShow: ('Found path with minDistance:{1} and edgeCount:{2}.' format: {shortestPathDistance . pathEdges size}).
+	Transcript crShow: ''.
+	"Try finding shortest path for each version of the graph with one of the shortest path edges missing.  Any versions that have the same mindistance are kept."
+	pathEdges do: [:edge | | distance|
+		graph := AIDijkstra new.
+		Transcript crShow: ('Experimenting with removing edge {1} using graph {2}' format: {edge . graph class}).
+		graph nodes: (self nodes collect: [:n | n model]).
+		graph
+			edges: ((self edges reject: [:e|e model = edge model]) collect: [:e | e model])
+			from: #first
+			to: #second
+			weight: #third.
+		graph start: (start model).
+		graph end: (end model).
+		graph run.
+		
+		distance := graph pathDistance.
+		Transcript crShow: ('   Found path with distance {1}.' format: {distance}).
+		(distance = shortestPathDistance) ifTrue: [
+			allPaths add: {#path -> (graph reconstructPath) . #distance -> distance} asDictionary.
+		].
+	].
 	^self.
 ]
 

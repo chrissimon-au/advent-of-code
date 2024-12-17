@@ -71,13 +71,16 @@ Maze >> edges [
 						[ e add: ({n . next . 1000}) ].
 
 				next := n next.	
-				(self wallAt: next position)
-					ifFalse:
-						[ e add: ({n . next . 1}) ].
 
 				( end = next position)
 					ifTrue:
-						[ e add: ({n . end . 1}) ].
+						[ e add: ({n . end . 1}) ]
+					ifFalse: [
+						(self wallAt: next position)
+							ifFalse:
+								[ e add: ({n . next . 1}) ]
+					].
+						
 				e
 			]
 			ifFalse: {}
@@ -146,18 +149,36 @@ Maze >> lowestScore [
 
 { #category : #'as yet unclassified' }
 Maze >> nodes [
-	| n |
+	| n next ns|
 	n := ((1 to: size row) flatCollect: [ :r |
 	(1 to: (size col)) flatCollect: [ :c | | currentPos |			
 		currentPos := { c . r } asCoordinates.
 		((self wallAt: currentPos) or: [currentPos = end])
 			ifFalse:
-			{
-				Vector new position: currentPos; direction: #north.
-				Vector new position: currentPos; direction: #south.
-				Vector new position: currentPos; direction: #east.
-				Vector new position: currentPos; direction: #west.
-			}
+			[
+				ns := OrderedCollection new.
+
+				next := Vector new position: currentPos; direction: #north.
+				(self wallAt: next next)
+					ifFalse:
+						[ns add: next.].
+				
+				next := Vector new position: currentPos; direction: #south.
+				(self wallAt: next next)
+					ifFalse:
+						[ns add: next.].
+						
+				next := Vector new position: currentPos; direction: #east.
+				(self wallAt: next next)
+					ifFalse:
+						[ns add: next.].
+
+				next := Vector new position: currentPos; direction: #west.
+				(self wallAt: next next)
+					ifFalse:
+						[ns add: next.].
+				ns.
+			]
 			ifTrue: {}.
 		].
 	]) asOrderedCollection.
