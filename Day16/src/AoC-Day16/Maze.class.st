@@ -88,6 +88,8 @@ Maze >> end: pos [
 
 { #category : #'as yet unclassified' }
 Maze >> graph [
+	(graph = nil)
+		ifTrue: [self run].
 	^graph.
 ]
 
@@ -131,7 +133,7 @@ Maze >> isPotentialBlockerAt: position [ | east west south north |
 Maze >> lowestScore [
 	(graph = nil)
 		ifTrue: [self run].
-	^(self graph findNode:  end) pathDistance.
+	^graph pathDistance.
 ]
 
 { #category : #'as yet unclassified' }
@@ -140,7 +142,7 @@ Maze >> nodes [
 	n := ((1 to: size row) flatCollect: [ :r |
 	(1 to: (size col)) flatCollect: [ :c | | currentPos |			
 		currentPos := { c . r } asCoordinates.
-		(self wallAt: currentPos)
+		((self wallAt: currentPos) and: [currentPos = end])
 			ifFalse:
 			{
 				Vector new position: currentPos; direction: #north.
@@ -189,11 +191,11 @@ Maze >> render: path [
 									| cell currentPos |
 									currentPos := {c.
 											r} asCoordinates.
-									cell := $..
-									cell := (path includes: currentPos) ifTrue: $O ifFalse: cell.
+									cell := $..									
 									cell := reindeer position = currentPos ifTrue: $S ifFalse: cell.
 									cell := end = currentPos ifTrue: $E ifFalse: cell.
 									cell := (self wallAt: currentPos) ifTrue: $# ifFalse: cell.
+									cell := (path includes: currentPos) ifTrue: $O ifFalse: cell.
 									cell ]) ])
 ]
 
@@ -204,7 +206,7 @@ Maze >> reset [
 
 { #category : #'as yet unclassified' }
 Maze >> run [
-	graph := AIDijkstra new.
+	graph := MazeAlgorithm new.
 	graph nodes: self nodes.
 	graph
 		edges: self edges

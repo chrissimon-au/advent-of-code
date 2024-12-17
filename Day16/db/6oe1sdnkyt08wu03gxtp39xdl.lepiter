@@ -1,0 +1,110 @@
+{
+	"__schema" : "4.1",
+	"__type" : "page",
+	"children" : {
+		"__type" : "snippets",
+		"items" : [
+			{
+				"__type" : "pharoSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T12:07:06.458178+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T12:07:10.79122+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "q2AVp87lDQChXuS2CofKcA=="
+				},
+				"code" : "EpMonitor disableDuring: [\n    Metacello new\n        repository: 'github://pharo-ai/graph-algorithms';\n        baseline: 'AIGraphAlgorithms';\n        load ]"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T12:07:00.166431+11:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2024-12-17T12:07:00.166431+11:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "LV+1ps7lDQChXUr4CofKcA=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : ""
+			}
+		]
+	},
+	"createEmail" : {
+		"__type" : "email",
+		"emailString" : "<unknown>"
+	},
+	"createTime" : {
+		"__type" : "time",
+		"time" : {
+			"__type" : "dateAndTime",
+			"dateAndTimeString" : "2024-12-17T12:22:40.592904+11:00"
+		}
+	},
+	"editEmail" : {
+		"__type" : "email",
+		"emailString" : "<unknown>"
+	},
+	"editTime" : {
+		"__type" : "time",
+		"time" : {
+			"__type" : "dateAndTime",
+			"dateAndTimeString" : "2024-12-17T12:22:40.592904+11:00"
+		}
+	},
+	"pageType" : {
+		"__type" : "namedPage",
+		"title" : "Load updated Version of AI Graph Algorithms"
+	},
+	"uid" : {
+		"__type" : "uuid",
+		"uuid" : "3908b5a6-cee5-0d00-a15c-8e9e0a87ca70"
+	}
+}

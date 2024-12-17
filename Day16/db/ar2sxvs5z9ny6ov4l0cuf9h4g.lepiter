@@ -407,40 +407,6 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-17T00:31:50.570984+11:00"
-					}
-				},
-				"editEmail" : {
-					"__type" : "email",
-					"emailString" : "<unknown>"
-				},
-				"editTime" : {
-					"__type" : "time",
-					"time" : {
-						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-17T00:32:04.338801+11:00"
-					}
-				},
-				"uid" : {
-					"__type" : "uid",
-					"uidString" : "c22f8MTlDQCML9QaANOaDQ=="
-				},
-				"code" : "maze := MazeExamples parsed.\rmaze wallAt:"
-			},
-			{
-				"__type" : "pharoSnippet",
-				"children" : {
-					"__type" : "snippets",
-					"items" : [ ]
-				},
-				"createEmail" : {
-					"__type" : "email",
-					"emailString" : "<unknown>"
-				},
-				"createTime" : {
-					"__type" : "time",
-					"time" : {
-						"__type" : "dateAndTime",
 						"dateAndTimeString" : "2024-12-17T00:52:31.005687+11:00"
 					}
 				},
@@ -486,14 +452,14 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-17T08:58:01.463708+11:00"
+						"dateAndTimeString" : "2024-12-17T12:24:27.982947+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
 					"uidString" : "lu0uX8XlDQCUyF/5ANOaDQ=="
 				},
-				"code" : "(Maze parse: ('\r#################\n#...#...#...#..E#\n#.#.#.#.#.#.#.#.#\n#.#.#.#...#...#.#\n#.#.#.#.###.#.#.#\n#...#.#.#.....#.#\n#.#.#.#.#.#####.#\n#.#...#.#.#.....#\n#.#.#####.#.###.#\n#.#.#.......#...#\n#.#.###.#####.###\n#.#.#...#.....#.#\n#.#.#.#####.###.#\n#.#.#.........#.#\n#.#.#.#########.#\n#S#.............#\n#################\r' trim))."
+				"code" : "maze := (Maze parse: ('\r#################\n#...#...#...#..E#\n#.#.#.#.#.#.#.#.#\n#.#.#.#...#...#.#\n#.#.#.#.###.#.#.#\n#...#.#.#.....#.#\n#.#.#.#.#.#####.#\n#.#...#.#.#.....#\n#.#.#####.#.###.#\n#.#.#.......#...#\n#.#.###.#####.###\n#.#.#...#.....#.#\n#.#.#.#####.###.#\n#.#.#.........#.#\n#.#.#.#########.#\n#S#.............#\n#################\r' trim)).\r"
 			}
 		]
 	},
