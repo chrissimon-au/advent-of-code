@@ -122,6 +122,14 @@ Register B: 1
 Register C: 1
 
 Program: 5,1`, "1"},
+
+		{"out: out combo value",
+			`
+Register A: 1
+Register B: 3
+Register C: 5
+
+Program: 5,6`, "5"},
 	}
 
 	for _, tt := range tests {
