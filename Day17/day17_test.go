@@ -98,6 +98,14 @@ Register B: 0
 Register C: 0
 
 Program: 2,4,5,5`, "2"},
+
+		{"bxc: noop xor with 0 is input",
+			`
+Register A: 0
+Register B: 3
+Register C: 0
+
+Program: 4,0,5,5`, "3"},
 	}
 
 	for _, tt := range tests {
