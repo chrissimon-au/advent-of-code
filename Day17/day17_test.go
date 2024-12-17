@@ -30,6 +30,13 @@ Register B: 0
 Register C: 0
 
 Program: 0,1,5,4`, "2"},
+
+		{`
+Register A: 15
+Register B: 0
+Register C: 0
+
+Program: 0,2,5,4`, "3"},
 	}
 
 	for _, tt := range tests {
