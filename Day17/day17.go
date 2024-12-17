@@ -47,7 +47,7 @@ func bxc(registers Registers) (Registers, int) {
 }
 
 func out(registers Registers, operand int) (Registers, int) {
-	return registers, operand
+	return registers, ComboOperandValue(registers, operand)
 }
 
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
