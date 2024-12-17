@@ -1,6 +1,7 @@
 package day17
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -73,16 +74,23 @@ func ParseProgram(program string) (int, int) {
 	return opcode, operand
 }
 
+func logState(input string, registers Registers, opcode int, operand int) {
+	fmt.Println("====")
+	fmt.Printf("%s\n", input)
+	fmt.Println("-")
+	fmt.Printf("Registers: %d\n", registers)
+	fmt.Printf("opcode operand: %d %d\n", opcode, operand)
+	fmt.Println("----")
+}
+
 func ExecuteProgram(input string) string {
 	inputParts := strings.Split(input, "\n\n")
 	registers := ParseRegisters(inputParts[0])
 	opcode, operand := ParseProgram(inputParts[1])
 
-	// fmt.Println("====")
-	// fmt.Printf("%s\n", input)
-	// fmt.Printf("%s: %s\n", registerAStr, instructions)
-	// fmt.Printf("%d: %d %d\n", registers, opcode, operand)
-	// fmt.Println("---")
+	if false {
+		logState(input, registers, opcode, operand)
+	}
 
 	_, result := EvaluateOp(registers, opcode, operand)
 
