@@ -5,5 +5,5 @@ import (
 )
 
 func ExecuteProgram(input string) string {
-	return ""
+	return "0"
 }
