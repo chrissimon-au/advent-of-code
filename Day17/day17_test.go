@@ -19,7 +19,7 @@ func Test_Computer(t *testing.T) {
 		expected_output string
 	}{
 
-		{"Nothing to do: 0 divide by 1",
+		{"adv: Nothing to do: 0 divide by 1",
 			`
 Register A: 0
 Register B: 0
@@ -27,7 +27,7 @@ Register C: 0
 
 Program: 0,1,5,4`, "0"},
 
-		{"Simple Division: 4 / 2",
+		{"adv: Simple Division: 4 / 2",
 			`
 Register A: 4
 Register B: 0
@@ -35,13 +35,21 @@ Register C: 0
 
 Program: 0,1,5,4`, "2"},
 
-		{"Rounding: 15 / 4",
+		{"adv: Rounding: 15 / 4",
 			`
 Register A: 15
 Register B: 0
 Register C: 0
 
 Program: 0,2,5,4`, "3"},
+
+		{"bxl: Nothing to do",
+			`
+Register A: 15
+Register B: 0
+Register C: 0
+
+Program: 1,0,5,5`, "0"},
 	}
 
 	for _, tt := range tests {
