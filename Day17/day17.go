@@ -21,6 +21,8 @@ func ComboOperandValue(registers Registers, operand int) int {
 		return registers.A
 	case 5:
 		return registers.B
+	case 6:
+		return registers.C
 	}
 	panic("undefined")
 }
@@ -57,12 +59,14 @@ func ExecuteProgram(input string) string {
 	instructions := strings.Split(strings.Replace(inputParts[1], "Program: ", "", -1), ",")
 	registerAStr := strings.Replace(registerStrs[0], "Register A: ", "", -1)
 	registerBStr := strings.Replace(registerStrs[1], "Register B: ", "", -1)
+	registerCStr := strings.Replace(registerStrs[2], "Register C: ", "", -1)
 	registerA, _ := strconv.Atoi(registerAStr)
 	registerB, _ := strconv.Atoi(registerBStr)
+	registerC, _ := strconv.Atoi(registerCStr)
 	opcode, _ := strconv.Atoi(instructions[0])
 	operand, _ := strconv.Atoi(instructions[1])
 
-	registers := Registers{registerA, registerB, 0}
+	registers := Registers{registerA, registerB, registerC}
 	// fmt.Println("====")
 	// fmt.Printf("%s\n", input)
 	// fmt.Printf("%s: %s\n", registerAStr, instructions)
