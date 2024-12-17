@@ -22,7 +22,7 @@ Register A: 0
 Register B: 0
 Register C: 0
 
-Program: 0,1`, "0"},
+Program: 0,1,5,4`, "0"},
     }
 
 	for _, tt := range tests {
