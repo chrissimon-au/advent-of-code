@@ -43,13 +43,21 @@ Register C: 0
 
 Program: 0,2,5,4`, "3"},
 
-		{"adv: using combo operand",
+		{"adv: using combo operand B",
 			`
 Register A: 15
 Register B: 3
 Register C: 0
 
 Program: 0,5,5,4`, "1"},
+
+		{"adv: using combo operand C",
+			`
+Register A: 15
+Register B: 0
+Register C: 3
+
+Program: 0,6,5,4`, "1"},
 
 		{"bxl: Nothing to do",
 			`
