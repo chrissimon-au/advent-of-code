@@ -12,6 +12,17 @@ type Registers struct {
 	C int
 }
 
+func ComboOperandValue(registers Registers, operand int) int {
+	if operand <= 3 {
+		return operand
+	}
+	switch operand {
+	case 4:
+		return registers.A
+	}
+	panic("undefined")
+}
+
 func adv(registers Registers, operand int) (Registers, int) {
 	divisor := int(math.Pow(2, float64(operand)))
 	return registers, registers.A / divisor
@@ -22,7 +33,7 @@ func bxl(registers Registers, operand int) (Registers, int) {
 }
 
 func bst(registers Registers, operand int) (Registers, int) {
-	return registers, operand
+	return registers, ComboOperandValue(registers, operand) % 8
 }
 
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
@@ -34,7 +45,7 @@ func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 	case 2:
 		return bst(registers, operand)
 	}
-	return registers, 0
+	panic("undefined opcode")
 }
 
 func ExecuteProgram(input string) string {
