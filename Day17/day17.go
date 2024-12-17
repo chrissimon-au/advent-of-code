@@ -65,13 +65,18 @@ func ParseRegisters(registerStr string) Registers {
 	return Registers{registerA, registerB, registerC}
 }
 
-func ExecuteProgram(input string) string {
-	inputParts := strings.Split(input, "\n\n")
-	registers := ParseRegisters(inputParts[0])
-	instructions := strings.Split(strings.Replace(inputParts[1], "Program: ", "", -1), ",")
+func ParseProgram(program string) (int, int) {
+	instructions := strings.Split(strings.Replace(program, "Program: ", "", -1), ",")
 
 	opcode, _ := strconv.Atoi(instructions[0])
 	operand, _ := strconv.Atoi(instructions[1])
+	return opcode, operand
+}
+
+func ExecuteProgram(input string) string {
+	inputParts := strings.Split(input, "\n\n")
+	registers := ParseRegisters(inputParts[0])
+	opcode, operand := ParseProgram(inputParts[1])
 
 	// fmt.Println("====")
 	// fmt.Printf("%s\n", input)
