@@ -17,8 +17,8 @@ func adv(registers Registers, operand int) (Registers, int) {
 	return registers, registers.A / divisor
 }
 
-func bxl(registers Registers, _ int) (Registers, int) {
-	return registers, registers.B
+func bxl(registers Registers, operand int) (Registers, int) {
+	return registers, registers.B ^ operand
 }
 
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
