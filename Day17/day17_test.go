@@ -106,6 +106,14 @@ Register B: 3
 Register C: 0
 
 Program: 4,0,5,5`, "3"},
+
+		{"bxc: xor B with C",
+			`
+Register A: 0
+Register B: 3
+Register C: 1
+
+Program: 4,0,5,5`, "2"},
 	}
 
 	for _, tt := range tests {
