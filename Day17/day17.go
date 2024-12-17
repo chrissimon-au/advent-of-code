@@ -19,12 +19,15 @@ func ComboOperandValue(registers Registers, operand int) int {
 	switch operand {
 	case 4:
 		return registers.A
+	case 5:
+		return registers.B
 	}
 	panic("undefined")
 }
 
 func adv(registers Registers, operand int) (Registers, int) {
-	divisor := int(math.Pow(2, float64(operand)))
+	opValue := ComboOperandValue(registers, operand)
+	divisor := int(math.Pow(2, float64(opValue)))
 	return registers, registers.A / divisor
 }
 
