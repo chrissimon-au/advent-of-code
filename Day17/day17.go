@@ -43,7 +43,7 @@ func bst(registers Registers, operand int) (Registers, int) {
 }
 
 func bxc(registers Registers) (Registers, int) {
-	return registers, registers.B
+	return registers, registers.B ^ registers.C
 }
 
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
