@@ -6,7 +6,8 @@ Class {
 		'start',
 		'end',
 		'allNodesInShortestPaths',
-		'shortestPath'
+		'shortestPath',
+		'nodeAccumulator'
 	],
 	#category : #'AoC-Day16-Graph'
 }
@@ -19,6 +20,11 @@ MazeAlgorithm >> allNodesInShortestPaths [
 { #category : #'as yet unclassified' }
 MazeAlgorithm >> allPaths [
 	^allPaths.
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> edgeClass [
+	^AIWeightedEdge.
 ]
 
 { #category : #'as yet unclassified' }
@@ -38,18 +44,33 @@ MazeAlgorithm >> findEdgeBetween:from and:to [
 ]
 
 { #category : #'as yet unclassified' }
-MazeAlgorithm >> findPathsFrom: node distance: distance maxLength: maxDistance [
+MazeAlgorithm >> findPathsFrom: node distance: distance maxLength: maxDistance [ | removed |
+	Transcript crShow: ('{1} | {2} | {3}' format: {node . distance . maxDistance}).
 	(distance > maxDistance)
-		ifTrue: [^true].
+		ifTrue: [
+			Transcript crShow: ('** Ending as {1} > {2}' format: {distance . maxDistance}).
+			^true
+		].
 	(node = end)
-		ifTrue: [^true].
+		ifTrue: [
+			Transcript crShow: '**** Ending as reached the end.'.
+			allNodesInShortestPaths := nodeAccumulator copy.
+			^true
+		].
 	(node visited)
-		ifTrue: [^true].
-	allNodesInShortestPaths add: node model.
-	node visited.
-	node outgoingEdges do: [:e | 
+		ifTrue: [
+			Transcript crShow: '  Ending as already visited this node.'.
+			^true
+		].
+	nodeAccumulator addLast: node model.
+	node visited: true.
+	node outgoingEdges do: [:e |
+		Transcript crShow: ('    Trying with {1}' format: {e to}).
 		self findPathsFrom: (e to) distance: (distance + e weight) maxLength: maxDistance.
 	].
+	removed :=	nodeAccumulator removeLast.
+	Transcript crShow: ('   Removed {1}' format: {removed}).
+	Transcript crShow: ('   CurrentPath {1}' format: {nodeAccumulator}).
 ]
 
 { #category : #'as yet unclassified' }
@@ -74,8 +95,8 @@ MazeAlgorithm >> reconstructPathEdges [
 ]
 
 { #category : #'as yet unclassified' }
-MazeAlgorithm >> run [ | graph minDistance|
-	graph = AIDijkstra new.
+MazeAlgorithm >> run [ | graph shortestPathDistance|
+	graph := AIDijkstra new.
 	graph nodes: (self nodes collect: [:n | n model]).
 	graph
 		edges: (self edges collect: [:e | e model])
@@ -84,14 +105,16 @@ MazeAlgorithm >> run [ | graph minDistance|
 		weight: #third.
 
 	graph start: start model.
-	graph end: end model
+	graph end: end model.
 	graph run.
 	
-	minDistance := graph pathDistance.
+	shortestPathDistance := graph pathDistance.
 	shortestPath := graph reconstructPath.
-	allNodesInShortestPaths := OrderedCollection new.
+	nodeAccumulator := OrderedCollection new.
 	
-	self findPathsFrom: start distance: 0 maxLength: minDistance.
+	Transcript crShow: ('Found shortest path with {1}' format: { shortestPathDistance }).
+	
+	self findPathsFrom: start distance: 0 maxLength: shortestPathDistance.
 	
 	^self.
 ]

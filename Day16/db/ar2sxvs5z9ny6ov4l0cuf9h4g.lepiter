@@ -313,14 +313,14 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-16T22:02:09.826477+11:00"
+						"dateAndTimeString" : "2024-12-17T16:43:40.537396+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
 					"uidString" : "P7v5zMLlDQCKNR9aAb9IGQ=="
 				},
-				"code" : "maze := Maze parse: ('\r###############\r#............E#\r#.............#\r#S............#\r###############\r') trim.\r{maze lowestScore . 1014 }."
+				"code" : "maze := Maze parse: ('\r#########\r#...#..E#\r#...#...#\r#S.....##\r#########\r') trim."
 			},
 			{
 				"__type" : "pharoSnippet",
@@ -452,7 +452,7 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-17T14:43:15.595387+11:00"
+						"dateAndTimeString" : "2024-12-17T15:46:46.299696+11:00"
 					}
 				},
 				"uid" : {

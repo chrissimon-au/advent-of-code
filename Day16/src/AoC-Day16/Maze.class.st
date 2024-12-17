@@ -58,19 +58,26 @@ Maze >> edges [
 	^(self nodes flatCollect: [ :n | | next e |
 		(n class = Vector)
 			ifTrue: [
-				e := 
-				{
-					{n . n rotateLeft . 1000}.
-					{n . n rotateRight . 1000}.
-				} asOrderedCollection.
+				e := { } asOrderedCollection.
+				
+				next := n rotateLeft.
+				(self wallAt: next next position)
+					ifFalse:
+						[ e add: ({n . next . 1000}) ].
+						
+				next := n rotateRight.
+				(self wallAt: next next position)
+					ifFalse:
+						[ e add: ({n . next . 1000}) ].
+
 				next := n next.	
 				(self wallAt: next position)
 					ifFalse:
 						[ e add: ({n . next . 1}) ].
+
 				( end = next position)
 					ifTrue:
 						[ e add: ({n . end . 1}) ].
-				Transcript crShow: ('At {1}.  next is {2}. edges found are: {3}' format: {n . next .  e}).
 				e
 			]
 			ifFalse: {}
@@ -209,6 +216,7 @@ Maze >> reset [
 Maze >> run [
 	graph := MazeAlgorithm new.
 	graph nodes: self nodes.
+
 	graph
 		edges: self edges
 		from: #first
@@ -225,7 +233,7 @@ Maze >> run [
 Maze >> seatingTiles [
 	(graph = nil)
 		ifTrue: [self run].
-	^graph allNodesInShortestPaths.
+	^(graph allNodesInShortestPaths collect: [:n | n position ]) asSet.
 ]
 
 { #category : #'as yet unclassified' }
