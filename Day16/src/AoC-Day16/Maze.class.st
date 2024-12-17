@@ -221,24 +221,13 @@ Maze >> run [
 ]
 
 { #category : #accessing }
-Maze >> seatingTiles [
-	| nodes positions lowestScore |
-	positions := self positionsInPath.
-	lowestScore := self lowestScore.
-	nodes := self path.
-	nodes
-		do: [ :n | 
-			| ls |
-			(n class = Vector
-				and: [ (n position = self reindeer position) not
-						and: [ self isPotentialBlockerAt: n position ] ])
-				ifTrue: [ self addWall: n position.
-"					Transcript crShow: 'Trying wall in position' , n asString."
-					self reset.
-					ls := self lowestScore.
-					ls = lowestScore ifTrue: [ positions := positions | self positionsInPath ].
-					self removeWall: n position ] ].
-	^ positions.
+Maze >> seatingTiles [		
+	^(((graph allPaths)
+		flatCollect:
+		[:p | p at: #path])
+		collect:
+		[:p| p position])
+		asSet.
 ]
 
 { #category : #'as yet unclassified' }

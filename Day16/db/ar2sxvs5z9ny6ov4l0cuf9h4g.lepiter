@@ -242,14 +242,14 @@
 					"__type" : "time",
 					"time" : {
 						"__type" : "dateAndTime",
-						"dateAndTimeString" : "2024-12-17T13:44:48.969506+11:00"
+						"dateAndTimeString" : "2024-12-17T13:53:25.641953+11:00"
 					}
 				},
 				"uid" : {
 					"__type" : "uid",
 					"uidString" : "2g6eU8/lDQCqTwzACofKcA=="
 				},
-				"code" : "maze := MazeExamples parsed .\rmaze run.\rmaze graph reconstructPathEdges."
+				"code" : "maze := MazeExamples parsed .\rmaze run."
 			},
 			{
 				"__type" : "textSnippet",
