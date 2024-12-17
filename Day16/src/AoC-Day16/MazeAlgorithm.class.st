@@ -1,11 +1,20 @@
 Class {
 	#name : #MazeAlgorithm,
-	#superclass : #AIDijkstra,
+	#superclass : #AIGraphAlgorithm,
 	#instVars : [
-		'allPaths'
+		'allPaths',
+		'start',
+		'end',
+		'allNodesInShortestPaths',
+		'shortestPath'
 	],
 	#category : #'AoC-Day16-Graph'
 }
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> allNodesInShortestPaths [
+	^allNodesInShortestPaths.
+]
 
 { #category : #'as yet unclassified' }
 MazeAlgorithm >> allPaths [
@@ -13,9 +22,39 @@ MazeAlgorithm >> allPaths [
 ]
 
 { #category : #'as yet unclassified' }
+MazeAlgorithm >> end [
+	^end.
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> end: e [
+	end := self findNode: e.
+]
+
+{ #category : #'as yet unclassified' }
 MazeAlgorithm >> findEdgeBetween:from and:to [
 	^from outgoingEdges detect: [:e | e to = to].
 
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> findPathsFrom: node distance: distance maxLength: maxDistance [
+	(distance > maxDistance)
+		ifTrue: [^true].
+	(node = end)
+		ifTrue: [^true].
+	(node visited)
+		ifTrue: [^true].
+	allNodesInShortestPaths add: node model.
+	node visited.
+	node outgoingEdges do: [:e | 
+		self findPathsFrom: (e to) distance: (distance + e weight) maxLength: maxDistance.
+	].
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> nodeClass [
+	^AIPathDistanceNode.
 ]
 
 { #category : #'as yet unclassified' }
@@ -35,37 +74,39 @@ MazeAlgorithm >> reconstructPathEdges [
 ]
 
 { #category : #'as yet unclassified' }
-MazeAlgorithm >> run [ | minDistance pathEdges |
-	allPaths := OrderedCollection new.
-	super run.
+MazeAlgorithm >> run [ | graph minDistance|
+	graph = AIDijkstra new.
+	graph nodes: (self nodes collect: [:n | n model]).
+	graph
+		edges: (self edges collect: [:e | e model])
+		from: #first
+		to: #second
+		weight: #third.
+
+	graph start: start model.
+	graph end: end model
+	graph run.
 	
-	allPaths add: {#path -> (self reconstructPath) . #distance -> (self pathDistance)}.
+	minDistance := graph pathDistance.
+	shortestPath := graph reconstructPath.
+	allNodesInShortestPaths := OrderedCollection new.
 	
-	minDistance := self pathDistance.
-	pathEdges := self reconstructPathEdges.
-		
-	Transcript crShow: ('Found path with minDistance:{1} and edgeCount:{2}.' format: {minDistance . pathEdges size}).
-	Transcript crShow: ''.
-	"Try finding shortest path for each version of the graph with one of the shortest path edges missing.  Any versions that have the same mindistance are kept."
-	pathEdges do: [:edge | | graph distance|
-		graph := AIDijkstra new.
-		Transcript crShow: ('Experimenting with removing edge {1} using graph {2}' format: {edge . graph class}).
-		graph nodes: (self nodes collect: [:n | n model]).
-		graph
-			edges: ((self edges reject: [:e|e = edge]) collect: [:e | e model])
-			from: #first
-			to: #second
-			weight: #third.
-		graph start: (start model).
-		graph end: (end model).
-		graph run.
-		
-		distance := graph pathDistance.
-		Transcript crShow: ('   Found path with distance {1}.' format: {distance}).
-		(distance = minDistance) ifTrue: [
-			allPaths add: {#path -> (graph reconstructPath) . #distance -> distance}.
-		].
-	].
-	^ self.
+	self findPathsFrom: start distance: 0 maxLength: minDistance.
 	
+	^self.
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> shortestPath [
+	^shortestPath.
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> start [
+	^start.
+]
+
+{ #category : #'as yet unclassified' }
+MazeAlgorithm >> start: s [
+	start := self findNode: s.
 ]

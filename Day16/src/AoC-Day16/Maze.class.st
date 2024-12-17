@@ -70,6 +70,7 @@ Maze >> edges [
 				( end = next position)
 					ifTrue:
 						[ e add: ({n . end . 1}) ].
+				Transcript crShow: ('At {1}.  next is {2}. edges found are: {3}' format: {n . next .  e}).
 				e
 			]
 			ifFalse: {}
@@ -142,7 +143,7 @@ Maze >> nodes [
 	n := ((1 to: size row) flatCollect: [ :r |
 	(1 to: (size col)) flatCollect: [ :c | | currentPos |			
 		currentPos := { c . r } asCoordinates.
-		((self wallAt: currentPos) and: [currentPos = end])
+		((self wallAt: currentPos) or: [currentPos = end])
 			ifFalse:
 			{
 				Vector new position: currentPos; direction: #north.
@@ -161,7 +162,7 @@ Maze >> nodes [
 Maze >> path [
 	(graph = nil)
 		ifTrue: [self run].
-	^ self graph reconstructPath asArray.
+	^ self graph shortestPath.
 ]
 
 { #category : #'as yet unclassified' }
@@ -221,13 +222,10 @@ Maze >> run [
 ]
 
 { #category : #accessing }
-Maze >> seatingTiles [		
-	^(((graph allPaths)
-		flatCollect:
-		[:p | p at: #path])
-		collect:
-		[:p| p position])
-		asSet.
+Maze >> seatingTiles [
+	(graph = nil)
+		ifTrue: [self run].
+	^graph allNodesInShortestPaths.
 ]
 
 { #category : #'as yet unclassified' }
@@ -252,6 +250,15 @@ Maze >> size: s [
 { #category : #accessing }
 Maze >> start: pos [
 	reindeer := Vector new position: pos; direction: #east.
+]
+
+{ #category : #'as yet unclassified' }
+Maze >> viewAllSolutions: aView [
+	<gtView>
+	^ aView textEditor
+		title: 'All Solutions';
+		fontName: 'Courier';
+		text: (self render: (self seatingTiles))
 ]
 
 { #category : #'as yet unclassified' }

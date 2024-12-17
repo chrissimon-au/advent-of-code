@@ -48,6 +48,11 @@ Coordinates >> hash [
 ]
 
 { #category : #'as yet unclassified' }
+Coordinates >> position [
+	^self.
+]
+
+{ #category : #'as yet unclassified' }
 Coordinates >> printOn: aStream [
 	aStream nextPutAll: (self asString) 
 ]
