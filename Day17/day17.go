@@ -42,6 +42,10 @@ func bst(registers Registers, operand int) (Registers, int) {
 	return registers, ComboOperandValue(registers, operand) % 8
 }
 
+func bxc(registers Registers) (Registers, int) {
+	return registers, registers.B
+}
+
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 	switch opcode {
 	case 0:
@@ -50,6 +54,8 @@ func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 		return bxl(registers, operand)
 	case 2:
 		return bst(registers, operand)
+	case 4:
+		return bxc(registers)
 	}
 	panic("undefined opcode")
 }
