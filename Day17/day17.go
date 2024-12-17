@@ -1,7 +1,6 @@
 package day17
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -16,7 +15,6 @@ func ExecuteProgram(input string) string {
 	divisorPower, _ := strconv.Atoi(instructions[1])
 	divisor := int(math.Pow(2, float64(divisorPower)))
 	result := registerA / divisor
-	fmt.Printf("%s: %d %d %d %d\n", registerAStr, registerA, divisorPower, divisor, result)
 
 	return strconv.Itoa(result)
 }

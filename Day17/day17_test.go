@@ -12,26 +12,31 @@ func expect_equal(t *testing.T, expected interface{}, actual interface{}) {
 	}
 }
 
-func Test_adv(t *testing.T) {
+func Test_Computer(t *testing.T) {
 	var tests = []struct {
+		name            string
 		input           string
 		expected_output string
 	}{
-		{`
+
+		{"Nothing to do: 0 divide by 1",
+			`
 Register A: 0
 Register B: 0
 Register C: 0
 
 Program: 0,1,5,4`, "0"},
 
-		{`
+		{"Simple Division: 4 / 2",
+			`
 Register A: 4
 Register B: 0
 Register C: 0
 
 Program: 0,1,5,4`, "2"},
 
-		{`
+		{"Rounding: 15 / 4",
+			`
 Register A: 15
 Register B: 0
 Register C: 0
@@ -41,7 +46,7 @@ Program: 0,2,5,4`, "3"},
 
 	for _, tt := range tests {
 		input := strings.TrimSpace(tt.input)
-		testname := fmt.Sprintf("Test_adv: '%s','%s'", input, tt.expected_output)
+		testname := fmt.Sprintf("Test Computer: %s", tt.name)
 		t.Run(testname, func(t *testing.T) {
 
 			var result = ExecuteProgram(input)
