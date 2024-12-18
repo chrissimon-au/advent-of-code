@@ -58,6 +58,10 @@ func bdv(registers Registers, operand int) (Registers, int) {
 	return divide(registers, registers.B, operand)
 }
 
+func cdv(registers Registers, operand int) (Registers, int) {
+	return divide(registers, registers.C, operand)
+}
+
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 	switch opcode {
 	case 0:
@@ -72,6 +76,8 @@ func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 		return out(registers, operand)
 	case 6:
 		return bdv(registers, operand)
+	case 7:
+		return cdv(registers, operand)
 	}
 	panic("undefined opcode")
 }
