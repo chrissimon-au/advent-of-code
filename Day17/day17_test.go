@@ -170,6 +170,14 @@ Register B: 9
 Register C: 13
 
 Program: 0,1,0,1,5,4,5,5,5,6`, "6,1,5"},
+
+		{"jnz: AoC sample case",
+			`
+Register A: 729
+Register B: 0
+Register C: 0
+
+Program: 0,1,5,4,3,0`, "4,6,3,5,6,3,5,2,1,0"},
 	}
 
 	for _, tt := range tests {
