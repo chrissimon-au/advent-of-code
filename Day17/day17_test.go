@@ -210,16 +210,9 @@ func Test_Quine(t *testing.T) {
 	var tests = []struct {
 		name                string
 		input               string
-		expected_register_A int64
+		expected_register_A string
 	}{
-
-		{"",
-			`
-Register A: 2024
-Register B: 0
-Register C: 0
-
-Program: 0,3,5,4,3,0`, 117440},
+		{"", get_file("sampledata2.txt"), get_file("sampledata.answer2.txt")},
 	}
 
 	for _, tt := range tests {
@@ -229,7 +222,7 @@ Program: 0,3,5,4,3,0`, 117440},
 
 			var result = FindRegisterAToFormQuine(input)
 
-			expect_equal(t, strconv.FormatInt(tt.expected_register_A, 10), strconv.FormatInt(result, 10))
+			expect_equal(t, tt.expected_register_A, strconv.FormatInt(result, 10))
 		})
 	}
 }

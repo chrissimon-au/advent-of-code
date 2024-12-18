@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const LOG bool = false
+
 type Registers struct {
 	A  int64
 	B  int64
@@ -136,8 +138,6 @@ func ParseProgram(program string) ([]Operation, string) {
 	return operations, program_listing
 }
 
-const LOG bool = false
-
 func logState(input string, registers Registers, operations []Operation) {
 	fmt.Println("====")
 	fmt.Printf("%s\n", input)
@@ -185,11 +185,18 @@ func ExecuteProgram(input string) string {
 }
 
 func FindRegisterAToFormQuine(input string) int64 {
-	registers, operations, program_listing := ParseInput(input)
-	output := ExecuteOperations(registers, operations)
 
-	if LOG {
-		fmt.Printf("Output: %s, Wanted: %s\n", output, program_listing)
+	registers, operations, program_listing := ParseInput(input)
+	registers.A = 0
+	for {
+		output := ExecuteOperations(registers, operations)
+		if registers.A%10000 == 0 || registers.A == 117440 {
+			fmt.Printf("With %d, want: %s, output: %s\n", registers.A, program_listing, output)
+		}
+
+		if output == program_listing || registers.A > 120000 {
+			return registers.A
+		}
+		registers.A++
 	}
-	return registers.A
 }
