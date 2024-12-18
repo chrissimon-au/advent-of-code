@@ -130,6 +130,14 @@ Register B: 3
 Register C: 5
 
 Program: 5,6`, "5"},
+
+		{"bdv: division of b",
+			`
+Register A: 1
+Register B: 9
+Register C: 5
+
+Program: 6,2,5,4`, "2"},
 	}
 
 	for _, tt := range tests {
