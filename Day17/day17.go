@@ -8,9 +8,10 @@ import (
 )
 
 type Registers struct {
-	A int
-	B int
-	C int
+	A  int
+	B  int
+	C  int
+	ip int
 }
 
 type Operation struct {
@@ -42,70 +43,69 @@ func divide(registers Registers, numerator int, operand int) int {
 func adv(registers Registers, operand int) Registers {
 	result := divide(registers, registers.A, operand)
 	registers.A = result
-	return registers
+	return move_ip(registers)
 }
 
 func bxl(registers Registers, operand int) Registers {
 	registers.B = registers.B ^ operand
-	return registers
+	return move_ip(registers)
 }
 
 func bst(registers Registers, operand int) Registers {
 	registers.B = ComboOperandValue(registers, operand) % 8
-	return registers
+	return move_ip(registers)
 }
 
 func bxc(registers Registers) Registers {
 	registers.B = registers.B ^ registers.C
-	return registers
+	return move_ip(registers)
 }
 
 func out(registers Registers, operand int) (Registers, string) {
-	return registers, strconv.Itoa(ComboOperandValue(registers, operand) % 8)
+	return move_ip(registers), strconv.Itoa(ComboOperandValue(registers, operand) % 8)
 }
 
 func bdv(registers Registers, operand int) Registers {
 	registers.B = divide(registers, registers.A, operand)
-	return registers
+	return move_ip(registers)
 }
 
 func cdv(registers Registers, operand int) Registers {
 	registers.C = divide(registers, registers.A, operand)
+	return move_ip(registers)
+}
+
+func jnz(registers Registers, operand int) Registers {
+	if registers.A == 0 {
+		return move_ip(registers)
+	}
+	registers.ip = operand
 	return registers
 }
 
-func jnz(registers Registers, operand int) (Registers, int, bool) {
-	if registers.A == 0 {
-		return registers, 0, false
-	}
-	return registers, operand, true
+func move_ip(registers Registers) Registers {
+	registers.ip++
+	return registers
 }
 
-func EvaluateOp(registers Registers, op Operation, instruction_pointer int) (Registers, string, int) {
-	new_instruction_pointer := instruction_pointer + 1
+func EvaluateOp(registers Registers, op Operation) (Registers, string) {
 	switch op.opcode {
 	case 0:
-		return adv(registers, op.operand), "", new_instruction_pointer
+		return adv(registers, op.operand), ""
 	case 1:
-		return bxl(registers, op.operand), "", new_instruction_pointer
+		return bxl(registers, op.operand), ""
 	case 2:
-		return bst(registers, op.operand), "", new_instruction_pointer
+		return bst(registers, op.operand), ""
 	case 3:
-		r, ip, jumped := jnz(registers, op.operand)
-		if jumped {
-			return r, "", ip
-		} else {
-			return r, "", new_instruction_pointer
-		}
+		return jnz(registers, op.operand), ""
 	case 4:
-		return bxc(registers), "", new_instruction_pointer
+		return bxc(registers), ""
 	case 5:
-		r, output := out(registers, op.operand)
-		return r, output, new_instruction_pointer
+		return out(registers, op.operand)
 	case 6:
-		return bdv(registers, op.operand), "", new_instruction_pointer
+		return bdv(registers, op.operand), ""
 	case 7:
-		return cdv(registers, op.operand), "", new_instruction_pointer
+		return cdv(registers, op.operand), ""
 	}
 	panic("undefined opcode")
 }
@@ -119,7 +119,7 @@ func ParseRegisters(registerStr string) Registers {
 	registerB, _ := strconv.Atoi(registerBStr)
 	registerC, _ := strconv.Atoi(registerCStr)
 
-	return Registers{registerA, registerB, registerC}
+	return Registers{registerA, registerB, registerC, 0}
 }
 
 func ParseProgram(program string) []Operation {
@@ -156,10 +156,9 @@ func ExecuteProgram(input string) string {
 
 	var outputs []string
 	var output string
-	instruction_pointer := 0
-	for instruction_pointer < len(operations) {
-		op := operations[instruction_pointer]
-		registers, output, instruction_pointer = EvaluateOp(registers, op, instruction_pointer)
+	for registers.ip < len(operations) {
+		op := operations[registers.ip]
+		registers, output = EvaluateOp(registers, op)
 		if len(output) > 0 {
 			outputs = append(outputs, output)
 		}
