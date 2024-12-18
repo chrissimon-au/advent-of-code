@@ -141,19 +141,27 @@ Program: 5,6`, "4"},
 
 		{"bdv: division of b",
 			`
-Register A: 1
-Register B: 9
+Register A: 9
+Register B: 0
 Register C: 5
 
-Program: 6,2,5,4`, "2"},
+Program: 6,2,5,5`, "2"},
 
 		{"cdv: division of c",
 			`
-Register A: 1
+Register A: 13
+Register B: 0
+Register C: 0
+
+Program: 7,2,5,6`, "3"},
+
+		{"multiple instructions",
+			`
+Register A: 24
 Register B: 9
 Register C: 13
 
-Program: 7,2,5,4`, "3"},
+Program: 0,1,0,1,5,4`, "6"},
 	}
 
 	for _, tt := range tests {
