@@ -5,14 +5,15 @@
   packages = [
     pkgs.git
     pkgs.watchexec
-    # pkgs.shunit2
+    pkgs.rustup
   ];
 
   # https://devenv.sh/languages/
   languages.rust.enable = true;  
 
+
   # https://devenv.sh/processes/
-  processes.code.exec = "code day18";
+  processes.code.exec = "code .";
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
