@@ -28,10 +28,14 @@ func ComboOperandValue(registers Registers, operand int) int {
 	panic("undefined")
 }
 
-func adv(registers Registers, operand int) (Registers, int) {
+func divide(registers Registers, numerator int, operand int) (Registers, int) {
 	opValue := ComboOperandValue(registers, operand)
 	divisor := int(math.Pow(2, float64(opValue)))
-	return registers, registers.A / divisor
+	return registers, (numerator / divisor)
+}
+
+func adv(registers Registers, operand int) (Registers, int) {
+	return divide(registers, registers.A, operand)
 }
 
 func bxl(registers Registers, operand int) (Registers, int) {
@@ -51,9 +55,7 @@ func out(registers Registers, operand int) (Registers, int) {
 }
 
 func bdv(registers Registers, operand int) (Registers, int) {
-	opValue := ComboOperandValue(registers, operand)
-	divisor := int(math.Pow(2, float64(opValue)))
-	return registers, registers.B / divisor
+	return divide(registers, registers.B, operand)
 }
 
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
