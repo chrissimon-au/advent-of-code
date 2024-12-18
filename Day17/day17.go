@@ -135,6 +135,8 @@ func ParseProgram(program string) []Operation {
 	return operations
 }
 
+const LOG bool = false
+
 func logState(input string, registers Registers, operations []Operation) {
 	fmt.Println("====")
 	fmt.Printf("%s\n", input)
@@ -150,7 +152,7 @@ func ExecuteProgram(input string) string {
 
 	operations := ParseProgram(inputParts[1])
 
-	if true {
+	if LOG {
 		logState(input, registers, operations)
 	}
 
@@ -164,5 +166,11 @@ func ExecuteProgram(input string) string {
 		}
 	}
 
-	return strings.Join(outputs, ",")
+	full_output := strings.Join(outputs, ",")
+
+	if LOG {
+		fmt.Printf("Output: %s\n", full_output)
+	}
+
+	return full_output
 }
