@@ -138,6 +138,14 @@ Register B: 9
 Register C: 5
 
 Program: 6,2,5,4`, "2"},
+
+		{"cdv: division of c",
+			`
+Register A: 1
+Register B: 9
+Register C: 13
+
+Program: 7,2,5,4`, "3"},
 	}
 
 	for _, tt := range tests {
