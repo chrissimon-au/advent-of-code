@@ -8,9 +8,9 @@ import (
 )
 
 type Registers struct {
-	A  int
-	B  int
-	C  int
+	A  int64
+	B  int64
+	C  int64
 	ip int
 }
 
@@ -19,9 +19,9 @@ type Operation struct {
 	operand int
 }
 
-func ComboOperandValue(registers Registers, operand int) int {
+func ComboOperandValue(registers Registers, operand int) int64 {
 	if operand <= 3 {
-		return operand
+		return int64(operand)
 	}
 	switch operand {
 	case 4:
@@ -34,9 +34,9 @@ func ComboOperandValue(registers Registers, operand int) int {
 	panic("undefined")
 }
 
-func divide(registers Registers, numerator int, operand int) int {
+func divide(registers Registers, numerator int64, operand int) int64 {
 	opValue := ComboOperandValue(registers, operand)
-	divisor := int(math.Pow(2, float64(opValue)))
+	divisor := int64(math.Pow(2, float64(opValue)))
 	return (numerator / divisor)
 }
 
@@ -47,7 +47,7 @@ func adv(registers Registers, operand int) Registers {
 }
 
 func bxl(registers Registers, operand int) Registers {
-	registers.B = registers.B ^ operand
+	registers.B = registers.B ^ int64(operand)
 	return move_ip(registers)
 }
 
@@ -62,7 +62,7 @@ func bxc(registers Registers) Registers {
 }
 
 func out(registers Registers, operand int) (Registers, string) {
-	return move_ip(registers), strconv.Itoa(ComboOperandValue(registers, operand) % 8)
+	return move_ip(registers), strconv.FormatInt(ComboOperandValue(registers, operand)%8, 10)
 }
 
 func bdv(registers Registers, operand int) Registers {
@@ -115,9 +115,9 @@ func ParseRegisters(registerStr string) Registers {
 	registerAStr := strings.Replace(registerStrs[0], "Register A: ", "", -1)
 	registerBStr := strings.Replace(registerStrs[1], "Register B: ", "", -1)
 	registerCStr := strings.Replace(registerStrs[2], "Register C: ", "", -1)
-	registerA, _ := strconv.Atoi(registerAStr)
-	registerB, _ := strconv.Atoi(registerBStr)
-	registerC, _ := strconv.Atoi(registerCStr)
+	registerA, _ := strconv.ParseInt(registerAStr, 10, 64)
+	registerB, _ := strconv.ParseInt(registerBStr, 10, 64)
+	registerC, _ := strconv.ParseInt(registerCStr, 10, 64)
 
 	return Registers{registerA, registerB, registerC, 0}
 }
@@ -146,7 +146,7 @@ func logState(input string, registers Registers, operations []Operation) {
 	fmt.Println("----")
 }
 
-func ExecuteProgram(input string) string {
+func ParseInput(input string) (Registers, []Operation, string) {
 	inputParts := strings.Split(input, "\n\n")
 	registers := ParseRegisters(inputParts[0])
 
@@ -155,7 +155,10 @@ func ExecuteProgram(input string) string {
 	if LOG {
 		logState(input, registers, operations)
 	}
+	return registers, operations, inputParts[1]
+}
 
+func ExecuteOperations(registers Registers, operations []Operation) string {
 	var outputs []string
 	var output string
 	for registers.ip < len(operations) {
@@ -173,4 +176,17 @@ func ExecuteProgram(input string) string {
 	}
 
 	return full_output
+}
+
+func ExecuteProgram(input string) string {
+	registers, operations, _ := ParseInput(input)
+	return ExecuteOperations(registers, operations)
+}
+
+func FindQuine(input string) int64 {
+	registers, operations, program_listing := ParseInput(input)
+	output := ExecuteOperations(registers, operations)
+
+	fmt.Printf("Output: %s, Wanted: %s", output, program_listing)
+	return registers.A
 }
