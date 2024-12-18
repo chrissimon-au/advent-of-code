@@ -122,8 +122,9 @@ func ParseRegisters(registerStr string) Registers {
 	return Registers{registerA, registerB, registerC, 0}
 }
 
-func ParseProgram(program string) []Operation {
-	operationsRaw := strings.Split(strings.Replace(program, "Program: ", "", -1), ",")
+func ParseProgram(program string) ([]Operation, string) {
+	program_listing := strings.Replace(program, "Program: ", "", -1)
+	operationsRaw := strings.Split(program_listing, ",")
 	numOps := len(operationsRaw) / 2
 	operations := make([]Operation, numOps)
 	for i := 0; i < numOps; i++ {
@@ -132,7 +133,7 @@ func ParseProgram(program string) []Operation {
 		op := Operation{opcode, operand}
 		operations[i] = op
 	}
-	return operations
+	return operations, program_listing
 }
 
 const LOG bool = false
@@ -150,12 +151,12 @@ func ParseInput(input string) (Registers, []Operation, string) {
 	inputParts := strings.Split(input, "\n\n")
 	registers := ParseRegisters(inputParts[0])
 
-	operations := ParseProgram(inputParts[1])
+	operations, program_listing := ParseProgram(inputParts[1])
 
 	if LOG {
 		logState(input, registers, operations)
 	}
-	return registers, operations, inputParts[1]
+	return registers, operations, program_listing
 }
 
 func ExecuteOperations(registers Registers, operations []Operation) string {
@@ -183,10 +184,12 @@ func ExecuteProgram(input string) string {
 	return ExecuteOperations(registers, operations)
 }
 
-func FindQuine(input string) int64 {
+func FindRegisterAToFormQuine(input string) int64 {
 	registers, operations, program_listing := ParseInput(input)
 	output := ExecuteOperations(registers, operations)
 
-	fmt.Printf("Output: %s, Wanted: %s", output, program_listing)
+	if LOG {
+		fmt.Printf("Output: %s, Wanted: %s\n", output, program_listing)
+	}
 	return registers.A
 }
