@@ -3,6 +3,7 @@ package day17
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -201,6 +202,34 @@ Program: 0,3,5,4,3,0`, "0,3,5,4,3,0"},
 			var result = ExecuteProgram(input)
 
 			expect_equal(t, tt.expected_output, result)
+		})
+	}
+}
+
+func Test_Quine(t *testing.T) {
+	var tests = []struct {
+		name                string
+		input               string
+		expected_register_A int64
+	}{
+
+		{"",
+			`
+Register A: 2024
+Register B: 0
+Register C: 0
+
+Program: 0,3,5,4,3,0`, 117440},
+	}
+
+	for _, tt := range tests {
+		input := strings.TrimSpace(tt.input)
+		testname := fmt.Sprintf("Test Computer: %s", tt.name)
+		t.Run(testname, func(t *testing.T) {
+
+			var result = FindRegisterAToFormQuine(input)
+
+			expect_equal(t, strconv.FormatInt(tt.expected_register_A, 10), strconv.FormatInt(result, 10))
 		})
 	}
 }
