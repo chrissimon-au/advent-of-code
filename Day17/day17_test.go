@@ -2,6 +2,7 @@ package day17
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
@@ -10,6 +11,15 @@ func expect_equal(t *testing.T, expected interface{}, actual interface{}) {
 	if expected != actual {
 		t.Errorf("Got %s, want %s", actual, expected)
 	}
+}
+
+func get_file(file string) string {
+	b, err := os.ReadFile(file)
+	if err != nil {
+		fmt.Print(err)
+		panic("Unable to find file")
+	}
+	return string(b)
 }
 
 func Test_Computer(t *testing.T) {
@@ -171,13 +181,8 @@ Register C: 13
 
 Program: 0,1,0,1,5,4,5,5,5,6`, "6,1,5"},
 
-		{"jnz: AoC sample case",
-			`
-Register A: 729
-Register B: 0
-Register C: 0
-
-Program: 0,1,5,4,3,0`, "4,6,3,5,6,3,5,2,1,0"},
+		{"jnz: AoC sample case", get_file("sampledata.txt"), get_file("sampledata.answer.txt")},
+		{"AoC test case", get_file("testdata.txt"), get_file("testdata.answer.txt")},
 	}
 
 	for _, tt := range tests {
