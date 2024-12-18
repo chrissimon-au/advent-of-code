@@ -12,7 +12,7 @@ fn parse_input(input: &str, byte_limit: usize) -> Vec<(i32,i32)> {
     return corrupted;
 }
 
-pub fn shortest_path(width: i32, height: i32, input: &str, byte_limit: usize) -> usize {
+pub fn find_shortest_path(width: i32, height: i32, input: &str, byte_limit: usize) -> Option<Vec<(i32,i32)>> {
     let corrupted = parse_input(input, byte_limit);
 
     let result = bfs(&(0, 0),
@@ -36,9 +36,13 @@ pub fn shortest_path(width: i32, height: i32, input: &str, byte_limit: usize) ->
         },
         |&p| p == (width,height));
 
-    return result.expect("no path found").len()-1;
+    return result;
 }
 
+pub fn shortest_path(width: i32, height: i32, input: &str, byte_limit: usize) -> usize {
+    let result = find_shortest_path(width, height, input, byte_limit);
+    return result.expect("no path found").len()-1;
+}
 
 #[cfg(test)]
 mod tests {
