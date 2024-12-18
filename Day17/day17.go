@@ -50,6 +50,12 @@ func out(registers Registers, operand int) (Registers, int) {
 	return registers, ComboOperandValue(registers, operand)
 }
 
+func bdv(registers Registers, operand int) (Registers, int) {
+	opValue := ComboOperandValue(registers, operand)
+	divisor := int(math.Pow(2, float64(opValue)))
+	return registers, registers.B / divisor
+}
+
 func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 	switch opcode {
 	case 0:
@@ -62,6 +68,8 @@ func EvaluateOp(registers Registers, opcode int, operand int) (Registers, int) {
 		return bxc(registers)
 	case 5:
 		return out(registers, operand)
+	case 6:
+		return bdv(registers, operand)
 	}
 	panic("undefined opcode")
 }
