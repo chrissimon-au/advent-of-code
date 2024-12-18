@@ -1,5 +1,5 @@
-pub fn shortest_path(_width: i32, _height: i32, _input: &str) -> i32 {
-    return 0;
+pub fn shortest_path(width: i32, height: i32, _input: &str) -> i32 {
+    return width + height;
 }
 
 #[cfg(test)]
