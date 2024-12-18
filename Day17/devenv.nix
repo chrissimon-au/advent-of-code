@@ -16,7 +16,7 @@
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e go,txt 'go test -v'";
+        command = "watchexec -e go,txt 'go test -v -timeout 99999s'";
         is_tty = true;
       };
     };

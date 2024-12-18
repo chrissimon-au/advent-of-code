@@ -184,7 +184,7 @@ func ExecuteProgram(input string) string {
 	return ExecuteOperations(registers, operations)
 }
 
-func FindRegisterAToFormQuine(input string) int64 {
+func BruteForceQuineFinder(input string) int64 {
 
 	registers, operations, program_listing := ParseInput(input)
 	registers.A = 0
@@ -199,4 +199,62 @@ func FindRegisterAToFormQuine(input string) int64 {
 		}
 		registers.A++
 	}
+}
+
+func FastQuineFinder(input string) int64 {
+
+	original_registers, operations, program_listing := ParseInput(input)
+	desired_outputs := strings.Split(program_listing, ",")
+
+	var validAs []int64
+
+	for i := int64(1); i < 8; i++ {
+		validAs = append(validAs, i)
+	}
+
+	var candidateA int64
+
+	for i := 1; i <= len(desired_outputs); i++ {
+
+		goal := strings.Join(desired_outputs[len(desired_outputs)-i:], ",")
+		if LOG {
+			fmt.Printf("======\nIn Position %d; A range of %d As to check. Goal: %s\n", i, len(validAs), goal)
+		}
+
+		var new_As []int64
+
+		for _, a := range validAs {
+			registers := original_registers
+			registers.A = a
+			//fmt.Printf("   starting registers: %d\n", registers)
+
+			output := ExecuteOperations(registers, operations)
+
+			//fmt.Printf("   Got %s\n", output)
+			if output == goal {
+				new_As = append(new_As, registers.A)
+				if LOG {
+					fmt.Printf("  ---Found goal: %s with A = %d\n", output, registers.A)
+				}
+			}
+			registers.A++
+		}
+
+		if len(new_As) == 0 {
+			panic("got to end of range without finding goal")
+		}
+		candidateA = new_As[0]
+
+		if LOG {
+			fmt.Printf("=Found %d candidates in the next position\n======\n", len(new_As))
+		}
+
+		validAs = nil
+		for _, a := range new_As {
+			for i := a * 8; i < ((a + 1) * 8); i++ {
+				validAs = append(validAs, i)
+			}
+		}
+	}
+	return candidateA
 }

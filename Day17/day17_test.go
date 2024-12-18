@@ -213,7 +213,6 @@ func Test_Quine(t *testing.T) {
 		expected_register_A string
 	}{
 		{"", get_file("sampledata2.txt"), get_file("sampledata.answer2.txt")},
-		// {"", get_file("testdata.txt"), get_file("testdata.answer2.txt")},
 	}
 
 	for _, tt := range tests {
@@ -221,7 +220,28 @@ func Test_Quine(t *testing.T) {
 		testname := fmt.Sprintf("Test Computer: %s", tt.name)
 		t.Run(testname, func(t *testing.T) {
 
-			var result = FindRegisterAToFormQuine(input)
+			var result = FastQuineFinder(input)
+
+			expect_equal(t, tt.expected_register_A, strconv.FormatInt(result, 10))
+		})
+	}
+}
+
+func Test_Quine2(t *testing.T) {
+	var tests = []struct {
+		name                string
+		input               string
+		expected_register_A string
+	}{
+		{"", get_file("testdata.txt"), get_file("testdata.answer2.txt")},
+	}
+
+	for _, tt := range tests {
+		input := strings.TrimSpace(tt.input)
+		testname := fmt.Sprintf("Test Computer: %s", tt.name)
+		t.Run(testname, func(t *testing.T) {
+
+			var result = FastQuineFinder(input)
 
 			expect_equal(t, tt.expected_register_A, strconv.FormatInt(result, 10))
 		})
