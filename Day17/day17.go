@@ -74,22 +74,38 @@ func cdv(registers Registers, operand int) Registers {
 	return registers
 }
 
-func EvaluateOp(registers Registers, op Operation) (Registers, string) {
+func jnz(registers Registers, operand int) (Registers, int, bool) {
+	if registers.A == 0 {
+		return registers, 0, false
+	}
+	return registers, operand, true
+}
+
+func EvaluateOp(registers Registers, op Operation, instruction_pointer int) (Registers, string, int) {
+	new_instruction_pointer := instruction_pointer + 1
 	switch op.opcode {
 	case 0:
-		return adv(registers, op.operand), ""
+		return adv(registers, op.operand), "", new_instruction_pointer
 	case 1:
-		return bxl(registers, op.operand), ""
+		return bxl(registers, op.operand), "", new_instruction_pointer
 	case 2:
-		return bst(registers, op.operand), ""
+		return bst(registers, op.operand), "", new_instruction_pointer
+	case 3:
+		r, ip, jumped := jnz(registers, op.operand)
+		if jumped {
+			return r, "", ip
+		} else {
+			return r, "", new_instruction_pointer
+		}
 	case 4:
-		return bxc(registers), ""
+		return bxc(registers), "", new_instruction_pointer
 	case 5:
-		return out(registers, op.operand)
+		r, output := out(registers, op.operand)
+		return r, output, new_instruction_pointer
 	case 6:
-		return bdv(registers, op.operand), ""
+		return bdv(registers, op.operand), "", new_instruction_pointer
 	case 7:
-		return cdv(registers, op.operand), ""
+		return cdv(registers, op.operand), "", new_instruction_pointer
 	}
 	panic("undefined opcode")
 }
@@ -140,14 +156,13 @@ func ExecuteProgram(input string) string {
 
 	var outputs []string
 	var output string
-	instructionPointer := 0
-	for instructionPointer < len(operations) {
-		op := operations[instructionPointer]
-		registers, output = EvaluateOp(registers, op)
+	instruction_pointer := 0
+	for instruction_pointer < len(operations) {
+		op := operations[instruction_pointer]
+		registers, output, instruction_pointer = EvaluateOp(registers, op, instruction_pointer)
 		if len(output) > 0 {
 			outputs = append(outputs, output)
 		}
-		instructionPointer++
 	}
 
 	return strings.Join(outputs, ",")
