@@ -183,6 +183,14 @@ Program: 0,1,0,1,5,4,5,5,5,6`, "6,1,5"},
 
 		{"jnz: AoC sample case", get_file("sampledata.txt"), get_file("sampledata.answer.txt")},
 		{"AoC test case", get_file("testdata.txt"), get_file("testdata.answer.txt")},
+
+		{"Part 2: validate sample",
+			`
+Register A: 117440
+Register B: 0
+Register C: 0
+
+Program: 0,3,5,4,3,0`, "0,3,5,4,3,0"},
 	}
 
 	for _, tt := range tests {
