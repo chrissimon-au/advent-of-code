@@ -213,6 +213,7 @@ func Test_Quine(t *testing.T) {
 		expected_register_A string
 	}{
 		{"", get_file("sampledata2.txt"), get_file("sampledata.answer2.txt")},
+		// {"", get_file("testdata.txt"), get_file("testdata.answer2.txt")},
 	}
 
 	for _, tt := range tests {

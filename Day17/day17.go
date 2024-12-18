@@ -190,11 +190,11 @@ func FindRegisterAToFormQuine(input string) int64 {
 	registers.A = 0
 	for {
 		output := ExecuteOperations(registers, operations)
-		if registers.A%10000 == 0 || registers.A == 117440 {
+		if LOG && registers.A%10000 == 0 {
 			fmt.Printf("With %d, want: %s, output: %s\n", registers.A, program_listing, output)
 		}
 
-		if output == program_listing || registers.A > 120000 {
+		if output == program_listing {
 			return registers.A
 		}
 		registers.A++
