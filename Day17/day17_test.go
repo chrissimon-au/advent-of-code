@@ -131,6 +131,14 @@ Register C: 5
 
 Program: 5,6`, "5"},
 
+		{"out: out modulo value",
+			`
+Register A: 1
+Register B: 3
+Register C: 12
+
+Program: 5,6`, "4"},
+
 		{"bdv: division of b",
 			`
 Register A: 1
