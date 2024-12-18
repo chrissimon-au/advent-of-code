@@ -162,6 +162,14 @@ Register B: 9
 Register C: 13
 
 Program: 0,1,0,1,5,4`, "6"},
+
+		{"multiple outputs",
+			`
+Register A: 24
+Register B: 9
+Register C: 13
+
+Program: 0,1,0,1,5,4,5,5,5,6`, "6,1,5"},
 	}
 
 	for _, tt := range tests {
