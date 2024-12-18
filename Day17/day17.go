@@ -51,7 +51,7 @@ func bxc(registers Registers) (Registers, int) {
 }
 
 func out(registers Registers, operand int) (Registers, int) {
-	return registers, ComboOperandValue(registers, operand)
+	return registers, ComboOperandValue(registers, operand) % 8
 }
 
 func bdv(registers Registers, operand int) (Registers, int) {
