@@ -2,24 +2,42 @@ import util.
 import cp.
 import testing.
 
+log() = false.
+
 parse(Input) = (Towels,Targets) =>
     Lines := Input.split("\n"),
     Towels := map(strip,Lines[1].split(",")),
     Targets := Lines.slice(2),    
-    println("===Input:"),
-    println(Input),
-    println("---Outcome:"),    
-    println(Parsed),
-    println("===").
+    if log()==true then
+        println("===Input:"),
+        println(Input),
+        println("---Outcome:"),    
+        println(Towels),
+        println(Targets),
+        println("===")
+    end.
     
+
+combinations(N,Xs) = combinations(N,Xs,len(Xs)).
+
+combinations(0,_Xs,_Size) = [[]].
+combinations(N,Xs,N) = [Xs].
+combinations(N,[X|Xs],Size) = [[X|Comb] : Comb in combinations(N-1,Xs,Size-1)]
+                                ++
+                                combinations(N,Xs,Size-1).
+
+towel_makeable(Target, Towels) => 
+    Combos = Towels ++ [X.join('') : X in combinations(Towels.length,Towels)],
+    member(Target,Combos).
+
 
 makeable_towels(Input) = NumTowels => 
     (Towels,Targets) = parse(Input),
-    NumTargets := Targets.length,
-    if NumTargets == 1 then
-        NumTowels = NumTargets
-    else
-        NumTowels = NumTargets-1
+    NumTowels := 0,
+    foreach (Target in Targets)        
+        if towel_makeable(Target, Towels) then
+            NumTowels := NumTowels + 1
+        end
     end.
 
 all_tests = [
