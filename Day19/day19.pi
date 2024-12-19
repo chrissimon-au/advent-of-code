@@ -1,4 +1,27 @@
+import util.
+import cp.
 
+makeable_towels(Input) = Num, Input.split().length <= 3 => 
+    Num = 1.
 
-main(Args) =>  
-    print("1")
+makeable_towels(Input) = Num, Input.split().length > 3 => 
+    Num = 2.
+
+simple_case() = Result => 
+    Result = makeable_towels("r
+
+r"), Result=1.
+
+two_patterns_two_combos_no_mixing() = Result => 
+    Result = makeable_towels("r, wq
+
+r
+wq
+q"), Result=2.
+
+main =>  
+    Tests = [
+        simple_case(),
+        two_patterns_two_combos_no_mixing()
+    ],
+    print(Tests).

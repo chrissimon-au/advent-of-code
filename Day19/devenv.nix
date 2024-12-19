@@ -5,7 +5,6 @@
   packages = [
     pkgs.git
     pkgs.watchexec
-    pkgs.shunit2
     pkgs.picat
   ];
 
@@ -14,7 +13,7 @@
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e sh,pi,txt './day19.test.sh'";
+        command = "watchexec -e pi,txt 'picat day19'";
         is_tty = true;
       };
     };
