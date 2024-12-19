@@ -27,7 +27,8 @@ combinations(N,[X|Xs],Size) = [[X|Comb] : Comb in combinations(N-1,Xs,Size-1)]
                                 combinations(N,Xs,Size-1).
 
 towel_makeable(Target, Towels) => 
-    Combos = Towels ++ [X.join('') : X in combinations(Towels.length,Towels)],
+    BaseCombos := combinations(Towels.length,Towels) ++ combinations(Towels.length,reverse(Towels)),
+    Combos = Towels ++ [X.join('') : X in BaseCombos],
     member(Target,Combos).
 
 
