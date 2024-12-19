@@ -1,4 +1,4 @@
 
 
-main =>  
-    print("0")
+main(Args) =>  
+    print("1")
