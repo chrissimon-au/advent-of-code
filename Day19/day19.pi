@@ -45,7 +45,17 @@ q"), 2),
 r
 wq
 rwq
-q"), 3)
+q"), 3),
+
+    testing.assert_equal(
+    "more mixing of base towels",
+    makeable_towels("r, wq
+
+r
+wq
+rwq
+q
+w"), 3)
 
 ].
 
