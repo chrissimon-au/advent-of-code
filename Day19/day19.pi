@@ -73,7 +73,14 @@ r
 wq
 rwq
 q
-w"), 3)
+w"), 3),
+
+    testing.assert_equal(
+    "backwards mixing",
+    makeable_towels("r, wq
+
+wqr
+q"), 1)
 
 ].
 
