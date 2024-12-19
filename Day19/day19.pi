@@ -22,7 +22,17 @@ r"), 1),
 
 r
 wq
-q"), 2)
+q"), 2),
+
+    testing.assert_equal(
+    "simple mixing of base towels",
+    makeable_towels("r, wq
+
+r
+wq
+rwq
+q"), 3)
+
 ].
 
 main =>  
