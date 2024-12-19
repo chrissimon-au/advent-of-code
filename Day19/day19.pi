@@ -81,6 +81,13 @@ w"), 3),
     makeable_towels("r, wq
 
 wqr
+q"), 1),
+
+    testing.assert_equal(
+    "multiple instances",
+    makeable_towels("r, wq
+
+rr
 q"), 1)
 
 ].
