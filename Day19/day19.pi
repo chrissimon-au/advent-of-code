@@ -2,24 +2,25 @@ import util.
 import cp.
 import testing.
 
-makeable_towels(Input) = NumTowels => 
+parse(Input) = (Towels,Targets) =>
     Lines := Input.split("\n"),
     Towels := map(strip,Lines[1].split(",")),
-    Targets := Lines.slice(2),
+    Targets := Lines.slice(2),    
     println("===Input:"),
     println(Input),
-    println("---Towels:"),
-    println(Towels),
-    println("---Targets:"),
-    println(Targets),
-    println("==="),
+    println("---Outcome:"),    
+    println(Parsed),
+    println("===").
+    
+
+makeable_towels(Input) = NumTowels => 
+    (Towels,Targets) = parse(Input),
     NumTargets := Targets.length,
     if NumTargets == 1 then
         NumTowels = NumTargets
     else
         NumTowels = NumTargets-1
     end.
-    
 
 all_tests = [
 
