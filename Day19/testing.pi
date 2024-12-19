@@ -1,0 +1,36 @@
+module testing.
+
+assert_equal(Name,Output,Expected) = Outcome =>
+    Result=_,
+    if Output =:= Expected then
+        Result = true
+    else
+        Result = false
+    end,
+    Outcome={Name,Result}.
+
+
+colour(Text, Colour) = CText =>
+    CText = [chr(27)] ++ "[" ++ Colour.to_string ++ "m" ++ Text.to_string ++ [chr(27)] ++ "[0m".
+
+passing(Testresult) = Passing =>
+    Passing:=Testresult=true.
+
+% Expects tests to be a list of test results.
+% Each result is an array with the first element being the name and the second the pass/fail status
+test_report(Tests) = Passing =>
+    println("====="),
+    Passing:=0,
+    foreach (Test in Tests)
+        Result:=Test[2],
+        if Result then
+            print(colour("PASS: ",32)),
+            Passing := Passing + 1,
+        else
+            print(colour("FAIL: ",31))
+        end,
+        println(Test[1]),
+    end,
+    println("-----"),
+    println(Passing.to_string ++ "/" ++ Tests.length.to_string ++ " passed."),
+    println("=====").

@@ -1,5 +1,6 @@
 import util.
 import cp.
+import testing.
 
 makeable_towels(Input) = Num, Input.split().length <= 3 => 
     Num = 1.
@@ -7,21 +8,23 @@ makeable_towels(Input) = Num, Input.split().length <= 3 =>
 makeable_towels(Input) = Num, Input.split().length > 3 => 
     Num = 2.
 
-simple_case() = Result => 
-    Result = makeable_towels("r
+all_tests = [
 
-r"), Result=1.
+    testing.assert_equal(        
+        "simple_case",
+        makeable_towels("r
 
-two_patterns_two_combos_no_mixing() = Result => 
-    Result = makeable_towels("r, wq
+r"), 1),
+
+    testing.assert_equal(
+        "two_patterns_two_combos_no_mixing",
+        makeable_towels("r, wq
 
 r
 wq
-q"), Result=2.
+q"), 2)
+].
 
 main =>  
-    Tests = [
-        simple_case(),
-        two_patterns_two_combos_no_mixing()
-    ],
-    print(Tests).
+    Tests = all_tests(),
+    testing.test_report(Tests)=Tests.length.
