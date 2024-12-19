@@ -2,12 +2,15 @@ module testing.
 
 assert_equal(Name,Output,Expected) = Outcome =>
     Result=_,
+    Reason=_,
     if Output =:= Expected then
-        Result = true
+        Result = true,
+        Reason = ""
     else
-        Result = false
+        Result = false,
+        Reason = "Received %w, Expected %w".to_fstring(Output,Expected)
     end,
-    Outcome={Name,Result}.
+    Outcome={Name,Result,Reason}.
 
 
 colour(Text, Colour) = CText =>
@@ -18,6 +21,7 @@ passing(Testresult) = Passing =>
 
 % Expects tests to be a list of test results.
 % Each result is an array with the first element being the name and the second the pass/fail status
+% and the third being a reason, if failure
 test_report(Tests) = Passing =>
     println("====="),
     Passing:=0,
@@ -29,7 +33,11 @@ test_report(Tests) = Passing =>
         else
             print(colour("FAIL: ",31))
         end,
-        println(Test[1]),
+        print(Test[1]),
+        if not Result then
+            print(colour(": " ++ Test[3],31))
+        end,
+        print("\n")
     end,
     println("-----"),
     println(Passing.to_string ++ "/" ++ Tests.length.to_string ++ " passed."),

@@ -2,11 +2,24 @@ import util.
 import cp.
 import testing.
 
-makeable_towels(Input) = Num, Input.split().length <= 3 => 
-    Num = 1.
-
-makeable_towels(Input) = Num, Input.split().length > 3 => 
-    Num = 2.
+makeable_towels(Input) = NumTowels => 
+    Lines := Input.split("\n"),
+    Towels := map(strip,Lines[1].split(",")),
+    Targets := Lines.slice(2),
+    println("===Input:"),
+    println(Input),
+    println("---Towels:"),
+    println(Towels),
+    println("---Targets:"),
+    println(Targets),
+    println("==="),
+    NumTargets := Targets.length,
+    if NumTargets == 1 then
+        NumTowels = NumTargets
+    else
+        NumTowels = NumTargets-1
+    end.
+    
 
 all_tests = [
 
