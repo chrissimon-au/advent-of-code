@@ -1,8 +1,14 @@
 #! /bin/sh
 
 testEmptyMemory() {
-  result=`picat day19.pi`
-  assertEquals "0" "${result}"
+  USAGE=$(cat <<END
+r
+
+r
+END
+)
+  result=`picat day19.pi "$USAGE"`
+  assertEquals "1" "${result}"
 }
 
 # Load shUnit2.

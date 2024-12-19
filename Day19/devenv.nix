@@ -14,7 +14,7 @@
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e pi,txt './day19.test.sh'";
+        command = "watchexec -e sh,pi,txt './day19.test.sh'";
         is_tty = true;
       };
     };
