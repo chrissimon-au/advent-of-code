@@ -41,7 +41,7 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-16 - Day 16 in Pharo/GToolkit](./Day16/)
 * [2024-12-17 - Day 17 in Go](./Day17/)
 * [2024-12-18 - Day 18 in Rust](./Day18/)
-* 2024-12-19 - Day 19 in Picat
+* [2024-12-19 - Day 19 in Picat](./Day19/)
 * 2024-12-20 - Day 20 in Perl
 * 2024-12-21 - Day 21 in Pascal
 * 2024-12-22 - Day 22 in Racket
