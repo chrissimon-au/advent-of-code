@@ -27,24 +27,24 @@ starts_with_any(Str, Lst, Matches) =>
     X!="",
     Matches=delete_all(StartsWith,"").
 
-towel_makeable("",_) => 
+towel_display_makeable("",_) => 
     true.
 
-towel_makeable(Display,Towels), starts_with_any(Display,Towels,Matches) =>
+towel_display_makeable(Display,Towels), starts_with_any(Display,Towels,Matches) =>
     NotMatching:=0,
-    foreach (Match in Matches, break(towel_makeable(drop(Display,Match.len),Towels)))
+    foreach (Match in Matches, break(towel_display_makeable(drop(Display,Match.len),Towels)))
         NotMatching := NotMatching+1
     end,
     NotMatching!=Matches.len.
 
-makeable_towels(Input) = NumTowels => 
-    (Towels,Targets) = parse(Input),
-    NumTowels := 0,
-    NumTargets := Targets.len,
+makeable_towel_displays(Input) = NumMakeableDisplays => 
+    (Towels,Displays) = parse(Input),
+    NumMakeableDisplays := 0,
+    NumDisplays := Displays.len,
     Idx := 0,
-    foreach (Target in Targets)        
-        if towel_makeable(Target, Towels) then
-            NumTowels := NumTowels + 1
+    foreach (Display in Displays)        
+        if towel_display_makeable(Display, Towels) then
+            NumMakeableDisplays := NumMakeableDisplays + 1
         end,
         Idx := Idx+1,
     end.
@@ -53,21 +53,21 @@ all_tests = [
 
     testing.assert_equal(        
         "simple_case",
-        makeable_towels("r
+        makeable_towel_displays("r
 
 r"), 1),
 
     testing.assert_equal(
         "two_patterns_two_combos_no_mixing",
-        makeable_towels("r, wq
+        makeable_towel_displays("r, wq
 
 r
 wq
 q"), 2),
 
     testing.assert_equal(
-    "simple mixing of base towels",
-    makeable_towels("r, wq
+        "simple mixing of base towels",
+        makeable_towel_displays("r, wq
 
 r
 wq
@@ -75,8 +75,8 @@ rwq
 q"), 3),
 
     testing.assert_equal(
-    "more mixing of base towels",
-    makeable_towels("r, wq
+        "more mixing of base towels",
+        makeable_towel_displays("r, wq
 
 r
 wq
@@ -85,28 +85,28 @@ q
 w"), 3),
 
     testing.assert_equal(
-    "backwards mixing",
-    makeable_towels("r, wq
+        "backwards mixing",
+        makeable_towel_displays("r, wq
 
 wqr
 q"), 1),
 
     testing.assert_equal(
-    "multiple instances of a towel",
-    makeable_towels("r, wq
+        "multiple instances of a towel",
+        makeable_towel_displays("r, wq
 
 rr
 q"), 1),
 
     testing.assert_equal(
-    "AoC Sample",
-    makeable_towels(
-        read_file_chars("sampledata.txt")),
-        to_int(read_file_chars("sampledata.answer.txt"))),
+        "AoC Sample",
+        makeable_towel_displays(
+            read_file_chars("sampledata.txt")),
+            to_int(read_file_chars("sampledata.answer.txt"))),
 
     testing.assert_equal(
         "AoC Test",
-        makeable_towels(
+        makeable_towel_displays(
             read_file_chars("testdata.txt")),
             to_int(read_file_chars("testdata.answer.txt")))
 
