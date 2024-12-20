@@ -1,10 +1,48 @@
 namespace Day19;
 
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using Xunit.Abstractions;
+using Towels = IDictionary<int, List<string>>;
+
 public class Day19
 {
+    private readonly ITestOutputHelper output;
+
+    public Day19(ITestOutputHelper output)
+    {
+        this.output = output;
+    }
+
+    (Towels, string[]) Parse(string input) {
+        var parts = input.Split("\n\n");
+        var towels = parts[0].Split(", ");
+        var towelsByLength = towels.GroupBy(t => t.Length).ToDictionary(g => g.Key, g => g.ToList());
+        var displays = parts[1].Split("\n");
+        return (towelsByLength, displays);
+    }
+
+    long CountWaysToMakeDisplay(string prefix, string display, Towels towels) {
+        return towels.Keys.Aggregate(0L, (counter, wordLength) => {
+            int numOptions = towels[wordLength].Where(t => display.StartsWith(t)).Count();
+            if (numOptions > 0) {
+                if (display.Length > wordLength) {
+                    var combinations = numOptions * CountWaysToMakeDisplay(prefix + " ", display.Substring(wordLength), towels);
+                    output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, recreturning {combinations}");
+                    return counter + combinations;
+                } else {
+                    output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning {numOptions}");
+                    return counter + numOptions;
+                }
+            }
+            output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning no options");
+            return counter;
+        });
+    }
 
     long CountWaysToMakeDisplay(string input) {
-        return 0;
+        var (towels, displays) = Parse(input);
+
+        return displays.Select(d => CountWaysToMakeDisplay("", d, towels)).Sum();
     }
 
     [Theory()]
