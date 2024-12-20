@@ -16,20 +16,23 @@ parse(Input) = (Towels,Targets) =>
         println(Targets),
         println("===")
     end.
-    
 
 combinations(N,Xs) = combinations(N,Xs,len(Xs)).
 
-combinations(0,_Xs,_Size) = [[]].
-combinations(N,Xs,N) = [Xs].
-combinations(N,[X|Xs],Size) = [[X|Comb] : Comb in combinations(N-1,Xs,Size-1)]
-                                ++
-                                combinations(N,Xs,Size-1).
+take_(K,Lst) = take(Lst,K).
 
-towel_makeable(Target, Towels) => 
-    BaseCombos := combinations(Towels.length,Towels) ++ combinations(Towels.length,reverse(Towels)),
-    Combos = Towels ++ [X.join('') : X in BaseCombos],
-    member(Target,Combos).
+starts_with(Str,Prefix) =>
+    Prefix = take(Str,len(Prefix)).
+
+starts_with_any(Str, Lst, Match) =>
+    Prefixes=[ cond(starts_with(Str,Elem),Elem,"") : Elem in Lst],
+    Match=flatten(Prefixes),
+    Match!="".
+
+
+towel_makeable("",_) => true.
+towel_makeable(Display,Towels), starts_with_any(Display,Towels,Match) =>
+    towel_makeable(drop(Display,Match.len),Towels).
 
 
 makeable_towels(Input) = NumTowels => 
@@ -84,7 +87,7 @@ wqr
 q"), 1),
 
     testing.assert_equal(
-    "multiple instances",
+    "multiple instances of a towel",
     makeable_towels("r, wq
 
 rr
