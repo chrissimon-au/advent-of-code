@@ -8,12 +8,14 @@
     pkgs.picat
   ];
 
+  languages.dotnet.enable=true;
+
   # https://devenv.sh/processes/
   processes.code.exec = "code .";
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e pi,txt --timings 'picat day19'";
+        command = "cd csharp; dotnet watch test";
         is_tty = true;
       };
     };
