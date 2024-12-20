@@ -42,8 +42,12 @@ print_all_ways_to_make_towel_display(Display,Towels) = _ =>
     println(Plan).
     
 count_ways_to_make_towel_display(Display,Towels) = NumWaysToMakeDisplay => 
-    S0 := $towel_display("", Towels, Display, Display),
-    NumWaysToMakeDisplay:=count_all(best_plan_nondet(S0, _)).
+    if towel_display_makeable(Display, Towels) then
+        S0 := $towel_display("", Towels, Display, Display),    
+        NumWaysToMakeDisplay:=count_all(best_plan_nondet(S0, _))
+    else
+        NumWaysToMakeDisplay:=0
+    end.
 
 final(S) =>
     $towel_display(CurrentDisplay, _, GoalDisplay, _) = S,
@@ -134,7 +138,15 @@ q"), 1),
 abc
 cba
 "),
-            4)
+            4),
+
+    testing.assert_equal(
+        "No solution when counting",
+        count_ways_to_make_towel_displays("x, y, z
+        
+        abc
+        "),
+                    0)
 
     % testing.assert_equal(
     %     "AoC Sample Part 2",
