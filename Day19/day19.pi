@@ -20,16 +20,18 @@ parse(Input) = (Towels,Targets) =>
     end.
 
 %%%% PLANNER DEFINITION %%%%%
-set_towels(Towels) = _ => get_global_map(t).put(towels,Towels).
+set_towels(Towels) => get_global_map(t).put(towels,Towels).
 get_towels() = Towels => Towels := get_global_map(t).get(towels).
 
-final("") => true.
+table
+final(("",_)) => true.
 
-action(RemainingDisplay, NewRemaining, TowelLen, Cost) ?=> 
-    Towels=get_towels(),
-    member(Towel, Towels),    
+table
+action((RemainingDisplay,G), NewRemaining, TowelLen, Cost) => 
+    Towels:=get_towels(),
+    member(Towel, Towels), 
     find(RemainingDisplay,Towel,1,TowelLen),
-    NewRemaining=drop(RemainingDisplay,TowelLen),
+    NewRemaining=(drop(RemainingDisplay,TowelLen),G),
     Cost = 0. % Ensures all plans are considered equal and all are found.
 
 %%%% END PLANNER %%%%%
@@ -37,12 +39,12 @@ action(RemainingDisplay, NewRemaining, TowelLen, Cost) ?=>
 %%%% PLANNING FUNCTIONS %%%%
 % uses the planner to find any plan with just `plan`
 towel_display_makeable(Display) =>
-    plan(Display, _).
+    plan((Display,Display), _).
 
 % uses the planner to find all plans with `best_plan_nondet`
-print_all_ways_to_make_towel_display(Display) =>
+print_ways_to_make_towel_display(Display) =>
     if towel_display_makeable(Display) then
-        All:=find_all(_,best_plan_nondet(Display, _)),
+        All:=find_all(_,best_plan_nondet((Display,Display), _)),
         println(All)
     else
         println("Not makeable")
@@ -51,7 +53,7 @@ print_all_ways_to_make_towel_display(Display) =>
 % uses the planner to find all plans with `best_plan_nondet`
 count_ways_to_make_towel_display(Display) = NumWaysToMakeDisplay => 
     if towel_display_makeable(Display) then
-        All:=find_all(Plan,best_plan_nondet(Display, Plan)),
+        All:=find_all(Plan,best_plan_nondet((Display,Display), Plan)),
         %println(All),
         NumWaysToMakeDisplay:=All.len
     else
@@ -63,12 +65,12 @@ count_ways_to_make_towel_display(Display) = NumWaysToMakeDisplay =>
 makeable_towel_displays(Input) = NumMakeableDisplays => 
     (Towels,Displays) = parse(Input),
     NumMakeableDisplays := 0,
-    _=set_towels(Towels),
+    set_towels(Towels),
     foreach (Display in Displays)        
         if towel_display_makeable(Display) then
             NumMakeableDisplays := NumMakeableDisplays + 1
-        else
-            println(Display)
+        % else
+        %     println(Display)
         end
     end.
 
@@ -76,20 +78,20 @@ count_ways_to_make_towel_displays(Input) = NumWaysToMakeDisplays =>
     (Towels,Displays) = parse(Input),
     NumWaysToMakeDisplays:=0,
     Idx:=0,
-    _=set_towels(Towels),
-    Total:=Displays.len,
+    set_towels(Towels),
+    %Total:=Displays.len,
     foreach (Display in Displays)
         NumWaysToMakeDisplays := NumWaysToMakeDisplays + count_ways_to_make_towel_display(Display),
         Idx:=Idx+1
         %printf("%d of %d. Found %d ways. (%s)%n", Idx, Total, NumWaysToMakeDisplays, Display)
     end.
 
-print_all_ways_to_make_towel_displays(Input) = _ =>
+print_ways_to_make_towel_displays(Input) = _ =>
     (Towels,Displays) = parse(Input),
-    _=set_towels(Towels),
+    set_towels(Towels),
     foreach (Display in Displays)
         printf("Target Display: %s%n", Display),
-        print_all_ways_to_make_towel_display(Display)
+        print_ways_to_make_towel_display(Display)
     end.
 %%%% END AGGREGATING FUNCTIONS OVER INPUT %%%%
 
@@ -173,7 +175,7 @@ abbcc"),
         "No solution when counting",
         count_ways_to_make_towel_displays("x, y, z
 
-abc"),0),
+efg"),0),
 
     testing.assert_equal(
         "AoC Sample Part 2",
