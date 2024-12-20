@@ -50,8 +50,21 @@ public class Day19
 
 abc
 cba", 4)]
+    [InlineData(@"a, b, c, ab, bc, bb, cc
+
+abbcc", 8)]
+    [InlineData(@"x, y, z
+
+efg", 0)]
     public void TestCountWaysToMakeDisplay(string input, long expected)
     {
         Assert.Equal(expected, CountWaysToMakeDisplay(input));
+    }
+
+    [Theory()]
+    [InlineData("../../../../sampledata.txt", "../../../../sampledata.answer2.txt")]
+    public void TestCountWaysToMakeDisplayFromFile(string dataFileName, string answerFileName)
+    {
+        Assert.Equal(Convert.ToInt64(File.ReadAllText(answerFileName)), CountWaysToMakeDisplay(File.ReadAllText(dataFileName)));
     }
 }
