@@ -19,25 +19,6 @@ parse(Input) = (Towels,Targets) =>
         println("===")
     end.
 
-starts_with(Str,Prefix) =>
-    Prefix = take(Str,len(Prefix)).
-
-starts_with_any(Str, Lst, Matches) =>
-    StartsWith=[ cond(starts_with(Str,Elem),Elem,"") : Elem in Lst],
-    X=flatten(StartsWith),
-    X!="",
-    Matches=delete_all(StartsWith,"").
-
-towel_display_makeable("",_) => 
-    true.
-
-towel_display_makeable(Display,Towels), starts_with_any(Display,Towels,Matches) =>
-    NotMatching:=0,
-    foreach (Match in Matches, break(towel_display_makeable(drop(Display,Match.len),Towels)))
-        NotMatching := NotMatching+1
-    end,
-    NotMatching!=Matches.len.
-
 makeable_towel_displays(Input) = NumMakeableDisplays => 
     (Towels,Displays) = parse(Input),
     NumMakeableDisplays := 0,
@@ -47,27 +28,36 @@ makeable_towel_displays(Input) = NumMakeableDisplays =>
         end
     end.
 
+starts_with(Str,Prefix) =>
+    Prefix = take(Str,len(Prefix)).
+
+% uses the planner to find any plan
+towel_display_makeable(Display,Towels) =>
+    S0 := $towel_display("", Towels, Display, Display),
+    plan(S0, _).
+
+print_all_ways_to_make_towel_display(Display,Towels) = _ =>    
+    S0 := $towel_display("", Towels, Display, Display),
+    best_plan_nondet(S0, Plan),
+    println(Plan).
+    
 count_ways_to_make_towel_display(Display,Towels) = NumWaysToMakeDisplay => 
-    S0 = $towel_display("", Towels, Display),
-    NumWaysToMakeDisplay:=count_all(best_plan_nondet(S0, Plan))+1.
+    S0 := $towel_display("", Towels, Display, Display),
+    NumWaysToMakeDisplay:=count_all(best_plan_nondet(S0, _)).
 
 final(S) =>
-    $towel_display(CurrentDisplay, _, GoalDisplay) = S,
-    % if CurrentDisplay==GoalDisplay then
-    %     printf("Checking Final: '%s' == '%s'%n", CurrentDisplay, GoalDisplay)
-    % else
-    %     printf("Not equal %n")
-    % end,
+    $towel_display(CurrentDisplay, _, GoalDisplay, _) = S,
     CurrentDisplay == GoalDisplay.
 
 action(S0, S1, Towel, Cost) => 
-    $towel_display(CurrentDisplay, Towels, GoalDisplay) = S0,
-    % println("Current: " ++ CurrentDisplay),
-    CurrentDisplay.len < GoalDisplay.len,
-    member(Towel,Towels),
+    $towel_display(CurrentDisplay, Towels, GoalDisplay, RemainingDisplay) = S0,
+    member(Towel,Towels),    
+    find(RemainingDisplay,Towel,1,TowelLen),
+
     NewDisplay = CurrentDisplay ++ Towel,
-    S1 = $towel_display(NewDisplay,Towels,GoalDisplay),
-    Cost=1.
+    RemainingDisplay := drop(RemainingDisplay,TowelLen),
+    S1 = $towel_display(NewDisplay,Towels,GoalDisplay,RemainingDisplay),
+    Cost=0.
 
 count_ways_to_make_towel_displays(Input) = NumWaysToMakeDisplays =>
     (Towels,Displays) = parse(Input),
@@ -135,7 +125,16 @@ q"), 1),
         "AoC Test",
         makeable_towel_displays(
             read_file_chars("testdata.txt")),
-            to_int(read_file_chars("testdata.answer.txt")))
+            to_int(read_file_chars("testdata.answer.txt"))),
+
+    testing.assert_equal(
+        "Count of Ways to make towels - simple case",
+        count_ways_to_make_towel_displays("a, b, c, ab, bc
+
+abc
+cba
+"),
+            4)
 
     % testing.assert_equal(
     %     "AoC Sample Part 2",
