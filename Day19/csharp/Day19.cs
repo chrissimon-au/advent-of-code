@@ -29,44 +29,19 @@ public class Day19
         var counter = towels.Keys.Aggregate(0L, (counter, wordLength) => {
             int numOptions = towels[wordLength].Where(t => display.StartsWith(t)).Count();
             if (numOptions > 0) {
-                if (display.Length > wordLength) {
-                    var combinations = numOptions * CountWaysToMakeDisplay(prefix + " ", display.Substring(wordLength), towels, cache);
-                    //output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, recreturning {combinations}");
-                    return counter + combinations;
-                } else {
-                    //output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning {numOptions}");
-                    return counter + numOptions;
-                }
+                var downStreamOptions =
+                    display.Length > wordLength ?
+                    CountWaysToMakeDisplay(prefix + " ", display.Substring(wordLength), towels, cache) :
+                    1;
+                output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning {numOptions}");
+                return counter + numOptions * downStreamOptions;
             }
-            //output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning no options");
+            output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning no options");
             return counter;
         });
         cache.Add(display, counter);
         return counter;
     }
-
-    // private record Combinations(int numCombos, string remainingDisplay);
-
-    // long CountWaysToMakeDisplay(string prefix, string display, Towels towels, Dictionary<string, long> cache) {
-    //     var toCheck = new Queue<Combinations>();
-    //     toCheck.Enqueue(new Combinations(1,display));
-    //     long counter = 0;
-    //     while (toCheck.Any()) {
-    //         var next = toCheck.Dequeue();
-    //         foreach(int wordLength in towels.Keys) {
-    //             int numOptions = towels[wordLength].Where(t => next.remainingDisplay.StartsWith(t)).Count();
-    //             if (numOptions > 0) {
-    //                 if (next.remainingDisplay.Length == wordLength) {
-    //                     counter += next.numCombos * numOptions;
-    //                 } else {
-    //                     toCheck.Enqueue(new Combinations(next.numCombos * numOptions, next.remainingDisplay.Substring(wordLength)));
-    //                 }
-
-    //             }
-    //         }
-    //     }
-    //     return counter;
-    // }
 
     long CountWaysToMakeDisplay(string input) {
         var (towels, displays) = Parse(input);
