@@ -49,6 +49,9 @@ makeable_towel_displays(Input) = NumMakeableDisplays =>
         Idx := Idx+1,
     end.
 
+count_ways_to_make_towel_displays(Input) = NumWaysToMakeDisplays =>
+    NumWaysToMakeDisplays=1.
+
 all_tests = [
 
     testing.assert_equal(        
@@ -108,7 +111,13 @@ q"), 1),
         "AoC Test",
         makeable_towel_displays(
             read_file_chars("testdata.txt")),
-            to_int(read_file_chars("testdata.answer.txt")))
+            to_int(read_file_chars("testdata.answer.txt"))),
+
+    testing.assert_equal(
+        "AoC Sample Part 2",
+        count_ways_to_make_towel_displays(
+            read_file_chars("sampledata.txt")),
+            to_int(read_file_chars("sampledata.answer2.txt")))
 
 ].
 
