@@ -1,5 +1,6 @@
 namespace Day19;
 
+using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Xunit.Abstractions;
 using Towels = IDictionary<int, List<string>>;
@@ -21,28 +22,56 @@ public class Day19
         return (towelsByLength, displays);
     }
 
-    long CountWaysToMakeDisplay(string prefix, string display, Towels towels) {
-        return towels.Keys.Aggregate(0L, (counter, wordLength) => {
+    long CountWaysToMakeDisplay(string prefix, string display, Towels towels,  Dictionary<string, long> cache) {
+        if (cache.ContainsKey(display)) {
+            return cache[display];
+        }
+        var counter = towels.Keys.Aggregate(0L, (counter, wordLength) => {
             int numOptions = towels[wordLength].Where(t => display.StartsWith(t)).Count();
             if (numOptions > 0) {
                 if (display.Length > wordLength) {
-                    var combinations = numOptions * CountWaysToMakeDisplay(prefix + " ", display.Substring(wordLength), towels);
-                    output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, recreturning {combinations}");
+                    var combinations = numOptions * CountWaysToMakeDisplay(prefix + " ", display.Substring(wordLength), towels, cache);
+                    //output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, recreturning {combinations}");
                     return counter + combinations;
                 } else {
-                    output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning {numOptions}");
+                    //output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning {numOptions}");
                     return counter + numOptions;
                 }
             }
-            output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning no options");
+            //output.WriteLine($"{prefix}{display}: c:{counter}, l:{wordLength}, o:{numOptions}, returning no options");
             return counter;
         });
+        cache.Add(display, counter);
+        return counter;
     }
+
+    // private record Combinations(int numCombos, string remainingDisplay);
+
+    // long CountWaysToMakeDisplay(string prefix, string display, Towels towels, Dictionary<string, long> cache) {
+    //     var toCheck = new Queue<Combinations>();
+    //     toCheck.Enqueue(new Combinations(1,display));
+    //     long counter = 0;
+    //     while (toCheck.Any()) {
+    //         var next = toCheck.Dequeue();
+    //         foreach(int wordLength in towels.Keys) {
+    //             int numOptions = towels[wordLength].Where(t => next.remainingDisplay.StartsWith(t)).Count();
+    //             if (numOptions > 0) {
+    //                 if (next.remainingDisplay.Length == wordLength) {
+    //                     counter += next.numCombos * numOptions;
+    //                 } else {
+    //                     toCheck.Enqueue(new Combinations(next.numCombos * numOptions, next.remainingDisplay.Substring(wordLength)));
+    //                 }
+
+    //             }
+    //         }
+    //     }
+    //     return counter;
+    // }
 
     long CountWaysToMakeDisplay(string input) {
         var (towels, displays) = Parse(input);
-
-        return displays.Select(d => CountWaysToMakeDisplay("", d, towels)).Sum();
+        var cache = new Dictionary<string, long>();
+        return displays.Select(d => CountWaysToMakeDisplay("", d, towels, cache)).Sum();
     }
 
     [Theory()]
@@ -63,6 +92,7 @@ efg", 0)]
 
     [Theory()]
     [InlineData("../../../../sampledata.txt", "../../../../sampledata.answer2.txt")]
+    [InlineData("../../../../testdata.txt", "../../../../testdata.answer2.txt")]
     public void TestCountWaysToMakeDisplayFromFile(string dataFileName, string answerFileName)
     {
         Assert.Equal(Convert.ToInt64(File.ReadAllText(answerFileName)), CountWaysToMakeDisplay(File.ReadAllText(dataFileName)));
