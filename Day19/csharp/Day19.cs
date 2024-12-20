@@ -1,7 +1,5 @@
 namespace Day19;
 
-using Microsoft.VisualBasic;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Xunit.Abstractions;
 using Towels = IDictionary<int, List<string>>;
 
