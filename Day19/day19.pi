@@ -19,159 +19,179 @@ parse(Input) = (Towels,Targets) =>
         println("===")
     end.
 
-makeable_towel_displays(Input) = NumMakeableDisplays => 
-    (Towels,Displays) = parse(Input),
-    NumMakeableDisplays := 0,
-    foreach (Display in Displays)        
-        if towel_display_makeable(Display, Towels) then
-            NumMakeableDisplays := NumMakeableDisplays + 1
-        end
-    end.
+%%%% PLANNER DEFINITION %%%%%
+set_towels(Towels) = _ => get_global_map(t).put(towels,Towels).
+get_towels() = Towels => Towels := get_global_map(t).get(towels).
 
+final("") => true.
+
+action(RemainingDisplay, NewRemaining, TowelLen, Cost) ?=> 
+    Towels=get_towels(),
+    member(Towel, Towels),    
+    find(RemainingDisplay,Towel,1,TowelLen),
+    NewRemaining=drop(RemainingDisplay,TowelLen),
+    Cost = 0. % Ensures all plans are considered equal and all are found.
+
+%%%% END PLANNER %%%%%
+
+%%%% PLANNING FUNCTIONS %%%%
 % uses the planner to find any plan with just `plan`
-towel_display_makeable(Display,Towels) =>
-    S0 = ("", Towels, Display, Display),
-    plan(S0, _).
+towel_display_makeable(Display) =>
+    plan(Display, _).
 
 % uses the planner to find all plans with `best_plan_nondet`
-print_all_ways_to_make_towel_display(Display,Towels) ?=>
-    if towel_display_makeable(Display, Towels) then
-        S0 := ("", Towels, Display, Display),
-        All:=find_all(Plan,best_plan_nondet(S0, Plan)),
+print_all_ways_to_make_towel_display(Display) =>
+    if towel_display_makeable(Display) then
+        All:=find_all(_,best_plan_nondet(Display, _)),
         println(All)
     else
         println("Not makeable")
     end.
 
 % uses the planner to find all plans with `best_plan_nondet`
-count_ways_to_make_towel_display(Display,Towels) = NumWaysToMakeDisplay => 
-    if towel_display_makeable(Display, Towels) then
-        S0 := ("", Towels, Display, Display),    
-        NumWaysToMakeDisplay:=count_all(best_plan_nondet(S0, _))
+count_ways_to_make_towel_display(Display) = NumWaysToMakeDisplay => 
+    if towel_display_makeable(Display) then
+        All:=find_all(Plan,best_plan_nondet(Display, Plan)),
+        %println(All),
+        NumWaysToMakeDisplay:=All.len
     else
         NumWaysToMakeDisplay:=0
     end.
+%%%% END PLANNING FUNCTIONS %%%%
 
-final((GoalDisplay, _, GoalDisplay, _)) => true.
-
-action(S0, S1, Towel, Cost) => 
-    (CurrentDisplay, Towels, GoalDisplay, RemainingDisplay) = S0,
-
-    member(Towel, Towels),
-    find(RemainingDisplay,Towel,1,TowelLen),
-
-    NewDisplay = CurrentDisplay ++ Towel,
-    RemainingDisplay := drop(RemainingDisplay,TowelLen),
-    S1 = (NewDisplay, Towels, GoalDisplay, RemainingDisplay),
-    Cost = 0. % Ensures all plans are considered equal and all are found.
+%%%% AGGREGATING FUNCTIONS OVER INPUT %%%%
+makeable_towel_displays(Input) = NumMakeableDisplays => 
+    (Towels,Displays) = parse(Input),
+    NumMakeableDisplays := 0,
+    _=set_towels(Towels),
+    foreach (Display in Displays)        
+        if towel_display_makeable(Display) then
+            NumMakeableDisplays := NumMakeableDisplays + 1
+        else
+            println(Display)
+        end
+    end.
 
 count_ways_to_make_towel_displays(Input) = NumWaysToMakeDisplays =>
     (Towels,Displays) = parse(Input),
     NumWaysToMakeDisplays:=0,
     Idx:=0,
+    _=set_towels(Towels),
     Total:=Displays.len,
     foreach (Display in Displays)
-        NumWaysToMakeDisplays := NumWaysToMakeDisplays + count_ways_to_make_towel_display(Display,Towels),
-        Idx:=Idx+1,
-        printf("%d of %d. Found %d ways.%n", Idx, Total, NumWaysToMakeDisplays)
+        NumWaysToMakeDisplays := NumWaysToMakeDisplays + count_ways_to_make_towel_display(Display),
+        Idx:=Idx+1
+        %printf("%d of %d. Found %d ways. (%s)%n", Idx, Total, NumWaysToMakeDisplays, Display)
     end.
 
 print_all_ways_to_make_towel_displays(Input) = _ =>
     (Towels,Displays) = parse(Input),
+    _=set_towels(Towels),
     foreach (Display in Displays)
         printf("Target Display: %s%n", Display),
-        print_all_ways_to_make_towel_display(Display,Towels)
+        print_all_ways_to_make_towel_display(Display)
     end.
+%%%% END AGGREGATING FUNCTIONS OVER INPUT %%%%
 
 all_tests = [
 
-%     testing.assert_equal(        
-%         "simple_case",
-%         makeable_towel_displays("r
+    testing.assert_equal(        
+        "simple_case",
+        makeable_towel_displays("r
 
-% r"), 1),
+r"), 1),
 
-%     testing.assert_equal(
-%         "two_patterns_two_combos_no_mixing",
-%         makeable_towel_displays("r, wq
+    testing.assert_equal(
+        "two_patterns_two_combos_no_mixing",
+        makeable_towel_displays("r, wq
 
-% r
-% wq
-% q"), 2),
+r
+wq
+q"), 2),
 
-%     testing.assert_equal(
-%         "simple mixing of base towels",
-%         makeable_towel_displays("r, wq
+    testing.assert_equal(
+        "simple mixing of base towels",
+        makeable_towel_displays("r, wq
 
-% r
-% wq
-% rwq
-% q"), 3),
+r
+wq
+rwq
+q"), 3),
 
-%     testing.assert_equal(
-%         "more mixing of base towels",
-%         makeable_towel_displays("r, wq
+    testing.assert_equal(
+        "more mixing of base towels",
+        makeable_towel_displays("r, wq
 
-% r
-% wq
-% rwq
-% q
-% w"), 3),
+r
+wq
+rwq
+q
+w"), 3),
 
-%     testing.assert_equal(
-%         "backwards mixing",
-%         makeable_towel_displays("r, wq
+    testing.assert_equal(
+        "backwards mixing",
+        makeable_towel_displays("r, wq
 
-% wqr
-% q"), 1),
+wqr
+q"), 1),
 
-%     testing.assert_equal(
-%         "multiple instances of a towel",
-%         makeable_towel_displays("r, wq
+    testing.assert_equal(
+        "multiple instances of a towel",
+        makeable_towel_displays("r, wq
 
-% rr
-% q"), 1),
+rr
+q"), 1),
 
-%     testing.assert_equal(
-%         "AoC Sample",
-%         makeable_towel_displays(
-%             read_file_chars("sampledata.txt")),
-%             to_int(read_file_chars("sampledata.answer.txt"))),
+    testing.assert_equal(
+        "AoC Sample",
+        makeable_towel_displays(
+            read_file_chars("sampledata.txt")),
+            to_int(read_file_chars("sampledata.answer.txt"))),
 
-%     testing.assert_equal(
-%         "AoC Test",
-%         makeable_towel_displays(
-%             read_file_chars("testdata.txt")),
-%             to_int(read_file_chars("testdata.answer.txt"))),
+    testing.assert_equal(
+        "AoC Test",
+        makeable_towel_displays(
+            read_file_chars("testdata.txt")),
+            to_int(read_file_chars("testdata.answer.txt"))),
 
-%     testing.assert_equal(
-%         "Count of Ways to make towels - simple case",
-%         count_ways_to_make_towel_displays("a, b, c, ab, bc
+    testing.assert_equal(
+        "Count of Ways to make towels - simple case",
+        count_ways_to_make_towel_displays("a, b, c, ab, bc
 
-% abc
-% cba
-% "),
-%             4),
+abc
+cba"),
+            4),
 
-%     testing.assert_equal(
-%         "No solution when counting",
-%         count_ways_to_make_towel_displays("x, y, z
-        
-%         abc
-%         "),
-%                     0),
+    testing.assert_equal(
+        "Count of Ways to make towels - multiple plans",
+        count_ways_to_make_towel_displays("a, b, c, ab, bc, bb, cc
+
+abbcc"),
+                    8),
+
+    testing.assert_equal(
+        "No solution when counting",
+        count_ways_to_make_towel_displays("x, y, z
+
+abc"),0),
 
     testing.assert_equal(
         "AoC Sample Part 2",
         count_ways_to_make_towel_displays(
             read_file_chars("sampledata.txt")),
-            to_int(read_file_chars("sampledata.answer2.txt"))),
+            to_int(read_file_chars("sampledata.answer2.txt")))
 
-    testing.assert_equal(
-        "AoC Test Part 2",
-        count_ways_to_make_towel_displays(
-            read_file_chars("testdata.txt")),
-            to_int(read_file_chars("testdata.answer2.txt")))
+    % testing.assert_equal(
+    %     "Sample Hard",
+    %     count_ways_to_make_towel_displays(
+    %         read_file_chars("sampledata.hard.txt")),
+    %         0)
+
+    % testing.assert_equal(
+    %     "AoC Test Part 2",
+    %     count_ways_to_make_towel_displays(
+    %         read_file_chars("testdata.txt")),
+    %         to_int(read_file_chars("testdata.answer2.txt")))
 
 ].
 
