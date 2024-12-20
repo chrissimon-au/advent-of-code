@@ -1,6 +1,7 @@
 import util.
 import cp.
 import testing.
+import io.
 
 log() = false.
 
@@ -17,31 +18,35 @@ parse(Input) = (Towels,Targets) =>
         println("===")
     end.
 
-combinations(N,Xs) = combinations(N,Xs,len(Xs)).
-
-take_(K,Lst) = take(Lst,K).
-
 starts_with(Str,Prefix) =>
     Prefix = take(Str,len(Prefix)).
 
-starts_with_any(Str, Lst, Match) =>
-    Prefixes=[ cond(starts_with(Str,Elem),Elem,"") : Elem in Lst],
-    Match=flatten(Prefixes),
-    Match!="".
+starts_with_any(Str, Lst, Matches) =>
+    StartsWith=[ cond(starts_with(Str,Elem),Elem,"") : Elem in Lst],
+    X=flatten(StartsWith),
+    X!="",
+    Matches=delete_all(StartsWith,"").
 
+towel_makeable("",_) => 
+    true.
 
-towel_makeable("",_) => true.
-towel_makeable(Display,Towels), starts_with_any(Display,Towels,Match) =>
-    towel_makeable(drop(Display,Match.len),Towels).
-
+towel_makeable(Display,Towels), starts_with_any(Display,Towels,Matches) =>
+    NotMatching:=0,
+    foreach (Match in Matches, break(towel_makeable(drop(Display,Match.len),Towels)))
+        NotMatching := NotMatching+1
+    end,
+    NotMatching!=Matches.len.
 
 makeable_towels(Input) = NumTowels => 
     (Towels,Targets) = parse(Input),
     NumTowels := 0,
+    NumTargets := Targets.len,
+    Idx := 0,
     foreach (Target in Targets)        
         if towel_makeable(Target, Towels) then
             NumTowels := NumTowels + 1
-        end
+        end,
+        Idx := Idx+1,
     end.
 
 all_tests = [
@@ -91,7 +96,19 @@ q"), 1),
     makeable_towels("r, wq
 
 rr
-q"), 1)
+q"), 1),
+
+    testing.assert_equal(
+    "AoC Sample",
+    makeable_towels(
+        read_file_chars("sampledata.txt")),
+        to_int(read_file_chars("sampledata.answer.txt"))),
+
+    testing.assert_equal(
+        "AoC Test",
+        makeable_towels(
+            read_file_chars("testdata.txt")),
+            to_int(read_file_chars("testdata.answer.txt")))
 
 ].
 
