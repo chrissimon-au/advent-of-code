@@ -201,21 +201,21 @@ use File::Slurp;
         my $cheatCounter = 0;
         while (not posEqual($currentPos,$end)) {
 
-            foreach my $cheatOffset (2..$picoSecondLimit) {
+            foreach my $cheatDelta (2..$picoSecondLimit) {
             
-                if ($self->cheatSaver($currentPos,($cheatOffset,0),$minSaved)) {
+                if ($self->cheatSaver($currentPos,($cheatDelta,0),$minSaved)) {
                     $cheatCounter = $cheatCounter + 1;
                 }
 
-                if ($self->cheatSaver($currentPos,(0,$cheatOffset),$minSaved)) {
+                if ($self->cheatSaver($currentPos,(0,$cheatDelta),$minSaved)) {
                     $cheatCounter = $cheatCounter + 1;
                 }
 
-                if ($self->cheatSaver($currentPos,(-$cheatOffset,0),$minSaved)) {
+                if ($self->cheatSaver($currentPos,(-$cheatDelta,0),$minSaved)) {
                     $cheatCounter = $cheatCounter + 1;
                 }
 
-                if ($self->cheatSaver($currentPos,(0,-$cheatOffset),$minSaved)) {
+                if ($self->cheatSaver($currentPos,(0,-$cheatDelta),$minSaved)) {
                     $cheatCounter = $cheatCounter + 1;
                 }
             }
