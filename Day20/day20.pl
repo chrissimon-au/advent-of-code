@@ -5,7 +5,7 @@ use warnings;
 use warnings FATAL => qw[uninitialized];
 use builtin qw(true false trim);
 use feature qw(say);
-use Test::Simple tests => 11;
+use Test::Simple tests => 12;
 use File::Slurp;
 
 {
@@ -300,6 +300,6 @@ ok(assert_equal(count_cheats_saving_at_least($sampleData,76,20), 3), "AoC Part 2
 ok(assert_equal(count_cheats_saving_at_least($sampleData,74,20), 7), "AoC Part 2 Sample");
 ok(assert_equal(count_cheats_saving_at_least($sampleData,72,20), 29), "AoC Part 2 Sample");
 
-my $part1Answer = read_file('testdata.answer2.txt');
+my $part2Answer = read_file('testdata.answer2.txt');
 my $cheats_count = count_cheats_saving_at_least($testdata, 100, 20);
-ok (assert_equal($cheats_count, $part1Answer), "AoC Test data part 2");
+ok (assert_equal($cheats_count, $part2Answer), "AoC Test data part 2");
