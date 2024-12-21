@@ -13,7 +13,6 @@
   # https://devenv.sh/languages/
   languages.perl.enable = true;  
   languages.perl.packages = [
-    "
     "Test::Simple"
     "JSON"
     "File::Slurp"

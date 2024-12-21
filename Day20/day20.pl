@@ -270,43 +270,12 @@ ok(assert_equal(count_cheats_saving_at_least(trim('
 #######
 '),2), 2), "2 cheats");
 
-ok (assert_equal(count_cheats_saving_at_least(trim('
-###############
-#...#...#.....#
-#.#.#.#.#.###.#
-#S#...#.#.#...#
-#######.#.#.###
-#######.#.#...#
-#######.#.###.#
-###..E#...#...#
-###.#######.###
-#...###...#...#
-#.#####.#.###.#
-#.#...#.#.#...#
-#.#.#.#.#.#.###
-#...#...#...###
-###############
-'),0), 14+14+2+4+2+3+1+1+1+1+1), "AoC Sample, all possible cheats");
+my $sampleData = read_file("sampledata.txt");
+ok (assert_equal(count_cheats_saving_at_least($sampleData,0), 44), "AoC Sample, all possible cheats");
 
-ok (assert_equal(count_cheats_saving_at_least(trim('
-###############
-#...#...#.....#
-#.#.#.#.#.###.#
-#S#...#.#.#...#
-#######.#.#.###
-#######.#.#...#
-#######.#.###.#
-###..E#...#...#
-###.#######.###
-#...###...#...#
-#.#####.#.###.#
-#.#...#.#.#...#
-#.#.#.#.#.#.###
-#...#...#...###
-###############
-'),64), 1), "AoC Sample - only cheast that save 64 or more");
+ok (assert_equal(count_cheats_saving_at_least($sampleData,64), 1), "AoC Sample - only cheast that save 64 or more");
 
 my $testdata = read_file('testdata.txt');
-my $answer = read_file('testdata.answer.txt');
+my $part1Answer = read_file('testdata.answer.txt');
 my $count = count_cheats_saving_at_least($testdata, 100);
-ok (assert_equal($count, $answer), "AoC Test data part 1");
+ok (assert_equal($count, $part1Answer), "AoC Test data part 1");
