@@ -27,6 +27,8 @@ Begin
   PosToString := ColStr + ',' + RowStr;
 End;
 
+
+(* Numeric KeyPad *)
 Function GetNumKpPos (button : String) : Pos;
 
 Var ButtonNumber : integer;
@@ -106,6 +108,68 @@ Begin
   GetNumKpPresses := KeyPresses;
 End;
 
+
+(* Directional KeyPad *)
+
+Function GetDirKpPos (button : String) : Pos;
+
+Begin
+  If button = 'A' Then
+    Begin
+      GetDirKpPos.Col := 2;
+      GetDirKpPos.Row := 0;
+    End
+  Else If button = '^' Then
+         Begin
+           GetDirKpPos.Col := 1;
+           GetDirKpPos.Row := 0;
+         End;
+End;
+
+Function GetDirKpPresses (start : String; target : String): string;
+
+Var 
+  KeyPressH,KeyPressV: char;
+  KeyPressesH,KeyPressesV,KeyPresses: string;
+  StartPos, EndPos : Pos;
+Begin
+  StartPos := GetDirKpPos(start);
+  EndPos := GetDirKpPos(target);
+  // WriteLn('Here:');
+  // WriteLn(PosToString(StartPos));
+  // WriteLn(PosToString(EndPos));
+
+  If StartPos.Col > EndPos.Col Then
+    Begin
+      KeyPressH := '<';
+    End
+  Else If StartPos.Col < EndPos.Col Then
+         Begin
+           KeyPressH := '>';
+         End;
+  KeyPressesH := StringOfChar(KeyPressH, abs(StartPos.Col - EndPos.Col));
+
+  If StartPos.Row < EndPos.Row Then
+    Begin
+      KeyPressV :=  'v';
+    End
+  Else If startpos.row > EndPos.Row Then
+         Begin
+           KeyPressV := '^';
+         End;
+  KeyPressesV := StringOfChar(KeyPressV, abs(StartPos.Row - EndPos.Row));
+
+  If StartPos.Col > EndPos.Col Then
+    Begin
+      KeyPresses := KeyPressesV + KeyPressesH;
+    End
+  Else
+    Begin
+      KeyPresses := KeyPressesH + KeyPressesV;
+    End;
+  KeyPresses := KeyPresses + 'A';
+  GetDirKpPresses := KeyPresses;
+End;
 
 (* Tests *)
 
