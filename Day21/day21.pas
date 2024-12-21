@@ -66,7 +66,11 @@ Begin
   If StartPos.Row < EndPos.Row Then
     Begin
       GetNumKpPress := 'v';
-    End;
+    End
+  Else If startpos.row > EndPos.Row Then
+         Begin
+           GetNumKpPress := '^';
+         End;
 End;
 
 
