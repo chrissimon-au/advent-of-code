@@ -10,9 +10,9 @@ TestFramework;
 
 (* Routines *)
 
-Function CheckIt : boolean;
+Function GetNumKPPress (start : char; target : char): string;
 Begin
-  CheckIt := True;
+  GetNumKPPress := '';
 End;
 
 
@@ -21,13 +21,13 @@ End;
 Type 
   TDay21Tests = Class(TTestCase)
     Published 
-      Procedure TestCheck;
+      Procedure TestSingleMovement;
   End;
 
 
-Procedure TDay21Tests.TestCheck;
+Procedure TDay21Tests.TestSingleMovement;
 Begin
-  Check(CheckIt(), 'Expect Failure');
+  CheckEquals(GetNumKPPress('A', '0'), '<');
 End;
 
 Procedure RegisterTests;
@@ -38,6 +38,5 @@ End;
 
 Begin
   RegisterTests;
-
-  RunRegisteredTests;
+  RunRegisteredTests(rxbHaltOnFailures);
 End.
