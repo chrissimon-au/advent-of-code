@@ -5,7 +5,7 @@ use warnings;
 use warnings FATAL => qw[uninitialized];
 use builtin qw(true false trim);
 use feature qw(say);
-use Test::Simple tests => 9;
+use Test::Simple tests => 11;
 use File::Slurp;
 
 {
@@ -274,7 +274,7 @@ ok(assert_equal(count_cheats_saving_at_least(trim('
 '),2), 2), "2 cheats");
 
 my $sampleData = read_file("sampledata.txt");
-ok (assert_equal(count_cheats_saving_at_least($sampleData,0), 44), "AoC Sample, all possible cheats");
+ok (assert_equal(count_cheats_saving_at_least($sampleData,1), 44), "AoC Sample, all possible cheats");
 
 ok (assert_equal(count_cheats_saving_at_least($sampleData,64), 1), "AoC Sample - only cheast that save 64 or more");
 
@@ -288,6 +288,8 @@ ok(assert_equal(count_cheats_saving_at_least(trim('
 #S##...#
 #....#E#
 ########
-'),0,3), 2), "1 part 1 cheat and 1 that is only a cheat with extra time in the cheat");
+'),1,3), 3), "1 part 1 cheat and 1 that is only a cheat with extra time in the cheat");
 
-ok(assert_equal(count_cheats_saving_at_least($sampleData,76,20), 3), "AoC Part 2 Sample for saving more than 76");
+ok(assert_equal(count_cheats_saving_at_least($sampleData,76,20), 3), "AoC Part 2 Sample");
+ok(assert_equal(count_cheats_saving_at_least($sampleData,74,20), 7), "AoC Part 2 Sample");
+ok(assert_equal(count_cheats_saving_at_least($sampleData,72,20), 29), "AoC Part 2 Sample");
