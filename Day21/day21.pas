@@ -15,6 +15,8 @@ Type
     Row : integer;
   End;
 
+Type 
+  TGetKeyPressFunc = Function (start: String; target: String): String;
 
 
 (* Routines *)
@@ -70,6 +72,22 @@ Begin
   GetKpPresses := KeyPresses;
 End;
 
+Function GetKpPresses (KeyPadEntry: String; GetTransitionKeyPress:
+                       TGetKeyPressFunc): string;
+
+Var idx: integer;
+
+Var KeyPresses : string;
+Begin
+  KeyPresses := GetTransitionKeyPress('A', KeyPadEntry.Substring(0,1));
+  For idx := 1 To (KeyPadEntry.Length-1) Do
+    Begin
+      KeyPresses := KeyPresses + GetTransitionKeyPress(KeyPadEntry.Substring(idx
+                    -1,1),
+                    KeyPadEntry.Substring(idx,1));
+    End;
+  GetKpPresses := KeyPresses;
+End;
 
 
 (* Numeric KeyPad *)
@@ -92,7 +110,7 @@ Begin
   GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
 End;
 
-Function GetNumKpPresses (start : String; target : String): string;
+Function GetNumKpStepPresses (start : String; target : String): string;
 
 Var 
 
@@ -101,22 +119,12 @@ Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
 
-  GetNumKpPresses := GetKpPresses(StartPos, EndPos);
+  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos);
 End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
-
-Var idx: integer;
-
-Var KeyPresses : string;
 Begin
-  KeyPresses := GetNumKpPresses('A', KeyPadEntry.Substring(0,1));
-  For idx := 1 To (KeyPadEntry.Length-1) Do
-    Begin
-      KeyPresses := KeyPresses + GetNumKpPresses(KeyPadEntry.Substring(idx-1,1),
-                    KeyPadEntry.Substring(idx,1));
-    End;
-  GetNumKpPresses := KeyPresses;
+  GetNumKpPresses := GetKpPresses(KeyPadEntry, @GetNumKpStepPresses);
 End;
 
 
@@ -144,7 +152,7 @@ Begin
   End;
 End;
 
-Function GetDirKpPresses (start : String; target : String): string;
+Function GetDirKpStepPresses (start : String; target : String): string;
 
 Var 
   StartPos, EndPos : Pos;
@@ -152,22 +160,13 @@ Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
 
-  GetDirKpPresses := GetKpPresses(StartPos, EndPos);;
+  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos);;
 End;
 
 Function GetDirKpPresses (KeyPadEntry: String): string;
 
-Var idx: integer;
-
-Var KeyPresses : string;
 Begin
-  KeyPresses := GetDirKpPresses('A', KeyPadEntry.Substring(0,1));
-  For idx := 1 To (KeyPadEntry.Length-1) Do
-    Begin
-      KeyPresses := KeyPresses + GetDirKpPresses(KeyPadEntry.Substring(idx-1,1),
-                    KeyPadEntry.Substring(idx,1));
-    End;
-  GetDirKpPresses := KeyPresses;
+  GetDirKpPresses := GetKpPresses(KeyPadEntry, @GetDirKpStepPresses);
 End;
 
 (* Tests *)
@@ -184,17 +183,17 @@ Type
 
 Procedure TDay21Tests.TestNumKpSingleMovement;
 Begin
-  CheckEquals('<A', GetNumKpPresses('A', '0'));
-  CheckEquals('>A', GetNumKpPresses('0', 'A'));
-  CheckEquals('<A', GetNumKpPresses('3', '2'));
-  CheckEquals('vA', GetNumKpPresses('8', '5'));
-  CheckEquals('^A', GetNumKpPresses('1', '4'));
-  CheckEquals('>vA', GetNumKpPresses('7', '5'));
-  CheckEquals('>vA', GetNumKpPresses('1', '0'));
-  CheckEquals('^<A', GetNumKpPresses('0', '1'));
-  CheckEquals('>>vA', GetNumKpPresses('7', '6'));
-  CheckEquals('vv<<A', GetNumKpPresses('9', '1'));
-  CheckEquals('^^^<<A', GetNumKpPresses('A', '7'));
+  CheckEquals('<A', GetNumKpStepPresses('A', '0'));
+  CheckEquals('>A', GetNumKpStepPresses('0', 'A'));
+  CheckEquals('<A', GetNumKpStepPresses('3', '2'));
+  CheckEquals('vA', GetNumKpStepPresses('8', '5'));
+  CheckEquals('^A', GetNumKpStepPresses('1', '4'));
+  CheckEquals('>vA', GetNumKpStepPresses('7', '5'));
+  CheckEquals('>vA', GetNumKpStepPresses('1', '0'));
+  CheckEquals('^<A', GetNumKpStepPresses('0', '1'));
+  CheckEquals('>>vA', GetNumKpStepPresses('7', '6'));
+  CheckEquals('vv<<A', GetNumKpStepPresses('9', '1'));
+  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'));
 End;
 
 Procedure TDay21Tests.TestNumKpMultipleMovements;
@@ -205,10 +204,10 @@ End;
 
 Procedure TDay21Tests.TestDirKpSingleMovement;
 Begin
-  CheckEquals('<A', GetDirKpPresses('A', '^'));
-  CheckEquals('vA', GetDirKpPresses('A', '>'));
-  CheckEquals('<A', GetDirKpPresses('>', 'v'));
-  CheckEquals('<A', GetDirKpPresses('v', '<'));
+  CheckEquals('<A', GetDirKpStepPresses('A', '^'));
+  CheckEquals('vA', GetDirKpStepPresses('A', '>'));
+  CheckEquals('<A', GetDirKpStepPresses('>', 'v'));
+  CheckEquals('<A', GetDirKpStepPresses('v', '<'));
 End;
 
 Procedure TDay21Tests.TestDirKpMultipleMovements;
