@@ -43,7 +43,7 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-18 - Day 18 in Rust](./Day18/)
 * [2024-12-19 - Day 19 in Picat (and C#)](./Day19/)
 * [2024-12-20 - Day 20 in Perl](./Day20/)
-* 2024-12-21 - Day 21 in Pascal
+* [2024-12-21 - Day 21 in Pascal](./Day21/)
 * 2024-12-22 - Day 22 in Racket
 * 2024-12-23 - Day 23 in Elixir
 * 2024-12-24 - Day 24 in Gleam
