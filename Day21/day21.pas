@@ -46,33 +46,6 @@ Begin
   GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
 End;
 
-Function GetNumKPPress (start : String; target : String): string;
-
-Var StartPos, EndPos: Pos;
-Begin
-  StartPos := GetNumKpPos(start);
-  EndPos := GetNumKpPos(target);
-  // WriteLn('Here:');
-  // WriteLn(PosToString(StartPos));
-  // WriteLn(PosToString(EndPos));
-  If StartPos.Col > EndPos.Col Then
-    Begin
-      GetNumKPPress := '<';
-    End
-  Else If StartPos.Col < EndPos.Col Then
-         Begin
-           GetNumKPPress := '>';
-         End;
-  If StartPos.Row < EndPos.Row Then
-    Begin
-      GetNumKpPress := 'v';
-    End
-  Else If startpos.row > EndPos.Row Then
-         Begin
-           GetNumKpPress := '^';
-         End;
-End;
-
 Function GetNumKpPresses (start : String; target : String): string;
 
 Var 
@@ -129,21 +102,22 @@ Type
 
 Procedure TDay21Tests.TestSingleMovement;
 Begin
-  CheckEquals(GetNumKPPress('A', '0'), '<');
-  CheckEquals(GetNumKPPress('0', 'A'), '>');
-  CheckEquals(GetNumKPPress('3', '2'), '<');
-  CheckEquals(GetNumKPPress('8', '5'), 'v');
-  CheckEquals(GetNumKPPress('1', '4'), '^');
-End;
-
-Procedure TDay21Tests.TestMultipleMovements;
-Begin
+  CheckEquals(GetNumKpPresses('A', '0'), '<');
+  CheckEquals(GetNumKpPresses('0', 'A'), '>');
+  CheckEquals(GetNumKpPresses('3', '2'), '<');
+  CheckEquals(GetNumKpPresses('8', '5'), 'v');
+  CheckEquals(GetNumKpPresses('1', '4'), '^');
   CheckEquals(GetNumKpPresses('7', '5'), '>v');
   CheckEquals(GetNumKpPresses('1', '0'), '>v');
   CheckEquals(GetNumKpPresses('0', '1'), '^<');
   CheckEquals(GetNumKpPresses('7', '6'), '>>v');
   CheckEquals(GetNumKpPresses('9', '1'), 'vv<<');
   CheckEquals(GetNumKpPresses('A', '7'), '^^^<<');
+End;
+
+Procedure TDay21Tests.TestMultipleMovements;
+Begin
+  
 End;
 
 
