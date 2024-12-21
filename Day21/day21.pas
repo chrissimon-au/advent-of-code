@@ -5,6 +5,7 @@ Program day21;
 
 Uses 
 Classes,
+SysUtils,
 TextTestRunner,
 TestFramework;
 
@@ -18,24 +19,32 @@ Type
 
 (* Routines *)
 
-Function GetNumKpPos (button : char) : Pos;
+Function GetNumKpPos (button : String) : Pos;
+
+Var ButtonNumber : integer;
 Begin
-  GetNumKpPos.Col := 2;
-  GetNumKpPos.Row := 3;
   If button = 'A' Then
     Begin
-      GetNumKpPos.Col := 0;
+      GetNumKpPos.Col := 2;
       GetNumKpPos.Row := 3;
+      Exit();
     End;
+  ButtonNumber := StrToInt(button);
+  If ButtonNumber = 0 Then
+    Begin
+      ButtonNumber := 11;
+    End;
+  GetNumKpPos.Col := (ButtonNumber-1) Mod 3;
+  GetNumKpPos.Row := 3;
 End;
 
-Function GetNumKPPress (start : char; target : char): string;
+Function GetNumKPPress (start : String; target : String): string;
 
 Var StartPos, EndPos: Pos;
 Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
-  If StartPos.Col < EndPos.Col Then
+  If StartPos.Col > EndPos.Col Then
     Begin
       GetNumKPPress := '<';
     End
