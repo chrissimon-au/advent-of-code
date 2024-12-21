@@ -112,12 +112,13 @@ End;
 Type 
   TDay21Tests = Class(TTestCase)
     Published 
-      Procedure TestSingleMovement;
-      Procedure TestMultipleMovements;
+      Procedure TestNumKpSingleMovement;
+      Procedure TestNumKpMultipleMovements;
+      Procedure TestDirKpSingleMovement;
   End;
 
 
-Procedure TDay21Tests.TestSingleMovement;
+Procedure TDay21Tests.TestNumKpSingleMovement;
 Begin
   CheckEquals('<A', GetNumKpPresses('A', '0'));
   CheckEquals('>A', GetNumKpPresses('0', 'A'));
@@ -132,12 +133,16 @@ Begin
   CheckEquals('^^^<<A', GetNumKpPresses('A', '7'));
 End;
 
-Procedure TDay21Tests.TestMultipleMovements;
+Procedure TDay21Tests.TestNumKpMultipleMovements;
 Begin
   CheckEquals('<A^A>^^A', GetNumKpPresses('029'));
   CheckEquals('<A^A>^^AvvvA', GetNumKpPresses('029A'));
 End;
 
+Procedure TDay21Tests.TestDirKpSingleMovement;
+Begin
+  CheckEquals('<A', GetDirKpPresses('A', '^'));
+End;
 
 Procedure RegisterTests;
 Begin
