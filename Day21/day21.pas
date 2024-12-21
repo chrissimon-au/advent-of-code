@@ -59,6 +59,7 @@ Procedure TDay21Tests.TestSingleMovement;
 Begin
   CheckEquals(GetNumKPPress('A', '0'), '<');
   CheckEquals(GetNumKPPress('0', 'A'), '>');
+  CheckEquals(GetNumKPPress('3', '2'), '<');
 End;
 
 Procedure RegisterTests;
