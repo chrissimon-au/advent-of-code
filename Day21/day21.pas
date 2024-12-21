@@ -119,23 +119,23 @@ Type
 
 Procedure TDay21Tests.TestSingleMovement;
 Begin
-  CheckEquals(GetNumKpPresses('A', '0'), '<A');
-  CheckEquals(GetNumKpPresses('0', 'A'), '>A');
-  CheckEquals(GetNumKpPresses('3', '2'), '<A');
-  CheckEquals(GetNumKpPresses('8', '5'), 'vA');
-  CheckEquals(GetNumKpPresses('1', '4'), '^A');
-  CheckEquals(GetNumKpPresses('7', '5'), '>vA');
-  CheckEquals(GetNumKpPresses('1', '0'), '>vA');
-  CheckEquals(GetNumKpPresses('0', '1'), '^<A');
-  CheckEquals(GetNumKpPresses('7', '6'), '>>vA');
-  CheckEquals(GetNumKpPresses('9', '1'), 'vv<<A');
-  CheckEquals(GetNumKpPresses('A', '7'), '^^^<<A');
+  CheckEquals('<A', GetNumKpPresses('A', '0'));
+  CheckEquals('>A', GetNumKpPresses('0', 'A'));
+  CheckEquals('<A', GetNumKpPresses('3', '2'));
+  CheckEquals('vA', GetNumKpPresses('8', '5'));
+  CheckEquals('^A', GetNumKpPresses('1', '4'));
+  CheckEquals('>vA', GetNumKpPresses('7', '5'));
+  CheckEquals('>vA', GetNumKpPresses('1', '0'));
+  CheckEquals('^<A', GetNumKpPresses('0', '1'));
+  CheckEquals('>>vA', GetNumKpPresses('7', '6'));
+  CheckEquals('vv<<A', GetNumKpPresses('9', '1'));
+  CheckEquals('^^^<<A', GetNumKpPresses('A', '7'));
 End;
 
 Procedure TDay21Tests.TestMultipleMovements;
 Begin
-  CheckEquals(GetNumKpPresses('029'), '<A^A>^^A');
-  CheckEquals(GetNumKpPresses('029A'), '<A^A>^^AvvvA');
+  CheckEquals('<A^A>^^A', GetNumKpPresses('029'));
+  CheckEquals('<A^A>^^AvvvA', GetNumKpPresses('029A'));
 End;
 
 
