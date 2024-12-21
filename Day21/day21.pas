@@ -183,6 +183,8 @@ Procedure TDay21Tests.TestDirKpSingleMovement;
 Begin
   CheckEquals('<A', GetDirKpPresses('A', '^'));
   CheckEquals('vA', GetDirKpPresses('A', '>'));
+  CheckEquals('<A', GetDirKpPresses('A', 'v'));
+  CheckEquals('<A', GetDirKpPresses('v', '<'));
 End;
 
 Procedure RegisterTests;
