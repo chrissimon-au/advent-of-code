@@ -181,12 +181,13 @@ use File::Slurp;
         my $neighbourDeltaRow = $dr eq 0 ? 0 : $dr / abs($dr);
         my $neighbour = move($position,$neighbourDeltaCol,$neighbourDeltaRow);
         my $cheatTargetNeighbour = move($cheatTarget,-$neighbourDeltaCol,-$neighbourDeltaRow);
+        my $cheatDistance = abs($dc) + abs($dr);
         # print(to_json($position), to_json($cheatTarget));
         # $a=<>;
         if ($self->isFree($cheatTarget) && $self->isWall($neighbour) && $self->isWall($cheatTargetNeighbour)) {
             my $startDistance = $self->{_distances}->{posToString($position)};
             my $endDistance = $self->{_distances}->{posToString($cheatTarget)};
-            return ($endDistance - $startDistance - 2) >= $minSaved;
+            return ($endDistance - $startDistance - $cheatDistance) >= $minSaved;
         }
         return false;
     }
@@ -194,29 +195,27 @@ use File::Slurp;
     sub countCheatsSavingAtLeast {
         my ($self, $minSaved, $picoSecondLimit) = @_;
 
+        my %cheats;
+
         my $currentPos = $self->getStart();
         my $end = $self->getEnd();
         my $lastPos = position(-1,-1);
 
-        my $cheatCounter = 0;
         while (not posEqual($currentPos,$end)) {
 
-            foreach my $cheatDelta (2..$picoSecondLimit) {
-            
-                if ($self->cheatSaver($currentPos,($cheatDelta,0),$minSaved)) {
-                    $cheatCounter = $cheatCounter + 1;
-                }
+            foreach my $cheatDeltaCol (-$picoSecondLimit..$picoSecondLimit) {
 
-                if ($self->cheatSaver($currentPos,(0,$cheatDelta),$minSaved)) {
-                    $cheatCounter = $cheatCounter + 1;
-                }
+                my $rowLimit = $picoSecondLimit-abs($cheatDeltaCol); 
 
-                if ($self->cheatSaver($currentPos,(-$cheatDelta,0),$minSaved)) {
-                    $cheatCounter = $cheatCounter + 1;
-                }
-
-                if ($self->cheatSaver($currentPos,(0,-$cheatDelta),$minSaved)) {
-                    $cheatCounter = $cheatCounter + 1;
+                foreach my $cheatDeltaRow (-$rowLimit..$rowLimit) {
+                
+                    #say "Testing $cheatDeltaCol,$cheatDeltaRow";
+                
+                    if ($self->cheatSaver($currentPos,($cheatDeltaCol,$cheatDeltaRow),$minSaved)) {
+                        my $cheatId = posToString($currentPos) . "|" . $cheatDeltaCol . "," . $cheatDeltaRow;
+                        #say "... is a cheat $cheatId";
+                        @cheats{$cheatId} = ()
+                    }
                 }
             }
 
@@ -224,7 +223,7 @@ use File::Slurp;
             $currentPos = $self->nextInPath($currentPos,$lastPos);
             $lastPos = $origPos;
         };
-        return $cheatCounter;
+        return scalar keys %cheats;
     }
 }
 
@@ -289,6 +288,6 @@ ok(assert_equal(count_cheats_saving_at_least(trim('
 #S##...#
 #....#E#
 ########
-'),0,10), 2), "1 part 1 cheat and 1 that is only a cheat with extra time in the cheat");
+'),0,3), 2), "1 part 1 cheat and 1 that is only a cheat with extra time in the cheat");
 
 ok(assert_equal(count_cheats_saving_at_least($sampleData,76,20), 3), "AoC Part 2 Sample for saving more than 76");
