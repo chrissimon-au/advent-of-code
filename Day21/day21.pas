@@ -125,6 +125,8 @@ End;
 Function GetDirKpPos (button : String) : Pos;
 
 Begin
+  GetDirKpPos.Col := 0;
+  GetDirKpPos.Row := 0;
   Case button Of 
     'A': GetDirKpPos.Col := 2;
     '^': GetDirKpPos.Col := 1;
@@ -132,7 +134,13 @@ Begin
          Begin
            GetDirKpPos.Col := 2;
            GetDirKpPos.Row := 1;
-         End
+         End;
+    'v':
+         Begin
+           GetDirKpPos.Col := 1;
+           GetDirKpPos.Row := 1;
+         End;
+    '<': GetDirKpPos.Row := 1;
   End;
 End;
 
@@ -183,7 +191,7 @@ Procedure TDay21Tests.TestDirKpSingleMovement;
 Begin
   CheckEquals('<A', GetDirKpPresses('A', '^'));
   CheckEquals('vA', GetDirKpPresses('A', '>'));
-  CheckEquals('<A', GetDirKpPresses('A', 'v'));
+  CheckEquals('<A', GetDirKpPresses('>', 'v'));
   CheckEquals('<A', GetDirKpPresses('v', '<'));
 End;
 
