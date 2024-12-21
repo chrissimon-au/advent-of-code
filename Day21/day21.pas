@@ -12,7 +12,7 @@ TestFramework;
 
 Function GetNumKPPress (start : char; target : char): string;
 Begin
-  GetNumKPPress := '';
+  GetNumKPPress := '<';
 End;
 
 
