@@ -91,8 +91,17 @@ End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
 
+Var idx: integer;
 
+Var KeyPresses : string;
 Begin
+  KeyPresses := '';
+  For idx := 1 To (KeyPadEntry.Length-1) Do
+    Begin
+      KeyPresses := KeyPresses + GetNumKpPresses(KeyPadEntry.Substring(idx-1,1),
+                    KeyPadEntry.Substring(idx,1));
+    End;
+  GetNumKpPresses := KeyPresses;
 End;
 
 
