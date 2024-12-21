@@ -155,6 +155,21 @@ Begin
   GetDirKpPresses := GetKpPresses(StartPos, EndPos);;
 End;
 
+Function GetDirKpPresses (KeyPadEntry: String): string;
+
+Var idx: integer;
+
+Var KeyPresses : string;
+Begin
+  KeyPresses := GetDirKpPresses('A', KeyPadEntry.Substring(0,1));
+  For idx := 1 To (KeyPadEntry.Length-1) Do
+    Begin
+      KeyPresses := KeyPresses + GetDirKpPresses(KeyPadEntry.Substring(idx-1,1),
+                    KeyPadEntry.Substring(idx,1));
+    End;
+  GetDirKpPresses := KeyPresses;
+End;
+
 (* Tests *)
 
 Type 
@@ -198,7 +213,7 @@ End;
 
 Procedure TDay21Tests.TestDirKpMultipleMovements;
 Begin
-  CheckEquals('v<<A', GetDirKpPresses('<A^A'));
+  CheckEquals('v<<A>>^A<A>A', GetDirKpPresses('<A^A'));
 End;
 
 Procedure RegisterTests;
