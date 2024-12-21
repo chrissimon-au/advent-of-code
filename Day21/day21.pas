@@ -73,6 +73,11 @@ Begin
          End;
 End;
 
+Function GetNumKpPresses (start : String; target : String): string;
+Begin
+  GetNumKpPresses := '';
+End;
+
 
 (* Tests *)
 
@@ -80,6 +85,7 @@ Type
   TDay21Tests = Class(TTestCase)
     Published 
       Procedure TestSingleMovement;
+      Procedure TestMultipleMovements;
   End;
 
 
@@ -91,6 +97,12 @@ Begin
   CheckEquals(GetNumKPPress('8', '5'), 'v');
   CheckEquals(GetNumKPPress('1', '4'), '^');
 End;
+
+Procedure TDay21Tests.TestMultipleMovements;
+Begin
+  CheckEquals(GetNumKpPresses('7', '5'), '>v');
+End;
+
 
 Procedure RegisterTests;
 Begin
