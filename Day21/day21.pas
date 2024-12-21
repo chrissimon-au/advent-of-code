@@ -50,7 +50,7 @@ Function GetNumKpPresses (start : String; target : String): string;
 
 Var 
   KeyPressH,KeyPressV: char;
-  KeyPressesH,KeyPressesV : string;
+  KeyPressesH,KeyPressesV,KeyPresses: string;
   StartPos, EndPos : Pos;
 Begin
   StartPos := GetNumKpPos(start);
@@ -117,22 +117,22 @@ Type
 
 Procedure TDay21Tests.TestSingleMovement;
 Begin
-  CheckEquals(GetNumKpPresses('A', '0'), '<');
-  CheckEquals(GetNumKpPresses('0', 'A'), '>');
-  CheckEquals(GetNumKpPresses('3', '2'), '<');
-  CheckEquals(GetNumKpPresses('8', '5'), 'v');
-  CheckEquals(GetNumKpPresses('1', '4'), '^');
-  CheckEquals(GetNumKpPresses('7', '5'), '>v');
-  CheckEquals(GetNumKpPresses('1', '0'), '>v');
-  CheckEquals(GetNumKpPresses('0', '1'), '^<');
-  CheckEquals(GetNumKpPresses('7', '6'), '>>v');
-  CheckEquals(GetNumKpPresses('9', '1'), 'vv<<');
-  CheckEquals(GetNumKpPresses('A', '7'), '^^^<<');
+  CheckEquals(GetNumKpPresses('A', '0'), '<A');
+  CheckEquals(GetNumKpPresses('0', 'A'), '>A');
+  CheckEquals(GetNumKpPresses('3', '2'), '<A');
+  CheckEquals(GetNumKpPresses('8', '5'), 'vA');
+  CheckEquals(GetNumKpPresses('1', '4'), '^A');
+  CheckEquals(GetNumKpPresses('7', '5'), '>vA');
+  CheckEquals(GetNumKpPresses('1', '0'), '>vA');
+  CheckEquals(GetNumKpPresses('0', '1'), '^<A');
+  CheckEquals(GetNumKpPresses('7', '6'), '>>vA');
+  CheckEquals(GetNumKpPresses('9', '1'), 'vv<<A');
+  CheckEquals(GetNumKpPresses('A', '7'), '^^^<<A');
 End;
 
 Procedure TDay21Tests.TestMultipleMovements;
 Begin
-  CheckEquals(GetNumKpPresses('029'), '^>^^');
+  CheckEquals(GetNumKpPresses('029'), '^>^^A');
 End;
 
 
