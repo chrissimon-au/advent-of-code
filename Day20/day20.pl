@@ -8,8 +8,6 @@ use feature qw(say);
 use Test::Simple tests => 8;
 use File::Slurp;
 
-my $moves_in_cheat = 2;
-
 {
     package Maze;
     use List::Util qw(min max);
@@ -179,10 +177,13 @@ my $moves_in_cheat = 2;
     sub cheatSaver {
         my ($self, $position, ($dc,$dr), $minSaved) = @_;
         my $cheatTarget = move($position,$dc,$dr);
-        my $neighbour = move($position,$dc/2,$dr/2);
+        my $neighbourDeltaCol = $dc eq 0 ? 0 : $dc / abs($dc);
+        my $neighbourDeltaRow = $dr eq 0 ? 0 : $dr / abs($dr);
+        my $neighbour = move($position,$neighbourDeltaCol,$neighbourDeltaRow);
+        my $cheatTargetNeighbour = move($cheatTarget,-$neighbourDeltaCol,-$neighbourDeltaRow);
         # print(to_json($position), to_json($cheatTarget));
         # $a=<>;
-        if ($self->isFree($cheatTarget) && $self->isWall($neighbour)) {
+        if ($self->isFree($cheatTarget) && $self->isWall($neighbour) && $self->isWall($cheatTargetNeighbour)) {
             my $startDistance = $self->{_distances}->{posToString($position)};
             my $endDistance = $self->{_distances}->{posToString($cheatTarget)};
             return ($endDistance - $startDistance - 2) >= $minSaved;
@@ -199,21 +200,24 @@ my $moves_in_cheat = 2;
 
         my $cheatCounter = 0;
         while (not posEqual($currentPos,$end)) {
+
+            foreach my $cheatOffset (2..$picoSecondLimit) {
             
-            if ($self->cheatSaver($currentPos,(2,0),$minSaved)) {
-                $cheatCounter = $cheatCounter + 1;
-            }
+                if ($self->cheatSaver($currentPos,($cheatOffset,0),$minSaved)) {
+                    $cheatCounter = $cheatCounter + 1;
+                }
 
-            if ($self->cheatSaver($currentPos,(0,2),$minSaved)) {
-                $cheatCounter = $cheatCounter + 1;
-            }
+                if ($self->cheatSaver($currentPos,(0,$cheatOffset),$minSaved)) {
+                    $cheatCounter = $cheatCounter + 1;
+                }
 
-            if ($self->cheatSaver($currentPos,(-2,0),$minSaved)) {
-                $cheatCounter = $cheatCounter + 1;
-            }
+                if ($self->cheatSaver($currentPos,(-$cheatOffset,0),$minSaved)) {
+                    $cheatCounter = $cheatCounter + 1;
+                }
 
-            if ($self->cheatSaver($currentPos,(0,-2),$minSaved)) {
-                $cheatCounter = $cheatCounter + 1;
+                if ($self->cheatSaver($currentPos,(0,-$cheatOffset),$minSaved)) {
+                    $cheatCounter = $cheatCounter + 1;
+                }
             }
 
             my $origPos = $currentPos;
