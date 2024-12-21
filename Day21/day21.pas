@@ -97,7 +97,7 @@ Var idx: integer;
 
 Var KeyPresses : string;
 Begin
-  KeyPresses := '';
+  KeyPresses := GetNumKpPresses('A', KeyPadEntry.Substring(0,1));
   For idx := 1 To (KeyPadEntry.Length-1) Do
     Begin
       KeyPresses := KeyPresses + GetNumKpPresses(KeyPadEntry.Substring(idx-1,1),
