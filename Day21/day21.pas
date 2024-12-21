@@ -85,6 +85,7 @@ Begin
   CheckEquals(GetNumKPPress('0', 'A'), '>');
   CheckEquals(GetNumKPPress('3', '2'), '<');
   CheckEquals(GetNumKPPress('8', '5'), 'v');
+  CheckEquals(GetNumKPPress('1', '4'), '^');
 End;
 
 Procedure RegisterTests;
