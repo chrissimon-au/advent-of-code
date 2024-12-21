@@ -127,6 +127,7 @@ Procedure TDay21Tests.TestMultipleMovements;
 Begin
   CheckEquals(GetNumKpPresses('7', '5'), '>v');
   CheckEquals(GetNumKpPresses('1', '0'), '>v');
+  CheckEquals(GetNumKpPresses('0', '1'), '^<');
 End;
 
 
