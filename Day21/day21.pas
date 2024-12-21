@@ -89,6 +89,12 @@ Begin
     End;
 End;
 
+Function GetNumKpPresses (KeyPadEntry: String): string;
+
+
+Begin
+End;
+
 
 (* Tests *)
 
@@ -117,7 +123,7 @@ End;
 
 Procedure TDay21Tests.TestMultipleMovements;
 Begin
-  
+  CheckEquals(GetNumKpPresses('029'), '^>^^');
 End;
 
 
