@@ -176,20 +176,20 @@ use File::Slurp;
 
     sub cheatSaver {
         my ($self, $position, ($dc,$dr), $minSaved) = @_;
-        my $cheatTarget = move($position,$dc,$dr);
-        my $neighbourDeltaCol = $dc eq 0 ? 0 : $dc / abs($dc);
-        my $neighbourDeltaRow = $dr eq 0 ? 0 : $dr / abs($dr);
-        my $neighbour = move($position,$neighbourDeltaCol,$neighbourDeltaRow);
-        my $cheatTargetNeighbour = move($cheatTarget,-$neighbourDeltaCol,-$neighbourDeltaRow);
         my $cheatDistance = abs($dc) + abs($dr);
-        # print(to_json($position), to_json($cheatTarget));
-        # $a=<>;
-        if ($self->isFree($cheatTarget) && $self->isWall($neighbour) && $self->isWall($cheatTargetNeighbour)) {
+        if ($cheatDistance < 2) {
+            return -1;
+        }
+
+        my $cheatTarget = move($position,$dc,$dr);
+        
+        if ($self->isFree($cheatTarget)) {
             my $startDistance = $self->{_distances}->{posToString($position)};
             my $endDistance = $self->{_distances}->{posToString($cheatTarget)};
-            return ($endDistance - $startDistance - $cheatDistance) >= $minSaved;
+            my $saves = $endDistance - $startDistance - $cheatDistance;
+            return $saves;
         }
-        return false;
+        return -1;
     }
 
     sub countCheatsSavingAtLeast {
@@ -210,14 +210,20 @@ use File::Slurp;
                 foreach my $cheatDeltaRow (-$rowLimit..$rowLimit) {
                 
                     #say "Testing $cheatDeltaCol,$cheatDeltaRow";
-                
-                    if ($self->cheatSaver($currentPos,($cheatDeltaCol,$cheatDeltaRow),$minSaved)) {
-                        my $cheatId = posToString($currentPos) . "|" . $cheatDeltaCol . "," . $cheatDeltaRow;
-                        #say "... is a cheat $cheatId";
+                    my $saves = $self->cheatSaver($currentPos,($cheatDeltaCol,$cheatDeltaRow), $minSaved);
+                    if ($saves >= $minSaved) {
+                        my $cheatTarget = move($currentPos,$cheatDeltaCol,$cheatDeltaRow);
+                        my $cheatId = posToString($currentPos) . "|" . posToString($cheatTarget);
+                        #if ($saves == $minSaved) {
+                            my $cheatDistance = abs($cheatDeltaCol) + abs($cheatDeltaRow);
+                            #say "  - $cheatId is a cheat and saves $saves after spending $cheatDistance on the cheat.";
+                        #}
                         @cheats{$cheatId} = ()
                     }
                 }
             }
+
+            #$a=<>;
 
             my $origPos = $currentPos;
             $currentPos = $self->nextInPath($currentPos,$lastPos);
