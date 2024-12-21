@@ -38,28 +38,26 @@ Var
   KeyPressH,KeyPressV: char;
   KeyPressesH,KeyPressesV,KeyPresses: string;
 Begin
-  // WriteLn('Here:');
-  // WriteLn(PosToString(StartPos));
-  // WriteLn(PosToString(EndPos));
-
   If StartPos.Col > EndPos.Col Then
     Begin
       KeyPressH := '<';
     End
-  Else If StartPos.Col < EndPos.Col Then
-         Begin
-           KeyPressH := '>';
-         End;
+  Else
+    If StartPos.Col < EndPos.Col Then
+      Begin
+        KeyPressH := '>';
+      End;
   KeyPressesH := StringOfChar(KeyPressH, abs(StartPos.Col - EndPos.Col));
 
   If StartPos.Row < EndPos.Row Then
     Begin
       KeyPressV :=  'v';
     End
-  Else If startpos.row > EndPos.Row Then
-         Begin
-           KeyPressV := '^';
-         End;
+  Else
+    If startpos.row > EndPos.Row Then
+      Begin
+        KeyPressV := '^';
+      End;
   KeyPressesV := StringOfChar(KeyPressV, abs(StartPos.Row - EndPos.Row));
 
   If (EndPos.Col = Blank.Col) And (StartPos.Row = Blank.Row) Then
@@ -263,8 +261,8 @@ Procedure TDay21Tests.TestHumanEntryKeyPresses;
 Begin
   CheckEquals(
               ('v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A' +
-              '>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A').Length
-  , GetHumanEntryKeyPresses('029A').Length);
+              '>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A').Length,
+  GetHumanEntryKeyPresses('029A').Length);
 End;
 
 Procedure TDay21Tests.TestSingleEntryComplexity;
@@ -282,7 +280,7 @@ Begin
               '980A' + LineEnding +
               '179A' + LineEnding +
               '456A' + LineEnding +
-              '379A'));
+              '379A'), 'AoC Sample');
 End;
 
 Procedure RegisterTests;
