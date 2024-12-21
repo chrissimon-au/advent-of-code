@@ -11,10 +11,39 @@ my $moves_in_cheat = 2;
 {
     package Maze;
     use List::Util qw(min max);
+    use JSON qw(to_json);
 
     sub position {
         my ($col, $row) = @_;
         return { col => $col, row => $row };
+    }
+
+    sub move {
+        my ($position, $col, $row) = @_;
+        return { col => $position->{col} + $col, row => $position->{row} + $row};
+    }
+
+    sub posToString {
+        my ($position) = @_;
+        return "$position->{col},$position->{row}";
+    }
+
+    sub posEqual {
+        my ($posL, $posR) = @_;
+        return $posL->{col} eq $posR->{col} && $posL->{row} eq $posR->{row};
+    }
+
+
+    sub new {
+        my $class = shift;
+        my $input = shift;
+        my $self = {
+            _distances => {}
+        };
+        bless $self, $class;
+        $self->parse($input);
+        $self->computeDistances();
+        return $self;
     }
 
     sub parse {
@@ -39,14 +68,51 @@ my $moves_in_cheat = 2;
         $self->setGrid(@grid);
     }
 
-    sub new {
-        my $class = shift;
-        my $input = shift;
-        my $self = {};
-        bless $self, $class;
-        $self->parse($input);
-        say $self->isWall(position(-5,-5));
-        return $self;
+    sub setDistance {
+        my ($self, $position, $distance) = @_;
+        $self->{_distances}->{posToString($position)} = $distance;
+    }
+
+    sub nextInPath {
+        my ($self, $position, $lastPos) = @_;
+        my $east = move($position,1,0);
+        my $south = move($position,0,1);
+        my $west = move($position,-1,0);
+        my $north = move($position,0,-1);
+        my $newPos;
+        if ($self->isFree($west) && not posEqual($west, $lastPos)) {
+            $newPos = $west;
+        }
+        if ($self->isFree($east) && not posEqual($east, $lastPos)) {
+            $newPos = $east;
+        }            
+        if ($self->isFree($south) && not posEqual($south, $lastPos)) {
+            $newPos = $south;
+        }
+        if ($self->isFree($north) && not posEqual($north, $lastPos)) {
+            $newPos = $north;
+        }
+        return $newPos;
+    }
+
+
+    sub computeDistances {
+        my ($self) = @_;
+        my $currentPos = $self->getStart();
+        my $end = $self->getEnd();
+        my $distance = 0;
+        my $lastPos = position(-1,-1);
+        while (not posEqual($currentPos,$end)) {
+            # say ((posToString($currentPos)) . ": " . $distance);
+            # $b = <>;
+            $self->setDistance($currentPos, $distance);
+            my $origPos = $currentPos;
+            $currentPos = $self->nextInPath($currentPos,$lastPos);
+            $lastPos = $origPos;
+            $distance = $distance + 1;            
+        };
+        $self->setDistance($currentPos, $distance);
+        # say to_json($self->{_distances});
     }
 
     sub setStart {
@@ -105,12 +171,57 @@ my $moves_in_cheat = 2;
         $cell eq "S" ||
         $cell eq "E";
     }
+
+    sub cheatSaver {
+        my ($self, $position, $neighbour, $cheatTarget) = @_;
+        if ($self.isWall($neighbour) && $self.isFree($cheatTarget)) {
+            my $startDistance = $self->{_distances}->{posToString($position)};
+            my $endDistance = $self->{_distances}->{posToString($cheatTarget)};
+            return $endDistance - $startDistance - 2;
+        }
+        return -1;
+    }
+
+    sub countCheatsSavingAtLeast {
+        my ($self, $minSaved) = @_;
+
+        my $currentPos = $self->getStart();
+        my $end = $self->getEnd();
+        my $lastPos = position(-1,-1);
+
+        my $cheatCounter = 0;
+        while (not posEqual($currentPos,$end)) {
+            
+
+            if ($self->cheatSaver($currentPos,move($currentPos,1,0),move($currentPos,2,0)) >= $minSaved) {
+                $cheatCounter = $cheatCounter + 1;
+            }
+
+            if ($self->cheatSaver($currentPos,move($currentPos,0,1),move($currentPos,0,2)) >= $minSaved) {
+                $cheatCounter = $cheatCounter + 1;
+            }
+
+            if ($self->cheatSaver($currentPos,move($currentPos,-1,0),move($currentPos,-2,0)) >= $minSaved) {
+                $cheatCounter = $cheatCounter + 1;
+            }
+
+            if ($self->cheatSaver($currentPos,move($currentPos,0,-1),move($currentPos,0,-2)) >= $minSaved) {
+                $cheatCounter = $cheatCounter + 1;
+            }
+
+            my $origPos = $currentPos;
+            $currentPos = $self->nextInPath($currentPos,$lastPos);
+            $lastPos = $origPos;
+        };
+        return $cheatCounter;
+    }
 }
 
 sub count_cheats_saving_at_least {
     my $maze = Maze->new(shift);
+    my $minSaved = shift;
 
-    return 0;
+    return $maze->countCheatsSavingAtLeast($minSaved);
 }
 
 ok (count_cheats_saving_at_least(trim('

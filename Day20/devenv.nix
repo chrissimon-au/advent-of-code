@@ -14,6 +14,7 @@
   languages.perl.enable = true;  
   languages.perl.packages = [
     "Test::Simple"
+    "JSON"
   ];
 
   # https://devenv.sh/processes/
