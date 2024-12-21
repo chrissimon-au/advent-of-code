@@ -125,16 +125,15 @@ End;
 Function GetDirKpPos (button : String) : Pos;
 
 Begin
-  If button = 'A' Then
-    Begin
-      GetDirKpPos.Col := 2;
-      GetDirKpPos.Row := 0;
-    End
-  Else If button = '^' Then
+  Case button Of 
+    'A': GetDirKpPos.Col := 2;
+    '^': GetDirKpPos.Col := 1;
+    '>':
          Begin
-           GetDirKpPos.Col := 1;
-           GetDirKpPos.Row := 0;
-         End;
+           GetDirKpPos.Col := 2;
+           GetDirKpPos.Row := 1;
+         End
+  End;
 End;
 
 Function GetDirKpPresses (start : String; target : String): string;
