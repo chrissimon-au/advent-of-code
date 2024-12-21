@@ -163,6 +163,7 @@ Type
       Procedure TestNumKpSingleMovement;
       Procedure TestNumKpMultipleMovements;
       Procedure TestDirKpSingleMovement;
+      Procedure TestDirKpMultipleMovements;
   End;
 
 
@@ -193,6 +194,11 @@ Begin
   CheckEquals('vA', GetDirKpPresses('A', '>'));
   CheckEquals('<A', GetDirKpPresses('>', 'v'));
   CheckEquals('<A', GetDirKpPresses('v', '<'));
+End;
+
+Procedure TDay21Tests.TestDirKpMultipleMovements;
+Begin
+  CheckEquals('v<<A', GetDirKpPresses('<A^A'));
 End;
 
 Procedure RegisterTests;
