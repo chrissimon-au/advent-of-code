@@ -134,7 +134,7 @@ End;
 
 Procedure TDay21Tests.TestMultipleMovements;
 Begin
-  CheckEquals(GetNumKpPresses('029'), '^A>^^A');
+  CheckEquals(GetNumKpPresses('029'), '<A^A>^^A');
 End;
 
 
