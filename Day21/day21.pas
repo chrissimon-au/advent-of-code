@@ -171,7 +171,8 @@ End;
 
 Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
 Begin
-  GetHumanEntryKeyPresses := '';
+  GetHumanEntryKeyPresses := GetDirKpPresses(GetDirKpPresses(GetNumKpPresses(
+                             KeyPadEntry)));
 End;
 
 (* Tests *)
@@ -224,7 +225,8 @@ End;
 Procedure TDay21Tests.TestHumanEntryKeyPresses;
 Begin
   CheckEquals(
-          '<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A'
+
+          'v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A'
               , GetHumanEntryKeyPresses('029A'));
 End;
 
