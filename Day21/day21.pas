@@ -27,36 +27,13 @@ Begin
   PosToString := ColStr + ',' + RowStr;
 End;
 
-
-(* Numeric KeyPad *)
-Function GetNumKpPos (button : String) : Pos;
-
-Var ButtonNumber : integer;
-Begin
-  If button = 'A' Then
-    Begin
-      GetNumKpPos.Col := 2;
-      GetNumKpPos.Row := 3;
-      Exit();
-    End;
-  ButtonNumber := StrToInt(button);
-  If ButtonNumber = 0 Then
-    Begin
-      ButtonNumber := -2;
-    End;
-  GetNumKpPos.Col := (abs(ButtonNumber)-1) Mod 3;
-  GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
-End;
-
-Function GetNumKpPresses (start : String; target : String): string;
+(* Generic Keypad *)
+Function GetKpPresses (StartPos : Pos; EndPos : Pos): string;
 
 Var 
   KeyPressH,KeyPressV: char;
   KeyPressesH,KeyPressesV,KeyPresses: string;
-  StartPos, EndPos : Pos;
 Begin
-  StartPos := GetNumKpPos(start);
-  EndPos := GetNumKpPos(target);
   // WriteLn('Here:');
   // WriteLn(PosToString(StartPos));
   // WriteLn(PosToString(EndPos));
@@ -90,7 +67,41 @@ Begin
       KeyPresses := KeyPressesH + KeyPressesV;
     End;
   KeyPresses := KeyPresses + 'A';
-  GetNumKpPresses := KeyPresses;
+  GetKpPresses := KeyPresses;
+End;
+
+
+
+(* Numeric KeyPad *)
+Function GetNumKpPos (button : String) : Pos;
+
+Var ButtonNumber : integer;
+Begin
+  If button = 'A' Then
+    Begin
+      GetNumKpPos.Col := 2;
+      GetNumKpPos.Row := 3;
+      Exit();
+    End;
+  ButtonNumber := StrToInt(button);
+  If ButtonNumber = 0 Then
+    Begin
+      ButtonNumber := -2;
+    End;
+  GetNumKpPos.Col := (abs(ButtonNumber)-1) Mod 3;
+  GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
+End;
+
+Function GetNumKpPresses (start : String; target : String): string;
+
+Var 
+
+  StartPos, EndPos : Pos;
+Begin
+  StartPos := GetNumKpPos(start);
+  EndPos := GetNumKpPos(target);
+
+  GetNumKpPresses := GetKpPresses(StartPos, EndPos);
 End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
@@ -129,46 +140,12 @@ End;
 Function GetDirKpPresses (start : String; target : String): string;
 
 Var 
-  KeyPressH,KeyPressV: char;
-  KeyPressesH,KeyPressesV,KeyPresses: string;
   StartPos, EndPos : Pos;
 Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
-  // WriteLn('Here:');
-  // WriteLn(PosToString(StartPos));
-  // WriteLn(PosToString(EndPos));
 
-  If StartPos.Col > EndPos.Col Then
-    Begin
-      KeyPressH := '<';
-    End
-  Else If StartPos.Col < EndPos.Col Then
-         Begin
-           KeyPressH := '>';
-         End;
-  KeyPressesH := StringOfChar(KeyPressH, abs(StartPos.Col - EndPos.Col));
-
-  If StartPos.Row < EndPos.Row Then
-    Begin
-      KeyPressV :=  'v';
-    End
-  Else If startpos.row > EndPos.Row Then
-         Begin
-           KeyPressV := '^';
-         End;
-  KeyPressesV := StringOfChar(KeyPressV, abs(StartPos.Row - EndPos.Row));
-
-  If StartPos.Col > EndPos.Col Then
-    Begin
-      KeyPresses := KeyPressesV + KeyPressesH;
-    End
-  Else
-    Begin
-      KeyPresses := KeyPressesH + KeyPressesV;
-    End;
-  KeyPresses := KeyPresses + 'A';
-  GetDirKpPresses := KeyPresses;
+  GetDirKpPresses := GetKpPresses(StartPos, EndPos);;
 End;
 
 (* Tests *)
