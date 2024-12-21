@@ -18,6 +18,14 @@ Type
 
 
 (* Routines *)
+Function PosToString(pos: Pos) : String;
+
+Var ColStr, RowStr: String;
+Begin
+  Str(pos.Col, ColStr);
+  Str(pos.Row, RowStr);
+  PosToString := ColStr + ',' + RowStr;
+End;
 
 Function GetNumKpPos (button : String) : Pos;
 
@@ -32,10 +40,10 @@ Begin
   ButtonNumber := StrToInt(button);
   If ButtonNumber = 0 Then
     Begin
-      ButtonNumber := 11;
+      ButtonNumber := -2;
     End;
-  GetNumKpPos.Col := (ButtonNumber-1) Mod 3;
-  GetNumKpPos.Row := 3;
+  GetNumKpPos.Col := (abs(ButtonNumber)-1) Mod 3;
+  GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
 End;
 
 Function GetNumKPPress (start : String; target : String): string;
@@ -44,13 +52,20 @@ Var StartPos, EndPos: Pos;
 Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
+  // WriteLn('Here:');
+  // WriteLn(PosToString(StartPos));
+  // WriteLn(PosToString(EndPos));
   If StartPos.Col > EndPos.Col Then
     Begin
       GetNumKPPress := '<';
     End
-  Else
+  Else If StartPos.Col < EndPos.Col Then
+         Begin
+           GetNumKPPress := '>';
+         End;
+  If StartPos.Row < EndPos.Row Then
     Begin
-      GetNumKPPress := '>';
+      GetNumKpPress := 'v';
     End;
 End;
 
