@@ -5,7 +5,7 @@ use warnings;
 use warnings FATAL => qw[uninitialized];
 use builtin qw(true false trim);
 use feature qw(say);
-use Test::Simple tests => 8;
+use Test::Simple tests => 9;
 use File::Slurp;
 
 {
@@ -290,3 +290,5 @@ ok(assert_equal(count_cheats_saving_at_least(trim('
 #....#E#
 ########
 '),0,10), 2), "1 part 1 cheat and 1 that is only a cheat with extra time in the cheat");
+
+ok(assert_equal(count_cheats_saving_at_least($sampleData,76,20), 3), "AoC Part 2 Sample for saving more than 76");
