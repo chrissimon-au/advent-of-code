@@ -162,11 +162,13 @@ my $moves_in_cheat = 2;
     }
 
     sub isWall {
-        (at @_) eq "#";
+        my ($self, $position) = @_;
+        ($self->at($position)) eq "#";
     }
 
     sub isFree {
-        my $cell = at @_;
+        my ($self, $position) = @_;
+        my $cell = $self->at($position);
         $cell eq "." || 
         $cell eq "S" ||
         $cell eq "E";
@@ -174,7 +176,7 @@ my $moves_in_cheat = 2;
 
     sub cheatSaver {
         my ($self, $position, $neighbour, $cheatTarget) = @_;
-        if ($self.isWall($neighbour) && $self.isFree($cheatTarget)) {
+        if ($self->isWall($neighbour) && $self->isFree($cheatTarget)) {
             my $startDistance = $self->{_distances}->{posToString($position)};
             my $endDistance = $self->{_distances}->{posToString($cheatTarget)};
             return $endDistance - $startDistance - 2;
@@ -218,8 +220,8 @@ my $moves_in_cheat = 2;
 }
 
 sub count_cheats_saving_at_least {
-    my $maze = Maze->new(shift);
-    my $minSaved = shift;
+    my ($input, $minSaved) = @_;
+    my $maze = Maze->new($input);
 
     return $maze->countCheatsSavingAtLeast($minSaved);
 }
