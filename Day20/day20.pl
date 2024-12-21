@@ -177,17 +177,21 @@ my $moves_in_cheat = 2;
     }
 
     sub cheatSaver {
-        my ($self, $position, $neighbour, $cheatTarget) = @_;
-        if ($self->isWall($neighbour) && $self->isFree($cheatTarget)) {
+        my ($self, $position, ($dc,$dr), $minSaved) = @_;
+        my $cheatTarget = move($position,$dc,$dr);
+        my $neighbour = move($position,$dc/2,$dr/2);
+        # print(to_json($position), to_json($cheatTarget));
+        # $a=<>;
+        if ($self->isFree($cheatTarget) && $self->isWall($neighbour)) {
             my $startDistance = $self->{_distances}->{posToString($position)};
             my $endDistance = $self->{_distances}->{posToString($cheatTarget)};
-            return $endDistance - $startDistance - 2;
+            return ($endDistance - $startDistance - 2) >= $minSaved;
         }
-        return -1;
+        return false;
     }
 
     sub countCheatsSavingAtLeast {
-        my ($self, $minSaved) = @_;
+        my ($self, $minSaved, $picoSecondLimit) = @_;
 
         my $currentPos = $self->getStart();
         my $end = $self->getEnd();
@@ -196,20 +200,19 @@ my $moves_in_cheat = 2;
         my $cheatCounter = 0;
         while (not posEqual($currentPos,$end)) {
             
-
-            if ($self->cheatSaver($currentPos,move($currentPos,1,0),move($currentPos,2,0)) >= $minSaved) {
+            if ($self->cheatSaver($currentPos,(2,0),$minSaved)) {
                 $cheatCounter = $cheatCounter + 1;
             }
 
-            if ($self->cheatSaver($currentPos,move($currentPos,0,1),move($currentPos,0,2)) >= $minSaved) {
+            if ($self->cheatSaver($currentPos,(0,2),$minSaved)) {
                 $cheatCounter = $cheatCounter + 1;
             }
 
-            if ($self->cheatSaver($currentPos,move($currentPos,-1,0),move($currentPos,-2,0)) >= $minSaved) {
+            if ($self->cheatSaver($currentPos,(-2,0),$minSaved)) {
                 $cheatCounter = $cheatCounter + 1;
             }
 
-            if ($self->cheatSaver($currentPos,move($currentPos,0,-1),move($currentPos,0,-2)) >= $minSaved) {
+            if ($self->cheatSaver($currentPos,(0,-2),$minSaved)) {
                 $cheatCounter = $cheatCounter + 1;
             }
 
@@ -224,39 +227,50 @@ my $moves_in_cheat = 2;
 sub count_cheats_saving_at_least {
     my $input = shift;
     my $minSaved = shift;
+    my $picoSecondLimit = shift || 2;
     my $maze = Maze->new($input);
 
-    return $maze->countCheatsSavingAtLeast($minSaved);
+    return $maze->countCheatsSavingAtLeast($minSaved, $picoSecondLimit);
 }
 
-ok (count_cheats_saving_at_least(trim('
+sub assert_equal {
+    my $actual = shift;
+    my $expected = shift;
+    if ($actual ne $expected) {
+        say "Expected, $expected, got $actual";
+        return false;
+    }
+    return true;
+}
+
+ok(assert_equal(count_cheats_saving_at_least(trim('
 ####
 #SE#
 ####
-'),0) eq 0);
+'),0), 0), "no movement");
 
-ok (count_cheats_saving_at_least(trim('
+ok (assert_equal(count_cheats_saving_at_least(trim('
 #####
 #S#E#
 #...#
 #####
-'),5) eq 0);
+'),5), 0), "1 cheat, only saves 2");
 
-ok (count_cheats_saving_at_least(trim('
+ok (assert_equal(count_cheats_saving_at_least(trim('
 #####
 #S#E#
 #...#
 #####
-'),2) eq 1);
+'),2), 1), "1 cheat, saves 2, is detected");
 
-ok (count_cheats_saving_at_least(trim('
+ok(assert_equal(count_cheats_saving_at_least(trim('
 #######
 #S#...#
 #...#E#
 #######
-'),2) eq 2);
+'),2), 2), "2 cheats");
 
-ok (count_cheats_saving_at_least(trim('
+ok (assert_equal(count_cheats_saving_at_least(trim('
 ###############
 #...#...#.....#
 #.#.#.#.#.###.#
@@ -272,9 +286,9 @@ ok (count_cheats_saving_at_least(trim('
 #.#.#.#.#.#.###
 #...#...#...###
 ###############
-'),0) eq 14+14+2+4+2+3+1+1+1+1+1);
+'),0), 14+14+2+4+2+3+1+1+1+1+1), "AoC Sample, all possible cheats");
 
-ok (count_cheats_saving_at_least(trim('
+ok (assert_equal(count_cheats_saving_at_least(trim('
 ###############
 #...#...#.....#
 #.#.#.#.#.###.#
@@ -290,9 +304,9 @@ ok (count_cheats_saving_at_least(trim('
 #.#.#.#.#.#.###
 #...#...#...###
 ###############
-'),64) eq 1);
+'),64), 1), "AoC Sample - only cheast that save 64 or more");
 
 my $testdata = read_file('testdata.txt');
 my $answer = read_file('testdata.answer.txt');
-my $count = count_cheats_saving_at_least($testdata ,100);
-ok ($count eq $answer);
+my $count = count_cheats_saving_at_least($testdata, 100);
+ok (assert_equal($count, $answer), "AoC Test data part 1");
