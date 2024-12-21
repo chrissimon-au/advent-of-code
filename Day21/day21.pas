@@ -8,11 +8,41 @@ Classes,
 TextTestRunner,
 TestFramework;
 
+Type 
+  Pos = Record
+    Col : integer;
+    Row : integer;
+  End;
+
+
+
 (* Routines *)
 
-Function GetNumKPPress (start : char; target : char): string;
+Function GetNumKpPos (button : char) : Pos;
 Begin
-  GetNumKPPress := '<';
+  GetNumKpPos.Col := 2;
+  GetNumKpPos.Row := 3;
+  If button = 'A' Then
+    Begin
+      GetNumKpPos.Col := 0;
+      GetNumKpPos.Row := 3;
+    End;
+End;
+
+Function GetNumKPPress (start : char; target : char): string;
+
+Var StartPos, EndPos: Pos;
+Begin
+  StartPos := GetNumKpPos(start);
+  EndPos := GetNumKpPos(target);
+  If StartPos.Col < EndPos.Col Then
+    Begin
+      GetNumKPPress := '<';
+    End
+  Else
+    Begin
+      GetNumKPPress := '>';
+    End;
 End;
 
 
