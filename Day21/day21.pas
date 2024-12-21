@@ -169,6 +169,11 @@ Begin
   GetDirKpPresses := GetKpPresses(KeyPadEntry, @GetDirKpStepPresses);
 End;
 
+Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
+Begin
+  GetHumanEntryKeyPresses := '';
+End;
+
 (* Tests *)
 
 Type 
@@ -178,6 +183,7 @@ Type
       Procedure TestNumKpMultipleMovements;
       Procedure TestDirKpSingleMovement;
       Procedure TestDirKpMultipleMovements;
+      Procedure TestHumanEntryKeyPresses;
   End;
 
 
@@ -215,10 +221,19 @@ Begin
   CheckEquals('v<<A>>^A<A>A', GetDirKpPresses('<A^A'));
 End;
 
+Procedure TDay21Tests.TestHumanEntryKeyPresses;
+Begin
+  CheckEquals(
+          '<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A'
+              , GetHumanEntryKeyPresses('029A'));
+End;
+
 Procedure RegisterTests;
 Begin
   TestFramework.RegisterTest(TDay21Tests.Suite);
 End;
+
+
 
 
 Begin
