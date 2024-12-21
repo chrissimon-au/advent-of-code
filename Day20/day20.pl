@@ -5,7 +5,7 @@ use warnings;
 use warnings FATAL => qw[uninitialized];
 use builtin qw(true false trim);
 use feature qw(say);
-use Test::Simple tests => 7;
+use Test::Simple tests => 8;
 use File::Slurp;
 
 my $moves_in_cheat = 2;
@@ -279,3 +279,10 @@ my $testdata = read_file('testdata.txt');
 my $part1Answer = read_file('testdata.answer.txt');
 my $count = count_cheats_saving_at_least($testdata, 100);
 ok (assert_equal($count, $part1Answer), "AoC Test data part 1");
+
+ok(assert_equal(count_cheats_saving_at_least(trim('
+########
+#S##...#
+#....#E#
+########
+'),0,10), 2), "1 part 1 cheat and 1 that is only a cheat with extra time in the cheat");
