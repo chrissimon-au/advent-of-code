@@ -15,6 +15,7 @@
   languages.perl.packages = [
     "Test::Simple"
     "JSON"
+    "File::Slurp"
   ];
 
   # https://devenv.sh/processes/

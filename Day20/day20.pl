@@ -2,9 +2,11 @@ package My::Day20;
 
 use strict;
 use warnings;
+use warnings FATAL => qw[uninitialized];
 use builtin qw(true false trim);
 use feature qw(say);
-use Test::Simple tests => 6;
+use Test::Simple tests => 7;
+use File::Slurp;
 
 my $moves_in_cheat = 2;
 
@@ -220,7 +222,8 @@ my $moves_in_cheat = 2;
 }
 
 sub count_cheats_saving_at_least {
-    my ($input, $minSaved) = @_;
+    my $input = shift;
+    my $minSaved = shift;
     my $maze = Maze->new($input);
 
     return $maze->countCheatsSavingAtLeast($minSaved);
@@ -288,3 +291,8 @@ ok (count_cheats_saving_at_least(trim('
 #...#...#...###
 ###############
 '),64) eq 1);
+
+my $testdata = read_file('testdata.txt');
+my $answer = read_file('testdata.answer.txt');
+my $count = count_cheats_saving_at_least($testdata ,100);
+ok ($count eq $answer);
