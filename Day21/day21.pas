@@ -74,8 +74,33 @@ Begin
 End;
 
 Function GetNumKpPresses (start : String; target : String): string;
+
+Var KeyPresses : string;
+  StartPos, EndPos : Pos;
 Begin
-  GetNumKpPresses := '';
+  StartPos := GetNumKpPos(start);
+  EndPos := GetNumKpPos(target);
+  WriteLn('Here:');
+  WriteLn(PosToString(StartPos));
+  WriteLn(PosToString(EndPos));
+  If StartPos.Col > EndPos.Col Then
+    Begin
+      KeyPresses := '<';
+    End
+  Else If StartPos.Col < EndPos.Col Then
+         Begin
+           KeyPresses := '>';
+         End;
+
+  If StartPos.Row < EndPos.Row Then
+    Begin
+      KeyPresses := KeyPresses + 'v';
+    End
+  Else If startpos.row > EndPos.Row Then
+         Begin
+           KeyPresses := KeyPresses + '^';
+         End;
+  GetNumKpPresses := KeyPresses;
 End;
 
 
