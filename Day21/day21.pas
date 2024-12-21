@@ -6,6 +6,8 @@ Program day21;
 Uses 
 Classes,
 SysUtils,
+Types,
+StrUtils,
 TextTestRunner,
 TestFramework;
 
@@ -30,7 +32,7 @@ Begin
 End;
 
 (* Generic Keypad *)
-Function GetKpPresses (StartPos : Pos; EndPos : Pos): string;
+Function GetKpPresses (StartPos : Pos; EndPos : Pos; Blank : Pos): string;
 
 Var 
   KeyPressH,KeyPressV: char;
@@ -60,7 +62,7 @@ Begin
          End;
   KeyPressesV := StringOfChar(KeyPressV, abs(StartPos.Row - EndPos.Row));
 
-  If StartPos.Col > EndPos.Col Then
+  If (EndPos.Col = Blank.Col) And (StartPos.Row = Blank.Row) Then
     Begin
       KeyPresses := KeyPressesV + KeyPressesH;
     End
@@ -114,12 +116,15 @@ Function GetNumKpStepPresses (start : String; target : String): string;
 
 Var 
 
-  StartPos, EndPos : Pos;
+  StartPos, EndPos, BlankPos: Pos;
+
 Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
+  BlankPos.Col := 0;
+  BlankPos.Row := 3;
 
-  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos);
+  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, BlankPos);
 End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
@@ -155,12 +160,14 @@ End;
 Function GetDirKpStepPresses (start : String; target : String): string;
 
 Var 
-  StartPos, EndPos : Pos;
+  StartPos, EndPos, BlankPos: Pos;
 Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
+  BlankPos.Col := 0;
+  BlankPos.Row := 0;
 
-  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos);;
+  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, BlankPos);
 End;
 
 Function GetDirKpPresses (KeyPadEntry: String): string;
@@ -183,11 +190,24 @@ Begin
   HumanEntry := GetHumanEntryKeyPresses(KeyPadEntry);
   KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
   GetComplexity := HumanEntry.length * KeypadNumber;
+  //Writeln(KeyPadEntry + ': ', GetComplexity);
 End;
 
 Function GetTotalComplexity(KeyPadEntries: String): Integer;
+
+Var KeyPadEntriesArr: TStringDynArray;
+
+Var KeyPadEntry: string;
+
+Var TotalComplexity: integer;
 Begin
-  GetTotalComplexity := 0;
+  KeyPadEntriesArr := SplitString(KeyPadEntries, LineEnding);
+  TotalComplexity := 0;
+  For KeyPadEntry In KeyPadEntriesArr Do
+    Begin
+      TotalComplexity := TotalComplexity + GetComplexity(KeyPadEntry);
+    End;
+  GetTotalComplexity := TotalComplexity;
 End;
 
 (* Tests *)
@@ -207,49 +227,53 @@ Type
 
 Procedure TDay21Tests.TestNumKpSingleMovement;
 Begin
-  CheckEquals('<A', GetNumKpStepPresses('A', '0'));
-  CheckEquals('>A', GetNumKpStepPresses('0', 'A'));
-  CheckEquals('<A', GetNumKpStepPresses('3', '2'));
-  CheckEquals('vA', GetNumKpStepPresses('8', '5'));
-  CheckEquals('^A', GetNumKpStepPresses('1', '4'));
-  CheckEquals('>vA', GetNumKpStepPresses('7', '5'));
-  CheckEquals('>vA', GetNumKpStepPresses('1', '0'));
-  CheckEquals('^<A', GetNumKpStepPresses('0', '1'));
-  CheckEquals('>>vA', GetNumKpStepPresses('7', '6'));
-  CheckEquals('vv<<A', GetNumKpStepPresses('9', '1'));
-  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'));
+  CheckEquals('<A', GetNumKpStepPresses('A', '0'), 'A to 0');
+  CheckEquals('>A', GetNumKpStepPresses('0', 'A'), '0 to A');
+  CheckEquals('<A', GetNumKpStepPresses('3', '2'), '3 to 2');
+  CheckEquals('vA', GetNumKpStepPresses('8', '5'), '8 to 5');
+  CheckEquals('^A', GetNumKpStepPresses('1', '4'), '1 to 4');
+  CheckEquals('>vA', GetNumKpStepPresses('7', '5'), '7 to 5');
+  CheckEquals('>vA', GetNumKpStepPresses('1', '0'), '1 to 0');
+  CheckEquals('^<A', GetNumKpStepPresses('0', '1'), '0 to 1');
+  CheckEquals('>>vA', GetNumKpStepPresses('7', '6'), '7 to 6');
+  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1'), '9 to 1');
+  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'), 'A to 7');
 End;
 
 Procedure TDay21Tests.TestNumKpMultipleMovements;
 Begin
-  CheckEquals('<A^A>^^A', GetNumKpPresses('029'));
-  CheckEquals('<A^A>^^AvvvA', GetNumKpPresses('029A'));
+  CheckEquals('<A^A>^^A', GetNumKpPresses('029'), '029');
+  CheckEquals('<A^A>^^AvvvA', GetNumKpPresses('029A'), '029A');
 End;
 
 Procedure TDay21Tests.TestDirKpSingleMovement;
 Begin
-  CheckEquals('<A', GetDirKpStepPresses('A', '^'));
-  CheckEquals('vA', GetDirKpStepPresses('A', '>'));
-  CheckEquals('<A', GetDirKpStepPresses('>', 'v'));
-  CheckEquals('<A', GetDirKpStepPresses('v', '<'));
+  CheckEquals('<A', GetDirKpStepPresses('A', '^'), 'A to ^');
+  CheckEquals('vA', GetDirKpStepPresses('A', '>'), 'A to >');
+  CheckEquals('<A', GetDirKpStepPresses('>', 'v'), '> to <');
+  CheckEquals('<A', GetDirKpStepPresses('v', '<'), 'v to <');
 End;
 
 Procedure TDay21Tests.TestDirKpMultipleMovements;
 Begin
-  CheckEquals('v<<A>>^A<A>A', GetDirKpPresses('<A^A'));
+  CheckEquals('v<<A>>^A<A>A', GetDirKpPresses('<A^A'), '<A^A');
 End;
 
 Procedure TDay21Tests.TestHumanEntryKeyPresses;
 Begin
   CheckEquals(
-              'v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A' +
-              '>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A'
-              , GetHumanEntryKeyPresses('029A'));
+              ('v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A' +
+              '>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A').Length
+  , GetHumanEntryKeyPresses('029A').Length);
 End;
 
 Procedure TDay21Tests.TestSingleEntryComplexity;
 Begin
-  CheckEquals(1972, GetComplexity('029A'));
+  CheckEquals(1972 (*68*29*), GetComplexity('029A'));
+  CheckEquals(58800 (*60*980*), GetComplexity('980A'));
+  CheckEquals(12172 (*68*179*), GetComplexity('179A'));
+  CheckEquals(29184 (*64*456*), GetComplexity('456A'));
+  CheckEquals(24256 (*64*379*), GetComplexity('379A'));
 End;
 
 Procedure TDay21Tests.TestTotalComplexity;
