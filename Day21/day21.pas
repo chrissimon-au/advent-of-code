@@ -176,8 +176,13 @@ Begin
 End;
 
 Function GetComplexity(KeyPadEntry: String): Integer;
+
+Var HumanEntry: string;
+  KeypadNumber: integer;
 Begin
-  GetComplexity := 0;
+  HumanEntry := GetHumanEntryKeyPresses(KeyPadEntry);
+  KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
+  GetComplexity := HumanEntry.length * KeypadNumber;
 End;
 
 (* Tests *)
@@ -231,6 +236,13 @@ End;
 Procedure TDay21Tests.TestHumanEntryKeyPresses;
 Begin
   CheckEquals(
+
+
+
+
+
+
+
 
 
 
