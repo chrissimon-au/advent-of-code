@@ -142,6 +142,7 @@ Begin
   CheckEquals(GetNumKpPresses('1', '0'), '>v');
   CheckEquals(GetNumKpPresses('0', '1'), '^<');
   CheckEquals(GetNumKpPresses('7', '6'), '>>v');
+  CheckEquals(GetNumKpPresses('9', '1'), 'vv<<');
 End;
 
 
