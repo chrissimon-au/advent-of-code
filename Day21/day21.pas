@@ -81,12 +81,14 @@ Begin
 
   If StartPos.Col > EndPos.Col Then
     Begin
-      GetNumKpPresses := KeyPressesV + KeyPressesH;
+      KeyPresses := KeyPressesV + KeyPressesH;
     End
   Else
     Begin
-      GetNumKpPresses := KeyPressesH + KeyPressesV;
+      KeyPresses := KeyPressesH + KeyPressesV;
     End;
+  KeyPresses := KeyPresses + 'A';
+  GetNumKpPresses := KeyPresses;
 End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
@@ -132,7 +134,7 @@ End;
 
 Procedure TDay21Tests.TestMultipleMovements;
 Begin
-  CheckEquals(GetNumKpPresses('029'), '^>^^A');
+  CheckEquals(GetNumKpPresses('029'), '^A>^^A');
 End;
 
 
