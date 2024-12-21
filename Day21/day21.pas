@@ -175,6 +175,11 @@ Begin
                              KeyPadEntry)));
 End;
 
+Function GetComplexity(KeyPadEntry: String): Integer;
+Begin
+  GetComplexity := 0;
+End;
+
 (* Tests *)
 
 Type 
@@ -185,6 +190,7 @@ Type
       Procedure TestDirKpSingleMovement;
       Procedure TestDirKpMultipleMovements;
       Procedure TestHumanEntryKeyPresses;
+      Procedure TestSingleEntryComplexity;
   End;
 
 
@@ -226,8 +232,17 @@ Procedure TDay21Tests.TestHumanEntryKeyPresses;
 Begin
   CheckEquals(
 
+
+
+
+
           'v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A'
               , GetHumanEntryKeyPresses('029A'));
+End;
+
+Procedure TDay21Tests.TestSingleEntryComplexity;
+Begin
+  CheckEquals(1972, GetComplexity('029A'));
 End;
 
 Procedure RegisterTests;
