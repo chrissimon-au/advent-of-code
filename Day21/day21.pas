@@ -17,11 +17,18 @@ Type
     Row : integer;
   End;
 
-Type 
   StringArray = array Of string;
 
-Type 
-  TGetKeyPressFunc = Function (start: String; target: String): String;
+  OptionsArray = array Of StringArray;
+
+  TGetKeyPressFunc = Function (start: String; target: String): StringArray;
+
+  KeyPressNode = Class
+    Parent : KeyPressNode;
+    Data: String;
+    Children : array Of KeyPressNode;
+  End;
+
 
 
 Const 
@@ -90,31 +97,58 @@ Begin
   GetKpPresses := Options;
 End;
 
-Function GetKpPresses (KeyPadEntry: String; GetTransitionKeyPress:
-                       TGetKeyPressFunc): string;
+Function GetKpPressOptions (KeyPadEntry: String; GetTransitionKeyPress:
+                            TGetKeyPressFunc): StringArray;
 
-Var idx: integer;
+Var CurrentOptions, LeafOptions, NextLeafOptions : StringArray;
+  KeyIdx, OptionsIdx, LeafIdx, NewLeafIdx: Integer;
 
-Var KeyPresses : string;
+
 Begin
-  KeyPresses := GetTransitionKeyPress('A', KeyPadEntry.Substring(0,1));
-  For idx := 1 To (KeyPadEntry.Length-1) Do
+  //WriteLn('     Getting Kp Options: ', KeyPadEntry);
+  CurrentOptions := GetTransitionKeyPress('A', KeyPadEntry.Substring(0,1));
+  LeafOptions := Copy(CurrentOptions);
+
+  For KeyIdx := 1 To (KeyPadEntry.Length-1) Do
     Begin
-      KeyPresses := KeyPresses + GetTransitionKeyPress(KeyPadEntry.Substring(idx
-                    -1,1),
-                    KeyPadEntry.Substring(idx,1));
+      // WriteLn('        Getting from ',
+      //         KeyPadEntry.Substring(KeyIdx-1,1),
+      // ' to ',
+      // KeyPadEntry.Substring(KeyIdx,1));
+      CurrentOptions := GetTransitionKeyPress(
+                        KeyPadEntry.Substring(KeyIdx-1,1),
+                        KeyPadEntry.Substring(KeyIdx,1));
+
+      SetLength(NextLeafOptions, Length(LeafOptions) * Length(CurrentOptions));
+
+      For OptionsIdx := 0 To Length(CurrentOptions)-1 Do
+        Begin
+          For LeafIdx := 0 To Length(LeafOptions)-1 Do
+            Begin
+              NewLeafIdx := OptionsIdx * Length(LeafOptions) + LeafIdx;
+              NextLeafOptions[NewLeafIdx] := 
+                                             LeafOptions
+                                             [
+                                             LeafIdx
+                                             ]
+                                             +
+
+                                             CurrentOptions
+                                             [
+                                             OptionsIdx
+                                             ];
+              // WriteLn('       ',
+              //         KeyIdx, '/', KeyPadEntry.Length-1, ': (', LeafOptions[
+              //         LeafIdx], ') ',
+              //         OptionsIdx, '/',
+              //         Length(CurrentOptions), ': ',
+              //LeafIdx, '/', Length(LeafOptions),': ',
+              //NextLeafOptions[NewLeafIdx])
+            End;
+        End;
+      LeafOptions := NextLeafOptions;
     End;
-  GetKpPresses := KeyPresses;
-End;
-
-Function GetSequenceOptions(KeySequence: String;
-                            BlankPos: Pos) : StringArray;
-
-Var Options: StringArray;
-Begin
-  SetLength(Options,1);
-  Options[0] := KeySequence;
-  GetSequenceOptions := Options;
+  GetKpPressOptions := LeafOptions;
 End;
 
 (* Numeric KeyPad *)
@@ -137,7 +171,8 @@ Begin
   GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
 End;
 
-Function GetNumKpStepPresses (start : String; target : String): string;
+Function GetNumKpStepPresses (start : String; target : String):
+                                                                StringArray;
 
 Var 
   StartPos, EndPos: Pos;
@@ -145,16 +180,8 @@ Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
 
-  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos)[0];
+  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos);
 End;
-
-Function GetNumKpPresses (KeyPadEntry: String): string;
-Begin
-
-  GetNumKpPresses := GetKpPresses(KeyPadEntry, @GetNumKpStepPresses);
-End;
-
-(* Directional KeyPad *)
 
 Function GetDirKpPos (button : String) : Pos;
 
@@ -178,7 +205,8 @@ Begin
   End;
 End;
 
-Function GetDirKpStepPresses (start : String; target : String): string;
+Function GetDirKpStepPresses (start : String; target : String):
+                                                                StringArray;
 
 Var 
   StartPos, EndPos: Pos;
@@ -186,42 +214,73 @@ Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
 
-  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos)[0];
+  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos);
 End;
 
-Function GetDirKpPresses (KeyPadEntry: String): string;
+Function GetDirKpPresses (KeyPadEntry: String): StringArray;
 
 Begin
-  GetDirKpPresses := GetKpPresses(KeyPadEntry, @GetDirKpStepPresses);
+  GetDirKpPresses := GetKpPressOptions(KeyPadEntry, @GetDirKpStepPresses);
 End;
 
 (* Human Entry Aggregation *)
 
+// returns a set of options for the next Char.
+// Could start with just producing a tree of options?
+
+//  For each option, need to compute a tree of the full
+//  string to produce that char.  Each leaf concatted back
+//  to the root will give the full set of options.
+
+//  For each option, need to compute a new tree of options
+//  to compute that tree. Each leaf concatted back to the
+//  root will give the full set of optins.
+
+//  The shortest option wins for this char in the keypress. }
 Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
 
 Var Idx : Integer;
-  LastChar, CurrChar: String;
-  KeyPresses, KeyPressesForChar: string;
-  OptionsForNumberKeypad: array Of string;
+  LastChar, CurrChar, Option, Option1, Option2: String;
+  OptionsForNumberKeypad, Options1, Options2 : StringArray;
+
+  KeyPresses, ShortestKeyPresses: String;
 Begin
   LastChar := 'A';
   KeyPresses := '';
+  //WriteLn('----');
+  //Writeln(KeyPadEntry);
   For Idx := 0 To (KeyPadEntry.Length-1) Do
     Begin
+      ShortestKeyPresses := '';
       CurrChar := KeyPadEntry.Substring(Idx,1);
-      KeyPressesForChar := GetNumKpStepPresses(
-                           LastChar, CurrChar
-                           );
-      OptionsForNumberKeypad := GetSequenceOptions(KeyPressesForChar,
-                                NumKpBlankPos);
-
-      KeyPressesForChar := 
-                           GetDirKpPresses(
-                           GetDirKpPresses(OptionsForNumberKeypad[0]
-                           ));
-      KeyPresses := KeyPresses + KeyPressesForChar;
+      //Writeln('Assessing from ', LastChar, ' to ', CurrChar);
+      OptionsForNumberKeypad := GetNumKpStepPresses(
+                                LastChar, CurrChar
+                                );
+      For Option In OptionsForNumberKeypad Do
+        Begin
+          //Writeln(' ', Option);
+          Options1 := GetDirKpPresses(Option);
+          For Option1 In Options1 Do
+            Begin
+              //Writeln('  ', Option1);
+              Options2 := GetDirKpPresses(Option1);
+              For Option2 In Options2 Do
+                Begin
+                  //Writeln('   ', Option2);
+                  If (Option2.Length < ShortestKeyPresses.Length) Or
+                     (ShortestKeyPresses = '') Then
+                    Begin
+                      //WriteLn('    New Shortest: ', Option2);
+                      ShortestKeyPresses := Option2;
+                    End;
+                End;
+            End;
+        End;
       LastChar := CurrChar;
+      KeyPresses := KeyPresses + ShortestKeyPresses;
     End;
+  //WriteLn('Found: ', KeyPresses);
   GetHumanEntryKeyPresses := KeyPresses;
 End;
 
@@ -259,9 +318,7 @@ Type
   TDay21Tests = Class(TTestCase)
     Published 
       Procedure TestNumKpSingleMovement;
-      Procedure TestNumKpMultipleMovements;
       Procedure TestDirKpSingleMovement;
-      Procedure TestDirKpMultipleMovements;
       Procedure TestHumanEntryKeyPresses;
       Procedure TestSingleEntryComplexity;
       Procedure TestTotalComplexity;
@@ -270,36 +327,25 @@ Type
 
 Procedure TDay21Tests.TestNumKpSingleMovement;
 Begin
-  CheckEquals('<A', GetNumKpStepPresses('A', '0'), 'A to 0');
-  CheckEquals('>A', GetNumKpStepPresses('0', 'A'), '0 to A');
-  CheckEquals('<A', GetNumKpStepPresses('3', '2'), '3 to 2');
-  CheckEquals('vA', GetNumKpStepPresses('8', '5'), '8 to 5');
-  CheckEquals('^A', GetNumKpStepPresses('1', '4'), '1 to 4');
-  CheckEquals('>vA', GetNumKpStepPresses('7', '5'), '7 to 5');
-  CheckEquals('>vA', GetNumKpStepPresses('1', '0'), '1 to 0');
-  CheckEquals('^<A', GetNumKpStepPresses('0', '1'), '0 to 1');
-  CheckEquals('>>vA', GetNumKpStepPresses('7', '6'), '7 to 6');
-  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1'), '9 to 1');
-  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'), 'A to 7');
-End;
-
-Procedure TDay21Tests.TestNumKpMultipleMovements;
-Begin
-  CheckEquals('<A^A>^^A', GetNumKpPresses('029'), '029');
-  CheckEquals('<A^A>^^AvvvA', GetNumKpPresses('029A'), '029A');
+  CheckEquals('<A', GetNumKpStepPresses('A', '0')[0], 'A to 0');
+  CheckEquals('>A', GetNumKpStepPresses('0', 'A')[0], '0 to A');
+  CheckEquals('<A', GetNumKpStepPresses('3', '2')[0], '3 to 2');
+  CheckEquals('vA', GetNumKpStepPresses('8', '5')[0], '8 to 5');
+  CheckEquals('^A', GetNumKpStepPresses('1', '4')[0], '1 to 4');
+  CheckEquals('>vA', GetNumKpStepPresses('7', '5')[0], '7 to 5');
+  CheckEquals('>vA', GetNumKpStepPresses('1', '0')[0], '1 to 0');
+  CheckEquals('^<A', GetNumKpStepPresses('0', '1')[0], '0 to 1');
+  CheckEquals('>>vA', GetNumKpStepPresses('7', '6')[0], '7 to 6');
+  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1')[0], '9 to 1');
+  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7')[0], 'A to 7');
 End;
 
 Procedure TDay21Tests.TestDirKpSingleMovement;
 Begin
-  CheckEquals('<A', GetDirKpStepPresses('A', '^'), 'A to ^');
-  CheckEquals('vA', GetDirKpStepPresses('A', '>'), 'A to >');
-  CheckEquals('<A', GetDirKpStepPresses('>', 'v'), '> to <');
-  CheckEquals('<A', GetDirKpStepPresses('v', '<'), 'v to <');
-End;
-
-Procedure TDay21Tests.TestDirKpMultipleMovements;
-Begin
-  CheckEquals('v<<A>>^A<A>A', GetDirKpPresses('<A^A'), '<A^A');
+  CheckEquals('<A', GetDirKpStepPresses('A', '^')[0], 'A to ^');
+  CheckEquals('vA', GetDirKpStepPresses('A', '>')[0], 'A to >');
+  CheckEquals('<A', GetDirKpStepPresses('>', 'v')[0], '> to <');
+  CheckEquals('<A', GetDirKpStepPresses('v', '<')[0], 'v to <');
 End;
 
 Procedure TDay21Tests.TestHumanEntryKeyPresses;
