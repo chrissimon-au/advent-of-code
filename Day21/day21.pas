@@ -209,15 +209,16 @@ Begin
   GetHumanEntryKeyPressCount := totalLength;
 End;
 
-// Function GetComplexity(KeyPadEntry: String; NumRobots: Integer): Integer;
+Function GetComplexity(KeyPadEntry: String; NumRobots: Integer): Integer;
 
-// Var HumanEntry: string;
-//   KeypadNumber: integer;
-// Begin
-//   HumanEntry := GetHumanEntryKeyPresses(KeyPadEntry, NumRobots);
-//   KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
-//   GetComplexity := HumanEntry.length * KeypadNumber;
-// End;
+Var EntryCount: int64;
+  KeypadNumber: integer;
+Begin
+  EntryCount := GetHumanEntryKeyPressCount(KeyPadEntry, NumRobots);
+  KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
+  GetComplexity := EntryCount * KeypadNumber;
+End;
+
 // Function GetTotalComplexity(
 //  KeyPadEntries: String;
 //  NumRobots: Integer): Integer;
@@ -247,7 +248,7 @@ Type
       Procedure TestNumKpSingleMovement;
       Procedure TestDirKpSingleMovement;
       Procedure TestHumanEntryKeyPresses;
-      //Procedure TestSingleEntryComplexity;
+      Procedure TestSingleEntryComplexity;
       //Procedure TestTotalComplexity;
   End;
 
@@ -284,14 +285,14 @@ Begin
   CheckEquals(64, GetHumanEntryKeyPressCount('379A', 2), '379A');
 End;
 
-// Procedure TDay21Tests.TestSingleEntryComplexity;
-// Begin
-//   CheckEquals(1972 (*68*29*), GetComplexity('029A', 2));
-//   CheckEquals(58800 (*60*980*), GetComplexity('980A', 2));
-//   CheckEquals(12172 (*68*179*), GetComplexity('179A', 2));
-//   CheckEquals(29184 (*64*456*), GetComplexity('456A', 2));
-//   CheckEquals(24256 (*64*379*), GetComplexity('379A', 2));
-// End;
+Procedure TDay21Tests.TestSingleEntryComplexity;
+Begin
+  CheckEquals(1972 (*68*29*), GetComplexity('029A', 2));
+  CheckEquals(58800 (*60*980*), GetComplexity('980A', 2));
+  CheckEquals(12172 (*68*179*), GetComplexity('179A', 2));
+  CheckEquals(29184 (*64*456*), GetComplexity('456A', 2));
+  CheckEquals(24256 (*64*379*), GetComplexity('379A', 2));
+End;
 
 // Procedure TDay21Tests.TestTotalComplexity;
 // Begin
