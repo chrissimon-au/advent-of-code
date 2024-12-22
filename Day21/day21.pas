@@ -21,7 +21,7 @@ Type
 
   OptionsArray = array Of StringArray;
 
-  TGetKeyPressFunc = Function (start: String; target: String): StringArray;
+  TGetKeyPressFunc = Function (start: String; target: String): String;
 
 Const 
   NumKpBlankPos : Pos = (Col: 0; Row: 3);
@@ -160,6 +160,55 @@ End;
 
 (* Human Entry Aggregation *)
 
+Function GetEntryKeyPressCount(startChar: char;
+                               targetChar: char;
+                               numRobots: integer;
+                               getKeyPressFunc: TGetKeyPressFunc): int64;
+
+Var KeyPressCount: Int64;
+  keyPresses: string;
+  innerStartChar, innerTargetChar: char;
+Begin
+  KeyPresses := getKeyPressFunc(startChar, targetChar);
+  If numRobots = 0 Then
+    Begin
+      KeyPressCount := KeyPresses.Length;
+    End
+  Else
+    Begin
+      innerStartChar := 'A';
+      KeyPressCount := 0;
+      For innerTargetChar In Keypresses Do
+        Begin
+          KeyPressCount := KeyPressCount +
+                           GetEntryKeyPressCount(
+                           innerStartChar, innerTargetChar,
+                           numRobots-1,
+                           @GetDirKpStepPresses);
+          innerStartChar := innerTargetChar;
+        End;
+    End;
+  GetEntryKeyPressCount := KeyPressCount;
+End;
+
+
+Function GetHumanEntryKeyPressCount(code: String; numRobots: integer): Int64;
+
+Var totalLength: Int64;
+  startChar, targetChar: char;
+Begin
+  startChar := 'A';
+  totalLength := 0;
+
+  For targetChar In code Do
+    Begin
+      totalLength := totalLength + GetEntryKeyPressCount(startChar, targetChar,
+                     numRobots, @GetNumKpStepPresses);
+      startChar := targetChar;
+    End;
+  GetHumanEntryKeyPressCount := totalLength;
+End;
+
 // Function GetComplexity(KeyPadEntry: String; NumRobots: Integer): Integer;
 
 // Var HumanEntry: string;
@@ -197,7 +246,7 @@ Type
     Published 
       Procedure TestNumKpSingleMovement;
       Procedure TestDirKpSingleMovement;
-      //Procedure TestHumanEntryKeyPresses;
+      Procedure TestHumanEntryKeyPresses;
       //Procedure TestSingleEntryComplexity;
       //Procedure TestTotalComplexity;
   End;
@@ -226,13 +275,14 @@ Begin
   CheckEquals('<A', GetDirKpStepPresses('v', '<'), 'v to <');
 End;
 
-// Procedure TDay21Tests.TestHumanEntryKeyPresses;
-// Begin
-//   CheckEquals(
-//               ('v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A' +
-//               '>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A').Length,
-//   GetHumanEntryKeyPresses('029A', 2).Length);
-// End;
+Procedure TDay21Tests.TestHumanEntryKeyPresses;
+Begin
+  CheckEquals(68, GetHumanEntryKeyPressCount('029A', 2), '029A');
+  CheckEquals(60, GetHumanEntryKeyPressCount('980A', 2), '980A');
+  CheckEquals(68, GetHumanEntryKeyPressCount('179A', 2), '179A');
+  CheckEquals(64, GetHumanEntryKeyPressCount('456A', 2), '456A');
+  CheckEquals(64, GetHumanEntryKeyPressCount('379A', 2), '379A');
+End;
 
 // Procedure TDay21Tests.TestSingleEntryComplexity;
 // Begin
