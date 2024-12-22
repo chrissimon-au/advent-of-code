@@ -21,11 +21,24 @@ Type
 
   OptionsArray = array Of StringArray;
 
-  TGetKeyPressFunc = Function (start: String; target: String): String;
+  TGetKeyPressFunc = Function (start: String;
+                               target: String;
+                               numRobots: Integer): String;
 
 Const 
   NumKpBlankPos : Pos = (Col: 0; Row: 3);
   DirKpBlankPos : Pos = (Col: 0; Row: 0);
+
+Function GetEntryKeyPressCount(startChar: char;
+                               targetChar: char;
+                               numRobots: integer;
+                               getKeyPressFunc: TGetKeyPressFunc): int64;
+forward;
+
+Function GetDirKpStepPresses (start: String;
+                              target: String;
+                              numRobots: integer): String;
+forward;
 
 (* Routines *)
 Function PosToString(pos: Pos) : String;
@@ -64,25 +77,41 @@ Begin
   End;
 End;
 
-Function GetCost(code: String): Integer;
+Function GetCost(code: String; NumRobots: integer): Integer;
 
 Var totalCost: integer;
-  targetChar: char;
+  startChar, targetChar: char;
   startPos, targetPos: Pos;
 Begin
-  startPos := GetDirKpPos('A');
+  startChar := 'A';
+  startPos := GetDirKpPos(startChar);
   totalCost := 0;
   For targetChar In code Do
     Begin
-      targetPos := GetDirKpPos(targetChar);
-      totalCost := totalCost + PosDiff(startPos, targetPos);
+      If numRobots > 0 Then
+        Begin
+          totalCost := totalCost +
+                       GetEntryKeyPressCount(startChar,
+                       targetChar,
+                       numRobots-1,
+                       @GetDirKpStepPresses);
+        End
+      Else
+        Begin
+          targetPos := GetDirKpPos(targetChar);
+          totalCost := totalCost + PosDiff(startPos, targetPos);
+        End;;
       startPos := targetPos;
+      startChar := targetChar;
     End;
   getCost := totalCost;
 End;
 
 (* Generic Keypad *)
-Function GetKpPresses (StartPos : Pos; EndPos : Pos; Blank : Pos): String;
+Function GetKpPresses (StartPos : Pos;
+                       EndPos : Pos;
+                       Blank : Pos;
+                       NumRobots: Integer): String;
 
 Var 
   KeyPressH,KeyPressV: char;
@@ -116,33 +145,31 @@ Begin
     Begin
       GetKpPresses := KeyPressesV + KeyPressesH + 'A';
     End
+  Else If (KeyPressesH.Length > 0) And (KeyPressesV.Length > 0) Then
+         Begin
+           Opt1 := KeyPressesH + KeyPressesV + 'A';
+           Opt1Cost := GetCost(Opt1, NumRobots);
+           Opt2 := KeyPressesV + KeyPressesH + 'A';
+           Opt2Cost := GetCost(Opt2, NumRobots);
+           If Opt1Cost <= Opt2Cost Then
+             Begin
+               GetKpPresses := Opt1;
+             End
+           Else
+             Begin
+               //WriteLn(Opt1, ' (', opt1Cost, ') vs ',
+               //        Opt2, ' (', opt2cost, ')');
+               GetKpPresses := Opt2;
+             End;
+         End
   Else
     Begin
-      If (KeyPressesH.Length > 0) And (KeyPressesV.Length > 0) Then
-        Begin
-          // TODO: compare relative cost
-          Opt1 := KeyPressesH + KeyPressesV + 'A';
-          Opt1Cost := GetCost(Opt1);
-          Opt2 := KeyPressesV + KeyPressesH + 'A';
-          Opt2Cost := GetCost(Opt2);
-          If Opt1Cost <= Opt2Cost Then
-            Begin
-              GetKpPresses := Opt1;
-            End
-          Else
-            Begin
-              WriteLn(Opt1, ' (', opt1Cost, ') vs ', Opt2, ' (', opt2cost, ')');
-              GetKpPresses := Opt2;
-            End;
-        End
-      Else
-        Begin
-          GetKpPresses := KeyPressesH + KeyPressesV + 'A';
-        End;
+      GetKpPresses := KeyPressesH + KeyPressesV + 'A';
     End;
 End;
 
 (* Numeric KeyPad *)
+
 Function GetNumKpPos (button : String) : Pos;
 
 Var ButtonNumber : integer;
@@ -163,7 +190,8 @@ Begin
 End;
 
 Function GetNumKpStepPresses (start : String;
-                              target : String): String;
+                              target : String;
+                              numRobots: integer): String;
 
 Var 
   StartPos, EndPos: Pos;
@@ -171,13 +199,15 @@ Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
 
-  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos);
+  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos, NumRobots
+                         );
 End;
 
 (* Directional Keypad *)
 
 Function GetDirKpStepPresses (start: String;
-                              target: String): String;
+                              target: String;
+                              numRobots: integer): String;
 
 Var 
   StartPos, EndPos: Pos;
@@ -185,7 +215,8 @@ Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
 
-  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos);
+  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos, numRobots
+                         );
 End;
 
 (* Human Entry Aggregation *)
@@ -199,7 +230,11 @@ Var KeyPressCount: Int64;
   keyPresses: string;
   innerStartChar, innerTargetChar: char;
 Begin
-  KeyPresses := getKeyPressFunc(startChar, targetChar);
+  KeyPresses := getKeyPressFunc(startChar, targetChar, numRobots);
+  // If (numRobots=0) Then
+  //   Begin
+  //     write(keypresses);
+  //   End;
   If numRobots = 0 Then
     Begin
       KeyPressCount := KeyPresses.Length;
@@ -231,12 +266,17 @@ Begin
   startChar := 'A';
   totalLength := 0;
 
+  // writeln('====');
+  // writeln(code);
+
   For targetChar In code Do
     Begin
-      totalLength := totalLength + GetEntryKeyPressCount(startChar, targetChar,
+      totalLength := totalLength + GetEntryKeyPressCount(startChar, targetChar
+                     ,
                      numRobots, @GetNumKpStepPresses);
       startChar := targetChar;
     End;
+  //  writeln();
   GetHumanEntryKeyPressCount := totalLength;
 End;
 
@@ -283,25 +323,25 @@ Type
 
 Procedure TDay21Tests.TestNumKpSingleMovement;
 Begin
-  CheckEquals('<A', GetNumKpStepPresses('A', '0'), 'A to 0');
-  CheckEquals('>A', GetNumKpStepPresses('0', 'A'), '0 to A');
-  CheckEquals('<A', GetNumKpStepPresses('3', '2'), '3 to 2');
-  CheckEquals('vA', GetNumKpStepPresses('8', '5'), '8 to 5');
-  CheckEquals('^A', GetNumKpStepPresses('1', '4'), '1 to 4');
-  CheckEquals('>vA', GetNumKpStepPresses('7', '5'), '7 to 5');
-  CheckEquals('>vA', GetNumKpStepPresses('1', '0'), '1 to 0');
-  CheckEquals('^<A', GetNumKpStepPresses('0', '1'), '0 to 1');
-  CheckEquals('>>vA', GetNumKpStepPresses('7', '6'), '7 to 6');
-  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1'), '9 to 1');
-  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'), 'A to 7');
+  CheckEquals('<A', GetNumKpStepPresses('A', '0',0), 'A to 0');
+  CheckEquals('>A', GetNumKpStepPresses('0', 'A',0), '0 to A');
+  CheckEquals('<A', GetNumKpStepPresses('3', '2',0), '3 to 2');
+  CheckEquals('vA', GetNumKpStepPresses('8', '5',0), '8 to 5');
+  CheckEquals('^A', GetNumKpStepPresses('1', '4',0), '1 to 4');
+  CheckEquals('>vA', GetNumKpStepPresses('7', '5',0), '7 to 5');
+  CheckEquals('>vA', GetNumKpStepPresses('1', '0',0), '1 to 0');
+  CheckEquals('^<A', GetNumKpStepPresses('0', '1',0), '0 to 1');
+  CheckEquals('>>vA', GetNumKpStepPresses('7', '6',0), '7 to 6');
+  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1',0), '9 to 1');
+  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7',0), 'A to 7');
 End;
 
 Procedure TDay21Tests.TestDirKpSingleMovement;
 Begin
-  CheckEquals('<A', GetDirKpStepPresses('A', '^'), 'A to ^');
-  CheckEquals('vA', GetDirKpStepPresses('A', '>'), 'A to >');
-  CheckEquals('<A', GetDirKpStepPresses('>', 'v'), '> to <');
-  CheckEquals('<A', GetDirKpStepPresses('v', '<'), 'v to <');
+  CheckEquals('<A', GetDirKpStepPresses('A', '^',0), 'A to ^');
+  CheckEquals('vA', GetDirKpStepPresses('A', '>',0), 'A to >');
+  CheckEquals('<A', GetDirKpStepPresses('>', 'v',0), '> to <');
+  CheckEquals('<A', GetDirKpStepPresses('v', '<',0), 'v to <');
 End;
 
 Procedure TDay21Tests.TestHumanEntryKeyPresses;
