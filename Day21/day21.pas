@@ -216,6 +216,36 @@ End;
 
 (* Human Entry Aggregation *)
 
+Function GetShortestHumanEntryKeyPresses(Options: StringArray;
+                                         RemainingRobots: integer) : string;
+
+Var ShortestKeyPresses, NextKeyPresses, Option: String;
+  NextOptions: StringArray;
+Begin
+  ShortestKeyPresses := '';
+  For Option In Options Do
+    Begin
+      If RemainingRobots = 0 Then
+        Begin
+          NextKeyPresses := Option;
+        End
+      Else
+        Begin
+          NextOptions := GetDirKpPresses(Option);
+          NextKeyPresses := GetShortestHumanEntryKeyPresses(
+                            NextOptions, RemainingRobots-1);
+        End;
+      If (NextKeyPresses.Length < ShortestKeyPresses.Length) Or (
+         ShortestKeyPresses =
+         '') Then
+        Begin
+          ShortestKeyPresses := NextKeyPresses
+        End;
+    End;
+  GetShortestHumanEntryKeyPresses := ShortestKeyPresses
+End;
+
+
 Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
 
 Var Idx : Integer;
@@ -226,40 +256,21 @@ Var Idx : Integer;
 Begin
   LastChar := 'A';
   KeyPresses := '';
-  //WriteLn('----');
-  //Writeln(KeyPadEntry);
   For Idx := 0 To (KeyPadEntry.Length-1) Do
     Begin
       ShortestKeyPresses := '';
       CurrChar := KeyPadEntry.Substring(Idx,1);
-      //Writeln('Assessing from ', LastChar, ' to ', CurrChar);
+
       OptionsForNumberKeypad := GetNumKpStepPresses(
                                 LastChar, CurrChar
                                 );
-      For Option In OptionsForNumberKeypad Do
-        Begin
-          //Writeln(' ', Option);
-          Options1 := GetDirKpPresses(Option);
-          For Option1 In Options1 Do
-            Begin
-              //Writeln('  ', Option1);
-              Options2 := GetDirKpPresses(Option1);
-              For Option2 In Options2 Do
-                Begin
-                  //Writeln('   ', Option2);
-                  If (Option2.Length < ShortestKeyPresses.Length) Or
-                     (ShortestKeyPresses = '') Then
-                    Begin
-                      //WriteLn('    New Shortest: ', Option2);
-                      ShortestKeyPresses := Option2;
-                    End;
-                End;
-            End;
-        End;
+
+      ShortestKeyPresses := GetShortestHumanEntryKeyPresses(
+                            OptionsForNumberKeypad, 2);
+
       LastChar := CurrChar;
       KeyPresses := KeyPresses + ShortestKeyPresses;
     End;
-  //WriteLn('Found: ', KeyPresses);
   GetHumanEntryKeyPresses := KeyPresses;
 End;
 
@@ -271,7 +282,6 @@ Begin
   HumanEntry := GetHumanEntryKeyPresses(KeyPadEntry);
   KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
   GetComplexity := HumanEntry.length * KeypadNumber;
-  //Writeln(KeyPadEntry + ': ', GetComplexity);
 End;
 
 Function GetTotalComplexity(KeyPadEntries: String): Integer;
