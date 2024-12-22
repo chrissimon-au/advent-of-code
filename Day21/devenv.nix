@@ -16,7 +16,7 @@
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e txt,pas --timings 'rm day21 ; fpc day21.pas -Fu../../fptest/src -Fu../../epiktimer/; ./day21'";
+        command = "watchexec -e txt,pas --timings './run.sh'";
         is_tty = true;
       };
     };

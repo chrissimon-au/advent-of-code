@@ -1,0 +1,1 @@
+rm day21 ; fpc day21.pas -Fu../../fptest/src -Fu../../epiktimer/ -Fu../../Pascal/StrHashMap; ./day21

@@ -8,6 +8,7 @@ Classes,
 SysUtils,
 Types,
 StrUtils,
+StrHashMap, //https://github.com/JuhaManninen/Pascal/tree/master/StrHashMap
 TextTestRunner,
 TestFramework;
 
@@ -28,8 +29,6 @@ Type
     Data: String;
     Children : array Of KeyPressNode;
   End;
-
-
 
 Const 
   NumKpBlankPos : Pos = (Col: 0; Row: 3);
@@ -97,13 +96,15 @@ Begin
   GetKpPresses := Options;
 End;
 
-Function GetKpPressOptions (KeyPadEntry: String; GetTransitionKeyPress:
-                            TGetKeyPressFunc): StringArray;
+Function GetKpPressOptions (KeyPadEntry: String;
+                            GetTransitionKeyPress: TGetKeyPressFunc;
+                            Cache: TStringHashMap;
+                            CacheKeySuffix: String)
+: StringArray;
 
 Var CurrentOptions, LeafOptions, NextLeafOptions : StringArray;
   KeyIdx, OptionsIdx, LeafIdx, NewLeafIdx: Integer;
-
-
+  KeyFrom, KeyTo, CacheKey: String;
 Begin
   //WriteLn('     Getting Kp Options: ', KeyPadEntry);
   CurrentOptions := GetTransitionKeyPress('A', KeyPadEntry.Substring(0,1));
@@ -111,13 +112,26 @@ Begin
 
   For KeyIdx := 1 To (KeyPadEntry.Length-1) Do
     Begin
-      // WriteLn('        Getting from ',
+      // WriteLn('                                     Getting from ',
       //         KeyPadEntry.Substring(KeyIdx-1,1),
-      // ' to ',
-      // KeyPadEntry.Substring(KeyIdx,1));
-      CurrentOptions := GetTransitionKeyPress(
-                        KeyPadEntry.Substring(KeyIdx-1,1),
-                        KeyPadEntry.Substring(KeyIdx,1));
+      // ' to ', KeyPadEntry.Substring(KeyIdx,1),
+      // ' with ', Length(LeafOptions), ' cumulative combos');
+      KeyFrom := KeyPadEntry.Substring(KeyIdx-1,1);
+      KeyTo := KeyPadEntry.Substring(KeyIdx,1);
+      CacheKey := 'From:' + KeyFrom + ':to:' + KeyTo;
+      // If Cache.contains(CacheKey) Then
+      //   Begin
+      //     CurrentOptions := stringarray(Cache[CacheKey]^);
+      //   End
+      // Else
+      //   Begin
+      CurrentOptions := GetTransitionKeyPress(KeyFrom, KeyTo);
+      Cache[CacheKey] := @CurrentOptions;
+      // End;
+      // WriteLn('                                      got ',
+      //   length(currentOptions),
+      //   ' more options, so about to have ',
+      //   Length(LeafOptions) * Length(CurrentOptions));
 
       SetLength(NextLeafOptions, Length(LeafOptions) * Length(CurrentOptions));
 
@@ -162,8 +176,8 @@ Begin
   GetNumKpPos.Row := Trunc((9-ButtonNumber) / 3);
 End;
 
-Function GetNumKpStepPresses (start : String; target : String):
-                                                                StringArray;
+Function GetNumKpStepPresses (start : String;
+                              target : String): StringArray;
 
 Var 
   StartPos, EndPos: Pos;
@@ -196,8 +210,8 @@ Begin
   End;
 End;
 
-Function GetDirKpStepPresses (start : String; target : String):
-                                                                StringArray;
+Function GetDirKpStepPresses (start: String;
+                              target: String): StringArray;
 
 Var 
   StartPos, EndPos: Pos;
@@ -208,21 +222,36 @@ Begin
   GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos);
 End;
 
-Function GetDirKpPresses (KeyPadEntry: String): StringArray;
+Function GetDirKpPresses (KeyPadEntry: String;
+                          Cache: TStringHashMap;
+                          CacheKeySuffix: String): StringArray;
 
 Begin
-  GetDirKpPresses := GetKpPressOptions(KeyPadEntry, @GetDirKpStepPresses);
+  GetDirKpPresses := GetKpPressOptions(KeyPadEntry,
+                     @GetDirKpStepPresses,
+                     Cache,
+                     CacheKeySuffix);
 End;
 
 (* Human Entry Aggregation *)
 
 Function GetShortestHumanEntryKeyPresses(Options: StringArray;
-                                         RemainingRobots: integer) : string;
+                                         RemainingRobots: integer;
+                                         Cache: TStringHashMap) : string;
 
-Var ShortestKeyPresses, NextKeyPresses, Option: String;
+Var ShortestKeyPresses,
+  NextKeyPresses,
+  Option,
+  CacheKeySuffix,
+  LogPrefix: String;
   NextOptions: StringArray;
 Begin
+  LogPrefix := '     ' + StringOfChar(' ', 2-RemainingRobots);
+  WriteLn(LogPrefix, DateTimeToStr(Now),
+  ': ', RemainingRobots);
+
   ShortestKeyPresses := '';
+  // CacheKeySuffix := ':' + IntToStr(RemainingRobots);
   For Option In Options Do
     Begin
       If RemainingRobots = 0 Then
@@ -231,9 +260,13 @@ Begin
         End
       Else
         Begin
-          NextOptions := GetDirKpPresses(Option);
+          //WriteLn(LogPrefix,'  ',Option);
+          NextOptions := GetDirKpPresses(Option, Cache, CacheKeySuffix);
+          //WriteLn(LogPrefix,'   got ',length(NextOptions),' options.');
           NextKeyPresses := GetShortestHumanEntryKeyPresses(
-                            NextOptions, RemainingRobots-1);
+                            NextOptions,
+                            RemainingRobots-1,
+                            Cache);
         End;
       If (NextKeyPresses.Length < ShortestKeyPresses.Length) Or (
          ShortestKeyPresses =
@@ -242,6 +275,7 @@ Begin
           ShortestKeyPresses := NextKeyPresses
         End;
     End;
+  WriteLn(ShortestKeyPresses);
   GetShortestHumanEntryKeyPresses := ShortestKeyPresses
 End;
 
@@ -252,9 +286,14 @@ Function GetHumanEntryKeyPresses(KeyPadEntry: String;
 Var Idx : Integer;
   LastChar, CurrChar: String;
   OptionsForNumberKeypad : StringArray;
-
   KeyPresses, ShortestKeyPresses: String;
+  Cache: TStringHashMap;
+
 Begin
+  Cache := TStringHashMap.create(1048576);
+  WriteLn('=======');
+  WriteLn(DateTimeToStr(Now), ': ', KeyPadEntry);
+  WriteLn('---');
   LastChar := 'A';
   KeyPresses := '';
   For Idx := 0 To (KeyPadEntry.Length-1) Do
@@ -266,12 +305,14 @@ Begin
                                 LastChar, CurrChar
                                 );
 
+      WriteLn('  ', DateTimeToStr(Now), ': ', LastChar, ' to ', CurrChar);
       ShortestKeyPresses := GetShortestHumanEntryKeyPresses(
-                            OptionsForNumberKeypad, NumRobots);
+                            OptionsForNumberKeypad, NumRobots, Cache);
 
       LastChar := CurrChar;
       KeyPresses := KeyPresses + ShortestKeyPresses;
     End;
+  WriteLn(KeyPresses);
   GetHumanEntryKeyPresses := KeyPresses;
 End;
 
@@ -370,10 +411,14 @@ Begin
   TestFramework.RegisterTest(TDay21Tests.Suite);
 End;
 
-
-
-
+Var testResult: integer;
 Begin
   RegisterTests;
   RunRegisteredTests(rxbHaltOnFailures);
+  // testResult := GetTotalComplexity('869A' + LineEnding +
+  //               '180A' + LineEnding +
+  //               '596A' + LineEnding +
+  //               '965A' + LineEnding +
+  //               '973A', 25);
+  // writeln(testResult);
 End.
