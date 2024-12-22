@@ -39,11 +39,12 @@ Begin
 End;
 
 (* Generic Keypad *)
-Function GetKpPresses (StartPos : Pos; EndPos : Pos; Blank : Pos): string;
+Function GetKpPresses (StartPos : Pos; EndPos : Pos; Blank : Pos): StringArray;
 
 Var 
+  Options : StringArray;
   KeyPressH,KeyPressV: char;
-  KeyPressesH,KeyPressesV,KeyPresses: string;
+  KeyPressesH,KeyPressesV: string;
 Begin
   If StartPos.Col > EndPos.Col Then
     Begin
@@ -69,14 +70,16 @@ Begin
 
   If (EndPos.Col = Blank.Col) And (StartPos.Row = Blank.Row) Then
     Begin
-      KeyPresses := KeyPressesV + KeyPressesH;
+      SetLength(Options,1);
+      Options[0] := KeyPressesV + KeyPressesH+ 'A';
     End
   Else
     Begin
-      KeyPresses := KeyPressesH + KeyPressesV;
+      SetLength(Options,2);
+      Options[0] := KeyPressesH + KeyPressesV + 'A';
+      Options[1] := KeyPressesV + KeyPressesH + 'A';
     End;
-  KeyPresses := KeyPresses + 'A';
-  GetKpPresses := KeyPresses;
+  GetKpPresses := Options;
 End;
 
 Function GetKpPresses (KeyPadEntry: String; GetTransitionKeyPress:
@@ -134,7 +137,7 @@ Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
 
-  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos);
+  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos)[0];
 End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
@@ -175,7 +178,7 @@ Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
 
-  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos);
+  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos)[0];
 End;
 
 Function GetDirKpPresses (KeyPadEntry: String): string;
@@ -248,7 +251,6 @@ Type
   TDay21Tests = Class(TTestCase)
     Published 
       Procedure TestNumKpSingleMovement;
-      Procedure TestGetSequenceOptions;
       Procedure TestNumKpMultipleMovements;
       Procedure TestDirKpSingleMovement;
       Procedure TestDirKpMultipleMovements;
@@ -271,14 +273,6 @@ Begin
   CheckEquals('>>vA', GetNumKpStepPresses('7', '6'), '7 to 6');
   CheckEquals('<<vvA', GetNumKpStepPresses('9', '1'), '9 to 1');
   CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'), 'A to 7');
-End;
-
-Procedure TDay21Tests.TestGetSequenceOptions;
-
-Var Opts : StringArray;
-Begin
-  Opts := GetSequenceOptions('<A', NumKpBlankPos);
-  CheckEquals('<A', Opts[0], 'Ato0 Options');
 End;
 
 Procedure TDay21Tests.TestNumKpMultipleMovements;
