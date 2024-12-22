@@ -18,8 +18,15 @@ Type
   End;
 
 Type 
+  StringArray = array Of string;
+
+Type 
   TGetKeyPressFunc = Function (start: String; target: String): String;
 
+
+Const 
+  NumKpBlankPos : Pos = (Col: 0; Row: 3);
+  DirKpBlankPos : Pos = (Col: 0; Row: 0);
 
 (* Routines *)
 Function PosToString(pos: Pos) : String;
@@ -89,6 +96,15 @@ Begin
   GetKpPresses := KeyPresses;
 End;
 
+Function GetSequenceOptions(KeySequence: String;
+                            BlankPos: Pos) : StringArray;
+
+Var Options: StringArray;
+Begin
+  SetLength(Options,1);
+  Options[0] := KeySequence;
+  GetSequenceOptions := Options;
+End;
 
 (* Numeric KeyPad *)
 Function GetNumKpPos (button : String) : Pos;
@@ -113,23 +129,19 @@ End;
 Function GetNumKpStepPresses (start : String; target : String): string;
 
 Var 
-
-  StartPos, EndPos, BlankPos: Pos;
-
+  StartPos, EndPos: Pos;
 Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
-  BlankPos.Col := 0;
-  BlankPos.Row := 3;
 
-  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, BlankPos);
+  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos);
 End;
 
 Function GetNumKpPresses (KeyPadEntry: String): string;
 Begin
+
   GetNumKpPresses := GetKpPresses(KeyPadEntry, @GetNumKpStepPresses);
 End;
-
 
 (* Directional KeyPad *)
 
@@ -158,14 +170,12 @@ End;
 Function GetDirKpStepPresses (start : String; target : String): string;
 
 Var 
-  StartPos, EndPos, BlankPos: Pos;
+  StartPos, EndPos: Pos;
 Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
-  BlankPos.Col := 0;
-  BlankPos.Row := 0;
 
-  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, BlankPos);
+  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos);
 End;
 
 Function GetDirKpPresses (KeyPadEntry: String): string;
@@ -174,10 +184,34 @@ Begin
   GetDirKpPresses := GetKpPresses(KeyPadEntry, @GetDirKpStepPresses);
 End;
 
+(* Human Entry Aggregation *)
+
 Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
+
+Var Idx : Integer;
+  LastChar, CurrChar: String;
+  KeyPresses, KeyPressesForChar: string;
+  OptionsForNumberKeypad: array Of string;
 Begin
-  GetHumanEntryKeyPresses := GetDirKpPresses(GetDirKpPresses(GetNumKpPresses(
-                             KeyPadEntry)));
+  LastChar := 'A';
+  KeyPresses := '';
+  For Idx := 0 To (KeyPadEntry.Length-1) Do
+    Begin
+      CurrChar := KeyPadEntry.Substring(Idx,1);
+      KeyPressesForChar := GetNumKpStepPresses(
+                           LastChar, CurrChar
+                           );
+      OptionsForNumberKeypad := GetSequenceOptions(KeyPressesForChar,
+                                NumKpBlankPos);
+
+      KeyPressesForChar := 
+                           GetDirKpPresses(
+                           GetDirKpPresses(OptionsForNumberKeypad[0]
+                           ));
+      KeyPresses := KeyPresses + KeyPressesForChar;
+      LastChar := CurrChar;
+    End;
+  GetHumanEntryKeyPresses := KeyPresses;
 End;
 
 Function GetComplexity(KeyPadEntry: String): Integer;
@@ -214,6 +248,7 @@ Type
   TDay21Tests = Class(TTestCase)
     Published 
       Procedure TestNumKpSingleMovement;
+      Procedure TestGetSequenceOptions;
       Procedure TestNumKpMultipleMovements;
       Procedure TestDirKpSingleMovement;
       Procedure TestDirKpMultipleMovements;
@@ -236,6 +271,14 @@ Begin
   CheckEquals('>>vA', GetNumKpStepPresses('7', '6'), '7 to 6');
   CheckEquals('<<vvA', GetNumKpStepPresses('9', '1'), '9 to 1');
   CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7'), 'A to 7');
+End;
+
+Procedure TDay21Tests.TestGetSequenceOptions;
+
+Var Opts : StringArray;
+Begin
+  Opts := GetSequenceOptions('<A', NumKpBlankPos);
+  CheckEquals('<A', Opts[0], 'Ato0 Options');
 End;
 
 Procedure TDay21Tests.TestNumKpMultipleMovements;
