@@ -126,17 +126,8 @@ Begin
           For LeafIdx := 0 To Length(LeafOptions)-1 Do
             Begin
               NewLeafIdx := OptionsIdx * Length(LeafOptions) + LeafIdx;
-              NextLeafOptions[NewLeafIdx] := 
-                                             LeafOptions
-                                             [
-                                             LeafIdx
-                                             ]
-                                             +
-
-                                             CurrentOptions
-                                             [
-                                             OptionsIdx
-                                             ];
+              NextLeafOptions[NewLeafIdx] := LeafOptions[LeafIdx] +
+                                             CurrentOptions [OptionsIdx];
               // WriteLn('       ',
               //         KeyIdx, '/', KeyPadEntry.Length-1, ': (', LeafOptions[
               //         LeafIdx], ') ',
@@ -225,18 +216,6 @@ End;
 
 (* Human Entry Aggregation *)
 
-// returns a set of options for the next Char.
-// Could start with just producing a tree of options?
-
-//  For each option, need to compute a tree of the full
-//  string to produce that char.  Each leaf concatted back
-//  to the root will give the full set of options.
-
-//  For each option, need to compute a new tree of options
-//  to compute that tree. Each leaf concatted back to the
-//  root will give the full set of optins.
-
-//  The shortest option wins for this char in the keypress. }
 Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
 
 Var Idx : Integer;
