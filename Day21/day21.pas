@@ -42,12 +42,53 @@ Begin
   PosDiff := abs(posL.Col-posR.Col) + abs(posL.Row-posR.Col);
 End;
 
+Function GetDirKpPos (button : String) : Pos;
+
+Begin
+  GetDirKpPos.Col := 0;
+  GetDirKpPos.Row := 0;
+  Case button Of 
+    'A': GetDirKpPos.Col := 2;
+    '^': GetDirKpPos.Col := 1;
+    '>':
+         Begin
+           GetDirKpPos.Col := 2;
+           GetDirKpPos.Row := 1;
+         End;
+    'v':
+         Begin
+           GetDirKpPos.Col := 1;
+           GetDirKpPos.Row := 1;
+         End;
+    '<': GetDirKpPos.Row := 1;
+  End;
+End;
+
+Function GetCost(code: String): Integer;
+
+Var totalCost: integer;
+  targetChar: char;
+  startPos, targetPos: Pos;
+Begin
+  startPos := GetDirKpPos('A');
+  totalCost := 0;
+  For targetChar In code Do
+    Begin
+      targetPos := GetDirKpPos(targetChar);
+      totalCost := totalCost + PosDiff(startPos, targetPos);
+      startPos := targetPos;
+    End;
+  getCost := totalCost;
+End;
+
 (* Generic Keypad *)
 Function GetKpPresses (StartPos : Pos; EndPos : Pos; Blank : Pos): String;
 
 Var 
   KeyPressH,KeyPressV: char;
   KeyPressesH,KeyPressesV: string;
+  Opt1, Opt2: string;
+  Opt1Cost, Opt2Cost: Integer;
 Begin
   If StartPos.Col > EndPos.Col Then
     Begin
@@ -73,15 +114,26 @@ Begin
 
   If (EndPos.Col = Blank.Col) And (StartPos.Row = Blank.Row) Then
     Begin
-      GetKpPresses := KeyPressesV + KeyPressesH+ 'A';
+      GetKpPresses := KeyPressesV + KeyPressesH + 'A';
     End
   Else
     Begin
       If (KeyPressesH.Length > 0) And (KeyPressesV.Length > 0) Then
         Begin
           // TODO: compare relative cost
-          GetKpPresses := KeyPressesH + KeyPressesV + 'A';
-          //Options[1] := KeyPressesV + KeyPressesH + 'A';
+          Opt1 := KeyPressesH + KeyPressesV + 'A';
+          Opt1Cost := GetCost(Opt1);
+          Opt2 := KeyPressesV + KeyPressesH + 'A';
+          Opt2Cost := GetCost(Opt2);
+          If Opt1Cost <= Opt2Cost Then
+            Begin
+              GetKpPresses := Opt1;
+            End
+          Else
+            Begin
+              WriteLn(Opt1, ' (', opt1Cost, ') vs ', Opt2, ' (', opt2cost, ')');
+              GetKpPresses := Opt2;
+            End;
         End
       Else
         Begin
@@ -124,28 +176,6 @@ End;
 
 (* Directional Keypad *)
 
-Function GetDirKpPos (button : String) : Pos;
-
-Begin
-  GetDirKpPos.Col := 0;
-  GetDirKpPos.Row := 0;
-  Case button Of 
-    'A': GetDirKpPos.Col := 2;
-    '^': GetDirKpPos.Col := 1;
-    '>':
-         Begin
-           GetDirKpPos.Col := 2;
-           GetDirKpPos.Row := 1;
-         End;
-    'v':
-         Begin
-           GetDirKpPos.Col := 1;
-           GetDirKpPos.Row := 1;
-         End;
-    '<': GetDirKpPos.Row := 1;
-  End;
-End;
-
 Function GetDirKpStepPresses (start: String;
                               target: String): String;
 
@@ -182,7 +212,8 @@ Begin
         Begin
           KeyPressCount := KeyPressCount +
                            GetEntryKeyPressCount(
-                           innerStartChar, innerTargetChar,
+                           innerStartChar,
+                           innerTargetChar,
                            numRobots-1,
                            @GetDirKpStepPresses);
           innerStartChar := innerTargetChar;
@@ -219,26 +250,23 @@ Begin
   GetComplexity := EntryCount * KeypadNumber;
 End;
 
-// Function GetTotalComplexity(
-//  KeyPadEntries: String;
-//  NumRobots: Integer): Integer;
+Function GetTotalComplexity(
+                            KeyPadEntries: String;
+                            NumRobots: Integer): Integer;
 
-// Var KeyPadEntriesArr: TStringDynArray;
-
-// Var KeyPadEntry: string;
-
-// Var TotalComplexity: integer;
-// Begin
-//   KeyPadEntriesArr := SplitString(KeyPadEntries, LineEnding);
-//   TotalComplexity := 0;
-//   For KeyPadEntry In KeyPadEntriesArr Do
-//     Begin
-//       TotalComplexity := TotalComplexity +
-//          GetComplexity(KeyPadEntry, NumRobots)
-//       ;
-//     End;
-//   GetTotalComplexity := TotalComplexity;
-// End;
+Var KeyPadEntriesArr: TStringDynArray;
+  KeyPadEntry: string;
+  TotalComplexity: integer;
+Begin
+  KeyPadEntriesArr := SplitString(KeyPadEntries, LineEnding);
+  TotalComplexity := 0;
+  For KeyPadEntry In KeyPadEntriesArr Do
+    Begin
+      TotalComplexity := TotalComplexity +
+                         GetComplexity(KeyPadEntry, NumRobots);
+    End;
+  GetTotalComplexity := TotalComplexity;
+End;
 
 (* Tests *)
 
@@ -249,7 +277,7 @@ Type
       Procedure TestDirKpSingleMovement;
       Procedure TestHumanEntryKeyPresses;
       Procedure TestSingleEntryComplexity;
-      //Procedure TestTotalComplexity;
+      Procedure TestTotalComplexity;
   End;
 
 
@@ -294,14 +322,14 @@ Begin
   CheckEquals(24256 (*64*379*), GetComplexity('379A', 2));
 End;
 
-// Procedure TDay21Tests.TestTotalComplexity;
-// Begin
-//   CheckEquals(126384, GetTotalComplexity('029A' + LineEnding +
-//               '980A' + LineEnding +
-//               '179A' + LineEnding +
-//               '456A' + LineEnding +
-//               '379A', 2), 'AoC Sample');
-// End;
+Procedure TDay21Tests.TestTotalComplexity;
+Begin
+  CheckEquals(126384, GetTotalComplexity('029A' + LineEnding +
+              '980A' + LineEnding +
+              '179A' + LineEnding +
+              '456A' + LineEnding +
+              '379A', 2), 'AoC Sample');
+End;
 
 Procedure RegisterTests;
 Begin
