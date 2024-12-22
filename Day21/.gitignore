@@ -9,4 +9,5 @@ devenv.local.nix
 .pre-commit-config.yaml
 
 *.o
+*.ppu
 day21

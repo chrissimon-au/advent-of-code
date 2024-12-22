@@ -8,7 +8,9 @@ Classes,
 SysUtils,
 Types,
 StrUtils,
+StrHashMap,
 TextTestRunner,
+CacheEntry,
 TestFramework;
 
 Type 
@@ -23,7 +25,8 @@ Type
 
   TGetKeyPressFunc = Function (start: String;
                                target: String;
-                               numRobots: Integer): String;
+                               numRobots: Integer;
+                               cache: TStringHashMap): String;
 
 Const 
   NumKpBlankPos : Pos = (Col: 0; Row: 3);
@@ -32,12 +35,14 @@ Const
 Function GetEntryKeyPressCount(startChar: char;
                                targetChar: char;
                                numRobots: integer;
-                               getKeyPressFunc: TGetKeyPressFunc): int64;
+                               getKeyPressFunc: TGetKeyPressFunc;
+                               cache: TStringHashMap): int64;
 forward;
 
 Function GetDirKpStepPresses (start: String;
                               target: String;
-                              numRobots: integer): String;
+                              numRobots: integer;
+                              cache: TStringHashMap): String;
 forward;
 
 (* Routines *)
@@ -77,7 +82,9 @@ Begin
   End;
 End;
 
-Function GetCost(code: String; NumRobots: integer): Integer;
+Function GetCost(code: String;
+                 NumRobots: integer;
+                 cache: TStringHashMap): Integer;
 
 Var totalCost: integer;
   startChar, targetChar: char;
@@ -94,7 +101,8 @@ Begin
                        GetEntryKeyPressCount(startChar,
                        targetChar,
                        numRobots-1,
-                       @GetDirKpStepPresses);
+                       @GetDirKpStepPresses,
+                       cache);
         End
       Else
         Begin
@@ -111,7 +119,8 @@ End;
 Function GetKpPresses (StartPos : Pos;
                        EndPos : Pos;
                        Blank : Pos;
-                       NumRobots: Integer): String;
+                       NumRobots: Integer;
+                       cache: TStringHashMap): String;
 
 Var 
   KeyPressH,KeyPressV: char;
@@ -148,9 +157,9 @@ Begin
   Else If (KeyPressesH.Length > 0) And (KeyPressesV.Length > 0) Then
          Begin
            Opt1 := KeyPressesH + KeyPressesV + 'A';
-           Opt1Cost := GetCost(Opt1, NumRobots);
+           Opt1Cost := GetCost(Opt1, NumRobots, cache);
            Opt2 := KeyPressesV + KeyPressesH + 'A';
-           Opt2Cost := GetCost(Opt2, NumRobots);
+           Opt2Cost := GetCost(Opt2, NumRobots, cache);
            If Opt1Cost <= Opt2Cost Then
              Begin
                GetKpPresses := Opt1;
@@ -191,7 +200,8 @@ End;
 
 Function GetNumKpStepPresses (start : String;
                               target : String;
-                              numRobots: integer): String;
+                              numRobots: integer;
+                              cache: TStringHashMap): String;
 
 Var 
   StartPos, EndPos: Pos;
@@ -199,15 +209,19 @@ Begin
   StartPos := GetNumKpPos(start);
   EndPos := GetNumKpPos(target);
 
-  GetNumKpStepPresses := GetKpPresses(StartPos, EndPos, NumKpBlankPos, NumRobots
-                         );
+  GetNumKpStepPresses := GetKpPresses(StartPos,
+                         EndPos,
+                         NumKpBlankPos,
+                         NumRobots,
+                         cache);
 End;
 
 (* Directional Keypad *)
 
 Function GetDirKpStepPresses (start: String;
                               target: String;
-                              numRobots: integer): String;
+                              numRobots: integer;
+                              cache: TStringHashMap): String;
 
 Var 
   StartPos, EndPos: Pos;
@@ -215,8 +229,11 @@ Begin
   StartPos := GetDirKpPos(start);
   EndPos := GetDirKpPos(target);
 
-  GetDirKpStepPresses := GetKpPresses(StartPos, EndPos, DirKpBlankPos, numRobots
-                         );
+  GetDirKpStepPresses := GetKpPresses(StartPos,
+                         EndPos,
+                         DirKpBlankPos,
+                         numRobots,
+                         cache);
 End;
 
 (* Human Entry Aggregation *)
@@ -224,13 +241,25 @@ End;
 Function GetEntryKeyPressCount(startChar: char;
                                targetChar: char;
                                numRobots: integer;
-                               getKeyPressFunc: TGetKeyPressFunc): int64;
+                               getKeyPressFunc: TGetKeyPressFunc;
+                               cache: TStringHashMap): int64;
 
-Var KeyPressCount: Int64;
+Var KeyPressCount, cacheValue: Int64;
   keyPresses: string;
+  cacheKey: string;
   innerStartChar, innerTargetChar: char;
 Begin
-  KeyPresses := getKeyPressFunc(startChar, targetChar, numRobots);
+  cacheKey := startChar + ',' + targetChar + ':' + IntToStr(numRobots);
+
+  If cache.contains(cacheKey) Then
+    Begin
+      cacheValue := TCacheEntry(cache[cacheKey]).GetCost();
+      //writeln('Got from cache: ', cacheKey, ' = ', cacheValue);
+      GetEntryKeyPressCount := cacheValue;
+      exit()
+    End;
+
+  KeyPresses := getKeyPressFunc(startChar, targetChar, numRobots, cache);
   // If (numRobots=0) Then
   //   Begin
   //     write(keypresses);
@@ -250,10 +279,13 @@ Begin
                            innerStartChar,
                            innerTargetChar,
                            numRobots-1,
-                           @GetDirKpStepPresses);
+                           @GetDirKpStepPresses,
+                           cache);
           innerStartChar := innerTargetChar;
         End;
     End;
+  //writeln('Storing to cache: ', cacheKey, ' = ', keyPressCount);
+  cache[cacheKey] := TCacheEntry.create(KeyPressCount);
   GetEntryKeyPressCount := KeyPressCount;
 End;
 
@@ -262,18 +294,24 @@ Function GetHumanEntryKeyPressCount(code: String; numRobots: integer): Int64;
 
 Var totalLength: Int64;
   startChar, targetChar: char;
+  cache: TStringHashMap;
 Begin
   startChar := 'A';
   totalLength := 0;
+  cache := TStringHashMap.create();
 
   // writeln('====');
   // writeln(code);
 
   For targetChar In code Do
     Begin
-      totalLength := totalLength + GetEntryKeyPressCount(startChar, targetChar
-                     ,
-                     numRobots, @GetNumKpStepPresses);
+      totalLength := totalLength +
+                     GetEntryKeyPressCount(
+                     startChar,
+                     targetChar,
+                     numRobots,
+                     @GetNumKpStepPresses,
+                     cache);
       startChar := targetChar;
     End;
   //  writeln();
@@ -322,26 +360,32 @@ Type
 
 
 Procedure TDay21Tests.TestNumKpSingleMovement;
+
+Var cache: TStringHashMap;
 Begin
-  CheckEquals('<A', GetNumKpStepPresses('A', '0',0), 'A to 0');
-  CheckEquals('>A', GetNumKpStepPresses('0', 'A',0), '0 to A');
-  CheckEquals('<A', GetNumKpStepPresses('3', '2',0), '3 to 2');
-  CheckEquals('vA', GetNumKpStepPresses('8', '5',0), '8 to 5');
-  CheckEquals('^A', GetNumKpStepPresses('1', '4',0), '1 to 4');
-  CheckEquals('>vA', GetNumKpStepPresses('7', '5',0), '7 to 5');
-  CheckEquals('>vA', GetNumKpStepPresses('1', '0',0), '1 to 0');
-  CheckEquals('^<A', GetNumKpStepPresses('0', '1',0), '0 to 1');
-  CheckEquals('>>vA', GetNumKpStepPresses('7', '6',0), '7 to 6');
-  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1',0), '9 to 1');
-  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7',0), 'A to 7');
+  cache := TStringHashMap.create();
+  CheckEquals('<A', GetNumKpStepPresses('A', '0', 0, cache), 'A to 0');
+  CheckEquals('>A', GetNumKpStepPresses('0', 'A', 0, cache), '0 to A');
+  CheckEquals('<A', GetNumKpStepPresses('3', '2', 0, cache), '3 to 2');
+  CheckEquals('vA', GetNumKpStepPresses('8', '5', 0, cache), '8 to 5');
+  CheckEquals('^A', GetNumKpStepPresses('1', '4', 0, cache), '1 to 4');
+  CheckEquals('>vA', GetNumKpStepPresses('7', '5', 0, cache), '7 to 5');
+  CheckEquals('>vA', GetNumKpStepPresses('1', '0', 0, cache), '1 to 0');
+  CheckEquals('^<A', GetNumKpStepPresses('0', '1', 0, cache), '0 to 1');
+  CheckEquals('>>vA', GetNumKpStepPresses('7', '6', 0, cache), '7 to 6');
+  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1', 0, cache), '9 to 1');
+  CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7', 0, cache), 'A to 7');
 End;
 
 Procedure TDay21Tests.TestDirKpSingleMovement;
+
+Var cache: TStringHashMap;
 Begin
-  CheckEquals('<A', GetDirKpStepPresses('A', '^',0), 'A to ^');
-  CheckEquals('vA', GetDirKpStepPresses('A', '>',0), 'A to >');
-  CheckEquals('<A', GetDirKpStepPresses('>', 'v',0), '> to <');
-  CheckEquals('<A', GetDirKpStepPresses('v', '<',0), 'v to <');
+  cache := TStringHashMap.create();
+  CheckEquals('<A', GetDirKpStepPresses('A', '^', 0, cache), 'A to ^');
+  CheckEquals('vA', GetDirKpStepPresses('A', '>', 0, cache), 'A to >');
+  CheckEquals('<A', GetDirKpStepPresses('>', 'v', 0, cache), '> to <');
+  CheckEquals('<A', GetDirKpStepPresses('v', '<', 0, cache), 'v to <');
 End;
 
 Procedure TDay21Tests.TestHumanEntryKeyPresses;
