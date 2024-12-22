@@ -246,11 +246,12 @@ Begin
 End;
 
 
-Function GetHumanEntryKeyPresses(KeyPadEntry: String): String;
+Function GetHumanEntryKeyPresses(KeyPadEntry: String;
+                                 NumRobots: Integer): String;
 
 Var Idx : Integer;
-  LastChar, CurrChar, Option, Option1, Option2: String;
-  OptionsForNumberKeypad, Options1, Options2 : StringArray;
+  LastChar, CurrChar: String;
+  OptionsForNumberKeypad : StringArray;
 
   KeyPresses, ShortestKeyPresses: String;
 Begin
@@ -266,7 +267,7 @@ Begin
                                 );
 
       ShortestKeyPresses := GetShortestHumanEntryKeyPresses(
-                            OptionsForNumberKeypad, 2);
+                            OptionsForNumberKeypad, NumRobots);
 
       LastChar := CurrChar;
       KeyPresses := KeyPresses + ShortestKeyPresses;
@@ -274,17 +275,17 @@ Begin
   GetHumanEntryKeyPresses := KeyPresses;
 End;
 
-Function GetComplexity(KeyPadEntry: String): Integer;
+Function GetComplexity(KeyPadEntry: String; NumRobots: Integer): Integer;
 
 Var HumanEntry: string;
   KeypadNumber: integer;
 Begin
-  HumanEntry := GetHumanEntryKeyPresses(KeyPadEntry);
+  HumanEntry := GetHumanEntryKeyPresses(KeyPadEntry, NumRobots);
   KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
   GetComplexity := HumanEntry.length * KeypadNumber;
 End;
 
-Function GetTotalComplexity(KeyPadEntries: String): Integer;
+Function GetTotalComplexity(KeyPadEntries: String; NumRobots: Integer): Integer;
 
 Var KeyPadEntriesArr: TStringDynArray;
 
@@ -296,7 +297,8 @@ Begin
   TotalComplexity := 0;
   For KeyPadEntry In KeyPadEntriesArr Do
     Begin
-      TotalComplexity := TotalComplexity + GetComplexity(KeyPadEntry);
+      TotalComplexity := TotalComplexity + GetComplexity(KeyPadEntry, NumRobots)
+      ;
     End;
   GetTotalComplexity := TotalComplexity;
 End;
@@ -342,16 +344,16 @@ Begin
   CheckEquals(
               ('v<A<AA>>^AvAA^<A>Av<<A>>^AvA^Av<A' +
               '>^A<Av<A>>^AAvA^Av<A<A>>^AAAvA^<A>A').Length,
-  GetHumanEntryKeyPresses('029A').Length);
+  GetHumanEntryKeyPresses('029A', 2).Length);
 End;
 
 Procedure TDay21Tests.TestSingleEntryComplexity;
 Begin
-  CheckEquals(1972 (*68*29*), GetComplexity('029A'));
-  CheckEquals(58800 (*60*980*), GetComplexity('980A'));
-  CheckEquals(12172 (*68*179*), GetComplexity('179A'));
-  CheckEquals(29184 (*64*456*), GetComplexity('456A'));
-  CheckEquals(24256 (*64*379*), GetComplexity('379A'));
+  CheckEquals(1972 (*68*29*), GetComplexity('029A', 2));
+  CheckEquals(58800 (*60*980*), GetComplexity('980A', 2));
+  CheckEquals(12172 (*68*179*), GetComplexity('179A', 2));
+  CheckEquals(29184 (*64*456*), GetComplexity('456A', 2));
+  CheckEquals(24256 (*64*379*), GetComplexity('379A', 2));
 End;
 
 Procedure TDay21Tests.TestTotalComplexity;
@@ -360,7 +362,7 @@ Begin
               '980A' + LineEnding +
               '179A' + LineEnding +
               '456A' + LineEnding +
-              '379A'), 'AoC Sample');
+              '379A', 2), 'AoC Sample');
 End;
 
 Procedure RegisterTests;
