@@ -75,9 +75,17 @@ Begin
     End
   Else
     Begin
-      SetLength(Options,2);
-      Options[0] := KeyPressesH + KeyPressesV + 'A';
-      Options[1] := KeyPressesV + KeyPressesH + 'A';
+      If (KeyPressesH.Length > 0) And (KeyPRessesV.Length > 0) Then
+        Begin
+          SetLength(Options,2);
+          Options[0] := KeyPressesH + KeyPressesV + 'A';
+          Options[1] := KeyPressesV + KeyPressesH + 'A';
+        End
+      Else
+        Begin
+          SetLength(Options,1);
+          Options[0] := KeyPressesH + KeyPressesV + 'A';
+        End;
     End;
   GetKpPresses := Options;
 End;
