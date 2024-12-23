@@ -11,7 +11,10 @@ SysUtils,
 Types;
 
 Type 
-  TCacheEntry = Class(TObject)
+  StringArray = array Of string;
+
+Type 
+  TInt64CacheEntry = Class(TObject)
     Private 
       FCost: int64;
     Protected 
@@ -25,29 +28,73 @@ Type
       Procedure SetCost(newCost: int64);
   End;
 
+  TStringArrayCacheEntry = Class(TObject)
+    Private 
+      FArray: StringArray;
+    Protected 
+
+    Public 
+      constructor Create();
+      overload;
+      constructor Create(l: integer);
+      overload;
+      Function Get(): StringArray;
+      Function GetAt(idx: integer): String;
+      Procedure SetAt(idx: integer; s: String);
+  End;
+
+
 
 Implementation
 
-constructor TCacheEntry.Create();
+constructor TInt64CacheEntry.Create();
 Begin
   inherited;
   FCost := 0;
 End;
 
-constructor TCacheEntry.Create(cost: int64);
+constructor TInt64CacheEntry.Create(cost: int64);
 Begin
   inherited Create;
   FCost := cost;
 End;
 
-Function TCacheEntry.GetCost(): int64;
+Function TInt64CacheEntry.GetCost(): int64;
 Begin
   GetCost := FCost;
 End;
 
-Procedure TCacheEntry.SetCost(newCost: Int64);
+Procedure TInt64CacheEntry.SetCost(newCost: Int64);
 Begin
   FCost := newCost;
 End;
+
+
+constructor TStringArrayCacheEntry.Create();
+Begin
+  inherited;
+End;
+
+constructor TStringArrayCacheEntry.Create(l: integer);
+Begin
+  inherited Create;
+  SetLength(FArray, l);
+End;
+
+Function TStringArrayCacheEntry.Get(): StringArray;
+Begin
+  Get := FArray;
+End;
+
+Function TStringArrayCacheEntry.GetAt(idx: integer): String;
+Begin
+  GetAt := FArray[idx];
+End;
+
+Procedure TStringArrayCacheEntry.SetAt(idx: integer; s: String);
+Begin
+  FArray[idx] := s;
+End;
+
 
 End.

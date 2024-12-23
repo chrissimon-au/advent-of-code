@@ -52,12 +52,12 @@ Var ColStr, RowStr: String;
 Begin
   Str(pos.Col, ColStr);
   Str(pos.Row, RowStr);
-  PosToString := ColStr + ',' + RowStr;
+  PosToString := '(' + ColStr + ',' + RowStr + ')';
 End;
 
 Function PosDiff(posL: Pos; posR: Pos) : int64;
 Begin
-  PosDiff := abs(posL.Col-posR.Col) + abs(posL.Row-posR.Col);
+  PosDiff := abs(posL.Col-posR.Col) + abs(posL.Row-posR.row);
 End;
 
 Function GetDirKpPos (button : String) : Pos;
@@ -87,6 +87,7 @@ Function GetCost(code: String;
                  cache: TStringHashMap): int64;
 
 Var totalCost: int64;
+  Cost: int64;
   startChar, targetChar: char;
   startPos, targetPos: Pos;
 Begin
@@ -107,13 +108,80 @@ Begin
       Else
         Begin
           targetPos := GetDirKpPos(targetChar);
-          totalCost := totalCost + PosDiff(startPos, targetPos);
-        End;;
+          cost := PosDiff(startPos, targetPos);
+          totalCost := totalCost + cost;
+          // WriteLn('At NumRobots ', NumRobots, ' so, startchar:', startChar,
+          //' ',postostring(startpos),
+          // ', targetchar:', targetchar,' ', posToString(targetpos),
+          //' (', cost, ', ', totalcost, ')') ;
+        End;
       startPos := targetPos;
       startChar := targetChar;
     End;
   getCost := totalCost;
 End;
+
+Function GetPermutations(raw: String; cache: TStringHashMap): StringArray;
+
+Var 
+  cacheEntry: TStringArrayCacheEntry;
+  ChildPermutations: StringArray;
+  NumPermutations, Idx, Idx2: Integer;
+  //LogPrefix: string;
+  Ch: string;
+Begin
+  //logprefix := StringOfChar(' ', raw.length);
+
+  If raw.length = 0 Then
+    Begin
+      setlength(ChildPermutations,0);
+      GetPermutations := ChildPermutations;
+      exit();
+    End;
+  If cache.contains(raw) Then
+    Begin
+      GetPermutations := TStringArrayCacheEntry(cache[raw]).Get();
+      exit();
+    End;
+
+  //writeln(logprefix, 'looking for ', raw);
+  Case raw.length Of 
+    1: NumPermutations := 1;
+    2: NumPermutations := 2;
+    3: NumPermutations := 6;
+    4: NumPermutations := 24;
+    otherwise raise Exception.Create('unknown length: ' + raw)
+  End;
+
+  cacheEntry := TStringArrayCacheEntry.create(NumPermutations);
+
+  If raw.length = 1 Then
+    Begin
+      cacheEntry.SetAt(0, raw);
+    End
+  Else
+    Begin
+      For idx := 0 To raw.length-1 Do
+        Begin
+          Ch := raw.substring(idx,1);
+          //writeln(logprefix, idx, ': ', ch);
+          ChildPermutations := GetPermutations(raw.substring(0,idx) + raw.
+                               substring(idx+1), cache);
+          For Idx2 := 0 To length(ChildPermutations)-1 Do
+            Begin
+              // writeln(logprefix, idx, ': ', idx2, ': ', ch, ' - ',
+              // idx * length(childpermutations) + idx2,
+              // ' - ', ch + childpermutations[idx2]);
+              cacheEntry.SetAt(idx * length(childpermutations) + idx2,
+              ch + childpermutations[idx2]);
+            End;
+        End;
+    End;
+
+  cache[raw] := cacheEntry;
+  GetPermutations := cacheEntry.get();
+End;
+
 
 (* Generic Keypad *)
 Function GetKpPresses (StartPos : Pos;
@@ -124,10 +192,18 @@ Function GetKpPresses (StartPos : Pos;
 
 Var 
   KeyPressH,KeyPressV: char;
-  KeyPressesH,KeyPressesV: string;
-  Opt1, Opt2: string;
-  Opt1Cost, Opt2Cost: int64;
+  KeyPressesH,KeyPressesV: String;
+  FirstChar : String;
+  Raw: String;
+  Combinations: StringArray;
+  AnOption, Option, CheapestOption: String;
+  Cost, CheapestCost: int64;
 Begin
+  If (StartPos.Col = EndPos.Col) And (startPos.row = Endpos.row) Then
+    Begin
+      GetKpPresses := 'A';
+      exit();
+    End;
   If StartPos.Col > EndPos.Col Then
     Begin
       KeyPressH := '<';
@@ -150,29 +226,42 @@ Begin
       End;
   KeyPressesV := StringOfChar(KeyPressV, abs(StartPos.Row - EndPos.Row));
 
+  FirstChar := '';
+
   If (EndPos.Col = Blank.Col) And (StartPos.Row = Blank.Row) Then
     Begin
-      GetKpPresses := KeyPressesV + KeyPressesH + 'A';
-    End
-  Else If (KeyPressesH.Length > 0) And (KeyPressesV.Length > 0) Then
-         Begin
-           Opt1 := KeyPressesH + KeyPressesV + 'A';
-           Opt1Cost := GetCost(Opt1, NumRobots, cache);
-           Opt2 := KeyPressesV + KeyPressesH + 'A';
-           Opt2Cost := GetCost(Opt2, NumRobots, cache);
-           If Opt1Cost <= Opt2Cost Then
-             Begin
-               GetKpPresses := Opt1;
-             End
-           Else
-             Begin
-               GetKpPresses := Opt2;
-             End;
-         End
-  Else
-    Begin
-      GetKpPresses := KeyPressesH + KeyPressesV + 'A';
+      FirstChar := KeyPressesV.SubString(0,1);
+      KeyPressesV := KeyPressesV.SubString(1);
     End;
+
+  If (StartPos.Col = Blank.Col) And (EndPos.Row = Blank.Row) Then
+    Begin
+      FirstChar := KeyPressesH.SubString(0,1);
+      KeyPressesH := KeyPressesH.SubString(1);
+    End;
+
+  Raw := KeyPressesV + KeyPressesH;
+
+  // writeln('Raw: ', FirstChar + Raw,
+  //         ' ', PosToString(startpos), PosToString(endpos),', at NumRobots ',
+  // NumRobots);
+
+  Combinations := GetPermutations(Raw, cache);
+  CheapestCost := -1;
+  CheapestOption := '';
+  For Option In Combinations Do
+    Begin
+      AnOption := FirstChar + Option + 'A';
+      Cost := GetCost(AnOption, NumRobots, cache);
+      //writeln('  AnOption: ', AnOption, ' (', Cost, ')');
+      If (Cost < CheapestCost) Or (CheapestCost < 0) Then
+        Begin
+          CheapestOption := AnOption;
+          CheapestCost := Cost;
+        End;
+    End;
+  //writeln(' Cheapest ', CheapestOption, ' with cost ', CheapestCost);
+  GetKpPresses := CheapestOption;
 End;
 
 (* Numeric KeyPad *)
@@ -251,7 +340,7 @@ Begin
 
   If cache.contains(cacheKey) Then
     Begin
-      cacheValue := TCacheEntry(cache[cacheKey]).GetCost();
+      cacheValue := TInt64CacheEntry(cache[cacheKey]).GetCost();
       //writeln('Got from cache: ', cacheKey, ' = ', cacheValue);
       GetEntryKeyPressCount := cacheValue;
       exit()
@@ -283,7 +372,7 @@ Begin
         End;
     End;
   //writeln('Storing to cache: ', cacheKey, ' = ', keyPressCount);
-  cache[cacheKey] := TCacheEntry.create(KeyPressCount);
+  cache[cacheKey] := TInt64CacheEntry.create(KeyPressCount);
   GetEntryKeyPressCount := KeyPressCount;
 End;
 
@@ -303,8 +392,7 @@ Begin
 
   For targetChar In code Do
     Begin
-      totalLength := totalLength +
-                     GetEntryKeyPressCount(
+      totalLength := totalLength + GetEntryKeyPressCount(
                      startChar,
                      targetChar,
                      numRobots,
@@ -368,11 +456,11 @@ Begin
   CheckEquals('<A', GetNumKpStepPresses('3', '2', 0, cache), '3 to 2');
   CheckEquals('vA', GetNumKpStepPresses('8', '5', 0, cache), '8 to 5');
   CheckEquals('^A', GetNumKpStepPresses('1', '4', 0, cache), '1 to 4');
-  CheckEquals('>vA', GetNumKpStepPresses('7', '5', 0, cache), '7 to 5');
+  CheckEquals('v>A', GetNumKpStepPresses('7', '5', 0, cache), '7 to 5');
   CheckEquals('>vA', GetNumKpStepPresses('1', '0', 0, cache), '1 to 0');
   CheckEquals('^<A', GetNumKpStepPresses('0', '1', 0, cache), '0 to 1');
-  CheckEquals('>>vA', GetNumKpStepPresses('7', '6', 0, cache), '7 to 6');
-  CheckEquals('<<vvA', GetNumKpStepPresses('9', '1', 0, cache), '9 to 1');
+  CheckEquals('v>>A', GetNumKpStepPresses('7', '6', 0, cache), '7 to 6');
+  CheckEquals('vv<<A', GetNumKpStepPresses('9', '1', 0, cache), '9 to 1');
   CheckEquals('^^^<<A', GetNumKpStepPresses('A', '7', 0, cache), 'A to 7');
 End;
 
@@ -421,7 +509,6 @@ End;
 
 Procedure TDay21Tests.AoCTest;
 Begin
-
 
 End;
 
