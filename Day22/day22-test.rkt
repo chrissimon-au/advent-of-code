@@ -23,3 +23,11 @@
 (check-eq? (nth-secret 10 2000) 4700978)
 (check-eq? (nth-secret 100 2000) 15273692)
 (check-eq? (nth-secret 2024 2000) 8667524)
+
+(check-eq? (total-nth-secrets #<<EOF
+1
+10
+100
+2024
+EOF
+                              2000) 37327623 "AoC Sample Data")
