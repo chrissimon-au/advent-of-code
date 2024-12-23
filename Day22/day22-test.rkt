@@ -17,30 +17,30 @@
 (check-eq? (next-secret 12249484) 7753432)
 (check-eq? (next-secret 7753432) 5908254)
 
-(check-eq? (nth-secret 1 2000) 8685429)
-(check-eq? (nth-secret 10 2000) 4700978)
-(check-eq? (nth-secret 100 2000) 15273692)
-(check-eq? (nth-secret 2024 2000) 8667524)
+(check-eq? ((nth-secret 2000) 1) 8685429)
+(check-eq? ((nth-secret 2000) 10) 4700978)
+(check-eq? ((nth-secret 2000) 100) 15273692)
+(check-eq? ((nth-secret 2000) 2024) 8667524)
 
-(check-eq? (total-nth-secrets #<<EOF
+(check-eq? (total-nth-secrets 2000 #<<EOF
 1
 10
 100
 2024
 EOF
-                              2000) 37327623 "AoC Sample Data")
+                              ) 37327623 "AoC Sample Data")
 
 (define (file-contents file-name)
   (string-trim (port->string (open-input-file file-name) #:close? #t)))
 
-(check-eq? (total-nth-secrets (file-contents "testdata.txt") 2000)
+(check-eq? (total-nth-secrets 2000 (file-contents "testdata.txt") )
            (string->number (file-contents "testdata.answer.txt")) "AoC Test Data")
 
 
-(check-eq? (most-bananas #<<EOF
+(check-eq? (most-bananas 5 #<<EOF
 1
 2
 3
 2024
 EOF
-                         5) 23 "AoC Sample Data Part 2")
+                         ) 23 "AoC Sample Data Part 2")

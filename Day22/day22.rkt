@@ -35,30 +35,35 @@
 (define (next-secret secret)
   (step3 (step2 (step1 secret))))
 
-(define (nth-secret secret n)
-  (if (eq? n 0) secret (nth-secret (next-secret secret) (- n 1))))
+(define ((nth-secret n) secret)
+  (if (eq? n 0)
+      secret
+      ((nth-secret (- n 1)) (next-secret secret)))
+  )
 
 (define (split-lines input) (string-split input (string #\newline)))
 
 (define (input->start-secrets input) (map string->number (split-lines input)))
 
-(define (total-nth-secrets input n)
+(define (total-nth-secrets n input)
   (let ([starting-nums (input->start-secrets input)])
-    (sum (map (lambda (secret) (nth-secret secret n)) starting-nums))
+    (sum (map (nth-secret n) starting-nums))
     ))
 
-(define (all-secrets secret n)
+(define ((all-secrets n) secret)
   (if (eq? n 0)
       (list secret)
-      (cons secret (all-secrets (next-secret secret) (- n 1)))
+      (cons secret ((all-secrets (- n 1)) (next-secret secret)))
       )
   )
 
-(define (most-bananas input n)
+(define (get-deltas secrets) (adjacent-map (lambda (x y) (- y x)) secrets))
+
+(define (most-bananas n input)
   (let* ([starting-nums (input->start-secrets input)]
-         [all-secret-nums (map (lambda (secret) (all-secrets secret n)) starting-nums)]
+         [all-secret-nums (map (all-secrets n) starting-nums)]
          [_ (println all-secret-nums)]
-         [deltas (map (lambda (secrets) (adjacent-map (lambda (x y) (- y x)) secrets)) all-secret-nums)]
+         [deltas (map get-deltas all-secret-nums)]
          [_ (println deltas)]
          ) 0))
 
