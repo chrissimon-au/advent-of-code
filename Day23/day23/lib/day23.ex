@@ -17,12 +17,15 @@ defmodule Day23 do
 
   def num_gamesets(g, start_char) do
     cliques = Graph.cliques(g)
-    |> Enum.filter(fn c -> length(c) >= 3 end)
-    games = Enum.concat(cliques
-      |> Enum.filter(fn c-> length(c) == 3 end),cliques
-      |> Enum.filter(fn c-> length(c) > 3 end)
-      |> Enum.flat_map(fn c -> Formulae.combinations(c, 3) end))
+      |> Enum.filter(fn c -> length(c) >= 3 end)
+
+    games_in_maximal_clique = cliques
+      |> Enum.filter( fn c-> length(c) > 3 end)
+      |> Enum.flat_map(fn c -> Formulae.combinations(c, 3) end)
+
+    games = Enum.concat(Enum.filter(cliques, fn c-> length(c) == 3 end), games_in_maximal_clique)
       |> Enum.filter(fn g -> Enum.any?(g, fn p -> String.starts_with?(p, start_char) end) end)
+
     length(games)
   end
 
