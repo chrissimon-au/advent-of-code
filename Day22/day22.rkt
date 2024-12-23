@@ -59,13 +59,20 @@
 
 (define ((mapped f) l) (map f l))
 
-(define (get-deltas secrets) (adjacent-map (lambda (x y) (- y x)) secrets))
+(define (get-deltas secrets) (adjacent-map (lambda (x y) (cons (- y x) y)) secrets))
+
+(define ((slide k) lst) (sliding lst k))
+
+(define (to-window-with-result chunk)
+  (let ([deltas (map car chunk)]
+        [secrets (map cdr chunk)]
+        )
+    (cons deltas (last secrets))
+    ))
 
 (define (most-bananas n input)
   (let* ([all-secret-nums ((compose (mapped (all-secrets n)) input->start-secrets) input)]
-         [_ (println all-secret-nums)]
-         [deltas (map get-deltas all-secret-nums)]
-         [_ (println deltas)]
+         [instructions ((compose (mapped (mapped to-window-with-result)) (mapped (slide 4)) (mapped get-deltas)) all-secret-nums)]
          ) 0))
 
 (provide
