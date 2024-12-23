@@ -31,4 +31,7 @@
 (define (next-secret secret)
   (step3 (step2 (step1 secret))))
 
-(provide mix prune next-secret)
+(define (nth-secret secret n)
+  (if (eq? n 0) secret (nth-secret (next-secret secret) (- n 1))))
+
+(provide mix prune next-secret nth-secret)
