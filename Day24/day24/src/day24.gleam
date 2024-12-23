@@ -1,5 +1,3 @@
-import gleam/io
-
-pub fn main() {
-  io.println("Hello from day24!")
+pub fn check() {
+  True
 }

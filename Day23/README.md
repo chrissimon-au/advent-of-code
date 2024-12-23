@@ -1,7 +1,7 @@
-## Day 22: ???
+## Day 23: LAN Party
 
-https://adventofcode.com/2024/day/
+https://adventofcode.com/2024/day/23
 
-TBD in [Elixir](https://elixir-lang.org/) using [ExUnit](https://hexdocs.pm/ex_unit/ExUnit.html) unit testing framework.
+Completed in [Elixir](https://elixir-lang.org/) using [ExUnit](https://hexdocs.pm/ex_unit/ExUnit.html) unit testing framework.
 
 To start, run `devenv up` in this folder.
