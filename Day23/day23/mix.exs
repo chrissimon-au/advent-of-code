@@ -22,6 +22,7 @@ defmodule Day23.MixProject do
   defp deps do
     [
       {:libgraph, "~> 0.16.0"},
+      {:formulae, "~> 0.17.1"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
