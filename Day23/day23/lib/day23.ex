@@ -3,16 +3,8 @@ defmodule Day23 do
   Documentation for `Day23`.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Day23.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def make_graph(input) do
+    g = Graph.new
+    Graph.add_vertices(g, ["kt","tk"])
   end
 end

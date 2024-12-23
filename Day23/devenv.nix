@@ -4,7 +4,7 @@
   # https://devenv.sh/packages/
   packages = [
     pkgs.git
-    # pkgs.watchexec
+    pkgs.watchexec
     # pkgs.shunit2
   ];
 
@@ -16,7 +16,7 @@
   process.managers.process-compose.settings = {
     processes = {
       test-wait = {
-        command = "watchexec -e txt './command.sh'";
+        command = "watchexec -e txt,ex,exs 'cd day23; mix test'";
         is_tty = true;
       };
     };
