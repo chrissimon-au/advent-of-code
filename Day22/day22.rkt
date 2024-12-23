@@ -45,9 +45,12 @@
     (sum (map (lambda (secret) (nth-secret secret n)) starting-nums))
     ))
 
+(define (most-bananas input n) 0)
+
 (provide
  mix
  prune
  next-secret
  nth-secret
- total-nth-secrets)
+ total-nth-secrets
+ most-bananas)

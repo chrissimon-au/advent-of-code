@@ -6,7 +6,6 @@
 
 (check-eq? (prune 100000000) 16113920)
 
-
 (check-eq? (next-secret 123) 15887950)
 (check-eq? (next-secret 15887950) 16495136)
 (check-eq? (next-secret 16495136) 527345)
@@ -31,9 +30,17 @@
 EOF
                               2000) 37327623 "AoC Sample Data")
 
-
 (define (file-contents file-name)
   (string-trim (port->string (open-input-file file-name) #:close? #t)))
 
 (check-eq? (total-nth-secrets (file-contents "testdata.txt") 2000)
-           (string->number (file-contents "testdata.answer.txt")) "AoC Sample Data")
+           (string->number (file-contents "testdata.answer.txt")) "AoC Test Data")
+
+
+(check-eq? (most-bananas #<<EOF
+1
+2
+3
+2024
+EOF
+                         2000) 23 "AoC Sample Data Part 2")
