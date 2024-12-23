@@ -1,6 +1,6 @@
 #lang racket/base
 
 (define (mix secret mixer)
-  0)
+  (bitwise-xor secret mixer))
 
 (provide mix)
