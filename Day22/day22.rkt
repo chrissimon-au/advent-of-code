@@ -59,21 +59,38 @@
 
 (define ((mapped f) l) (map f l))
 
+(define (get-cost secret) (remainder secret 10))
+
 (define (get-deltas secrets) (adjacent-map (lambda (x y) (cons (- y x) y)) secrets))
 
 (define ((slide k) lst) (sliding lst k))
 
 (define (to-window-with-result chunk)
   (let ([deltas (map car chunk)]
-        [secrets (map cdr chunk)]
+        [costs (map cdr chunk)]
         )
-    (cons deltas (last secrets))
+    (cons deltas (last costs))
     ))
+
+(define (group-outcomes-by-chunk lst)
+  (group-by (lambda (chunk) (car chunk)) lst equal?)
+  )
+
+(define (get-first-instruction-instance lst)
+  (map car lst)
+  )
+
+(define (get-bananas-per-instructions list)
+  (sum (map cdr list))
+  )
 
 (define (most-bananas n input)
   (let* ([all-secret-nums ((compose (mapped (all-secrets n)) input->start-secrets) input)]
-         [instructions ((compose (mapped (mapped to-window-with-result)) (mapped (slide 4)) (mapped get-deltas)) all-secret-nums)]
-         ) 0))
+         [all-instructionsets ((compose (mapped get-first-instruction-instance) (mapped group-outcomes-by-chunk) (mapped (mapped to-window-with-result)) (mapped (slide 4)) (mapped get-deltas) (mapped (mapped get-cost))) all-secret-nums)]
+         [all-instructions (foldl append '() all-instructionsets)]
+         )
+    (argmax (lambda (x) x) ((compose (mapped get-bananas-per-instructions) group-outcomes-by-chunk) all-instructions))
+    ))
 
 (provide
  mix

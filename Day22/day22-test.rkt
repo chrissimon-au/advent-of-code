@@ -37,7 +37,7 @@ EOF
            (string->number (file-contents "testdata.answer.txt")) "AoC Test Data")
 
 
-(check-eq? (most-bananas 0 #<<EOF
+(check-eq? (most-bananas 2000 #<<EOF
 1
 2
 3
