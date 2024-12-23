@@ -20,14 +20,16 @@ bp-kh
     assert Enum.sort(Graph.vertices(g)) == Enum.sort(["kh", "tc", "ba", "bp"])
   end
 
-  def assert_game_sets(input, expected_gameset) do
-    g = Day23.make_graph(input)
-    assert Graph.num_vertices(g) == 16
-    assert Graph.num_edges(g) == 32
-    assert Day23.num_gamesets(g, "t") == expected_gameset |> String.to_integer
+  def assert_game_sets(base) do
+    g = Day23.make_graph(File.read!("../#{base}data.txt"))
+    assert Day23.num_gamesets(g, "t") == File.read!("../#{base}data.answer.txt") |> String.to_integer
   end
 
   test "AoC Sample: finds number of game-sets with t" do
-    assert_game_sets(File.read!("../sampledata.txt"), File.read!("../sampledata.answer.txt"))
+    assert_game_sets("sample")
+  end
+
+  test "AoC Test: finds number of game-sets with t" do
+    assert_game_sets("test")
   end
 end

@@ -25,7 +25,9 @@ defmodule Day23 do
 
     games = Enum.concat(Enum.filter(cliques, fn c-> length(c) == 3 end), games_in_maximal_clique)
       |> Enum.filter(fn g -> Enum.any?(g, fn p -> String.starts_with?(p, start_char) end) end)
-
+      |> Enum.map(&Enum.sort(&1))
+      |> Enum.sort
+      |> Enum.dedup
     length(games)
   end
 
