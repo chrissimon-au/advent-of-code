@@ -1,7 +1,6 @@
-#lang racket/base
+#lang racket
 
-(require rackunit
-         "day22.rkt")
+(require rackunit"day22.rkt")
 
 (check-eq? (mix 42 15) 37)
 
@@ -31,3 +30,10 @@
 2024
 EOF
                               2000) 37327623 "AoC Sample Data")
+
+
+(define (file-contents file-name)
+  (string-trim (port->string (open-input-file file-name) #:close? #t)))
+
+(check-eq? (total-nth-secrets (file-contents "testdata.txt") 2000)
+           (string->number (file-contents "testdata.answer.txt")) "AoC Sample Data")
