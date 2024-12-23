@@ -23,7 +23,7 @@ defmodule Day23 do
       |> Enum.filter( fn c-> length(c) > 3 end)
       |> Enum.flat_map(fn c -> Formulae.combinations(c, 3) end)
 
-    games = Enum.concat(Enum.filter(cliques, fn c-> length(c) == 3 end), games_in_maximal_clique)
+    games = Enum.concat(Enum.filter(cliques, fn c -> length(c) == 3 end), games_in_maximal_clique)
       |> Enum.filter(fn g -> Enum.any?(g, fn p -> String.starts_with?(p, start_char) end) end)
       |> Enum.map(&Enum.sort(&1))
       |> Enum.sort
@@ -31,8 +31,11 @@ defmodule Day23 do
     length(games)
   end
 
-  def get_password(_g) do
-    ""
+  def get_password(g) do
+    biggest_clique = Graph.cliques(g)
+      |> Enum.max_by(&length(&1))
+
+    Enum.join(Enum.sort(biggest_clique), ",")
   end
 
 end
