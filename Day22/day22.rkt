@@ -57,11 +57,12 @@
       )
   )
 
+(define ((mapped f) l) (map f l))
+
 (define (get-deltas secrets) (adjacent-map (lambda (x y) (- y x)) secrets))
 
 (define (most-bananas n input)
-  (let* ([starting-nums (input->start-secrets input)]
-         [all-secret-nums (map (all-secrets n) starting-nums)]
+  (let* ([all-secret-nums ((compose (mapped (all-secrets n)) input->start-secrets) input)]
          [_ (println all-secret-nums)]
          [deltas (map get-deltas all-secret-nums)]
          [_ (println deltas)]
