@@ -9,14 +9,14 @@ SysUtils,
 Types,
 StrUtils,
 StrHashMap,
-TextTestRunner,
 CacheEntry,
+TextTestRunner,
 TestFramework;
 
 Type 
   Pos = Record
-    Col : integer;
-    Row : integer;
+    Col : int64;
+    Row : int64;
   End;
 
   StringArray = array Of string;
@@ -25,7 +25,7 @@ Type
 
   TGetKeyPressFunc = Function (start: String;
                                target: String;
-                               numRobots: Integer;
+                               numRobots: int64;
                                cache: TStringHashMap): String;
 
 Const 
@@ -34,14 +34,14 @@ Const
 
 Function GetEntryKeyPressCount(startChar: char;
                                targetChar: char;
-                               numRobots: integer;
+                               numRobots: int64;
                                getKeyPressFunc: TGetKeyPressFunc;
                                cache: TStringHashMap): int64;
 forward;
 
 Function GetDirKpStepPresses (start: String;
                               target: String;
-                              numRobots: integer;
+                              numRobots: int64;
                               cache: TStringHashMap): String;
 forward;
 
@@ -55,7 +55,7 @@ Begin
   PosToString := ColStr + ',' + RowStr;
 End;
 
-Function PosDiff(posL: Pos; posR: Pos) : Integer;
+Function PosDiff(posL: Pos; posR: Pos) : int64;
 Begin
   PosDiff := abs(posL.Col-posR.Col) + abs(posL.Row-posR.Col);
 End;
@@ -83,10 +83,10 @@ Begin
 End;
 
 Function GetCost(code: String;
-                 NumRobots: integer;
-                 cache: TStringHashMap): Integer;
+                 NumRobots: int64;
+                 cache: TStringHashMap): int64;
 
-Var totalCost: integer;
+Var totalCost: int64;
   startChar, targetChar: char;
   startPos, targetPos: Pos;
 Begin
@@ -119,14 +119,14 @@ End;
 Function GetKpPresses (StartPos : Pos;
                        EndPos : Pos;
                        Blank : Pos;
-                       NumRobots: Integer;
+                       NumRobots: int64;
                        cache: TStringHashMap): String;
 
 Var 
   KeyPressH,KeyPressV: char;
   KeyPressesH,KeyPressesV: string;
   Opt1, Opt2: string;
-  Opt1Cost, Opt2Cost: Integer;
+  Opt1Cost, Opt2Cost: int64;
 Begin
   If StartPos.Col > EndPos.Col Then
     Begin
@@ -166,8 +166,6 @@ Begin
              End
            Else
              Begin
-               //WriteLn(Opt1, ' (', opt1Cost, ') vs ',
-               //        Opt2, ' (', opt2cost, ')');
                GetKpPresses := Opt2;
              End;
          End
@@ -181,7 +179,7 @@ End;
 
 Function GetNumKpPos (button : String) : Pos;
 
-Var ButtonNumber : integer;
+Var ButtonNumber : int64;
 Begin
   If button = 'A' Then
     Begin
@@ -200,7 +198,7 @@ End;
 
 Function GetNumKpStepPresses (start : String;
                               target : String;
-                              numRobots: integer;
+                              numRobots: int64;
                               cache: TStringHashMap): String;
 
 Var 
@@ -220,7 +218,7 @@ End;
 
 Function GetDirKpStepPresses (start: String;
                               target: String;
-                              numRobots: integer;
+                              numRobots: int64;
                               cache: TStringHashMap): String;
 
 Var 
@@ -240,7 +238,7 @@ End;
 
 Function GetEntryKeyPressCount(startChar: char;
                                targetChar: char;
-                               numRobots: integer;
+                               numRobots: int64;
                                getKeyPressFunc: TGetKeyPressFunc;
                                cache: TStringHashMap): int64;
 
@@ -290,7 +288,7 @@ Begin
 End;
 
 
-Function GetHumanEntryKeyPressCount(code: String; numRobots: integer): Int64;
+Function GetHumanEntryKeyPressCount(code: String; numRobots: int64): Int64;
 
 Var totalLength: Int64;
   startChar, targetChar: char;
@@ -318,10 +316,10 @@ Begin
   GetHumanEntryKeyPressCount := totalLength;
 End;
 
-Function GetComplexity(KeyPadEntry: String; NumRobots: Integer): Integer;
+Function GetComplexity(KeyPadEntry: String; NumRobots: int64): int64;
 
 Var EntryCount: int64;
-  KeypadNumber: integer;
+  KeypadNumber: int64;
 Begin
   EntryCount := GetHumanEntryKeyPressCount(KeyPadEntry, NumRobots);
   KeypadNumber := StrToInt(KeyPadEntry.Substring(0,3));
@@ -330,11 +328,11 @@ End;
 
 Function GetTotalComplexity(
                             KeyPadEntries: String;
-                            NumRobots: Integer): Integer;
+                            NumRobots: int64): int64;
 
 Var KeyPadEntriesArr: TStringDynArray;
   KeyPadEntry: string;
-  TotalComplexity: integer;
+  TotalComplexity: int64;
 Begin
   KeyPadEntriesArr := SplitString(KeyPadEntries, LineEnding);
   TotalComplexity := 0;
@@ -356,6 +354,7 @@ Type
       Procedure TestHumanEntryKeyPresses;
       Procedure TestSingleEntryComplexity;
       Procedure TestTotalComplexity;
+      Procedure AoCTest;
   End;
 
 
@@ -395,6 +394,11 @@ Begin
   CheckEquals(68, GetHumanEntryKeyPressCount('179A', 2), '179A');
   CheckEquals(64, GetHumanEntryKeyPressCount('456A', 2), '456A');
   CheckEquals(64, GetHumanEntryKeyPressCount('379A', 2), '379A');
+  CheckEquals(164, GetHumanEntryKeyPressCount('029A', 3), '029A');
+  CheckEquals(146, GetHumanEntryKeyPressCount('980A', 3), '980A');
+  CheckEquals(164, GetHumanEntryKeyPressCount('179A', 3), '179A');
+  CheckEquals(162, GetHumanEntryKeyPressCount('456A', 3), '456A');
+  CheckEquals(156, GetHumanEntryKeyPressCount('379A', 3), '379A');
 End;
 
 Procedure TDay21Tests.TestSingleEntryComplexity;
@@ -413,6 +417,12 @@ Begin
               '179A' + LineEnding +
               '456A' + LineEnding +
               '379A', 2), 'AoC Sample');
+End;
+
+Procedure TDay21Tests.AoCTest;
+Begin
+
+
 End;
 
 Procedure RegisterTests;
