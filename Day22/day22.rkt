@@ -4,6 +4,6 @@
   (bitwise-xor secret mixer))
 
 (define (prune secret)
-  0)
+  (bitwise-and secret (- 16777215 1)))
 
 (provide mix prune)
