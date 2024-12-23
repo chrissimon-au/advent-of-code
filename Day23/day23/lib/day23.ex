@@ -17,14 +17,14 @@ defmodule Day23 do
 
   def num_gamesets(g, start_char) do
     cliques = Graph.cliques(g)
-      |> Enum.filter(fn c -> length(c) >= 3 end)
+      |> Enum.filter(&length(&1)>=3)
 
     games_in_maximal_clique = cliques
-      |> Enum.filter( fn c-> length(c) > 3 end)
-      |> Enum.flat_map(fn c -> Formulae.combinations(c, 3) end)
+      |> Enum.filter(&length(&1)>3)
+      |> Enum.flat_map(&Formulae.combinations(&1, 3))
 
-    games = Enum.concat(Enum.filter(cliques, fn c -> length(c) == 3 end), games_in_maximal_clique)
-      |> Enum.filter(fn g -> Enum.any?(g, fn p -> String.starts_with?(p, start_char) end) end)
+    games = Enum.concat(Enum.filter(cliques, &length(&1)==3), games_in_maximal_clique)
+      |> Enum.filter(fn g -> Enum.any?(g, &String.starts_with?(&1, start_char)) end)
       |> Enum.map(&Enum.sort(&1))
       |> Enum.sort
       |> Enum.dedup
