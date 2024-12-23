@@ -32,4 +32,14 @@ bp-kh
   test "AoC Test: finds number of game-sets with t" do
     assert_game_sets("test")
   end
+
+  def assert_password(base) do
+    g = Day23.make_graph(File.read!("../#{base}data.txt"))
+    assert Day23.get_password(g) == File.read!("../#{base}data.answer2.txt")
+  end
+
+  test "AoC Sample: get password" do
+    assert_password("sample")
+  end
+
 end

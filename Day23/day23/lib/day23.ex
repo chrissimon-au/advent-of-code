@@ -31,4 +31,8 @@ defmodule Day23 do
     length(games)
   end
 
+  def get_password(_g) do
+    ""
+  end
+
 end
