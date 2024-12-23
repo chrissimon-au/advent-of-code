@@ -1,4 +1,6 @@
-#lang racket/base
+#lang racket
+
+(require math/base)
 
 (define (mix secret mixer)
   (bitwise-xor secret mixer))
@@ -36,11 +38,16 @@
 (define (nth-secret secret n)
   (if (eq? n 0) secret (nth-secret (next-secret secret) (- n 1))))
 
+(define (split-lines input) (string-split input (string #\newline)))
+
+(define (total-nth-secrets input n)
+  (let ([starting-nums (map string->number (split-lines input))])
+    (sum (map (lambda (secret) (nth-secret secret n)) starting-nums))
+    ))
+
 (provide
  mix
  prune
  next-secret
  nth-secret
- step1
- step2
- step3)
+ total-nth-secrets)
