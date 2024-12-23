@@ -45,6 +45,6 @@ It's up to each language's test runner to load the data and pass to the test sui
 * [2024-12-20 - Day 20 in Perl](./Day20/)
 * [2024-12-21 - Day 21 in Pascal](./Day21/)
 * [2024-12-22 - Day 22 in Racket](./Day22/)
-* 2024-12-23 - Day 23 in Elixir
+* [2024-12-23 - Day 23 in Elixir](./Day23/)
 * 2024-12-24 - Day 24 in Gleam
 * 2024-12-25 - Day 25 in zig
