@@ -15,8 +15,8 @@ kh-tc
 tc-ba
 bp-kh
 """);
-    assert Graph.num_vertices(g) == 2
-    assert Graph.num_edges(g) == 1
-    assert Enum.sort(Graph.vertices(g)) == Enum.sort(["kh", "tc"])
+    assert Graph.num_vertices(g) == 4
+    assert Graph.num_edges(g) == 3
+    assert Enum.sort(Graph.vertices(g)) == Enum.sort(["kh", "tc", "ba", "bp"])
   end
 end
