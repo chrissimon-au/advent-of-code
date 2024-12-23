@@ -38,8 +38,12 @@ bp-kh
     assert Day23.get_password(g) == File.read!("../#{base}data.answer2.txt")
   end
 
-  test "AoC Sample: get password" do
+  test "AoC Sample Part 2: get password" do
     assert_password("sample")
+  end
+
+  test "AoC Test Part 2: get password" do
+    assert_password("test")
   end
 
 end
