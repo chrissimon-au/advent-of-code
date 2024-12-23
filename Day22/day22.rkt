@@ -1,6 +1,6 @@
 #lang racket/base
 
-(define (checkit)
-  #t)
+(define (mix secret mixer)
+  0)
 
-(provide checkit)
+(provide mix)

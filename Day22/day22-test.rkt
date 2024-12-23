@@ -4,5 +4,4 @@
          "day22.rkt")
 
 
-(check-true
- (checkit) "should be true")
+(check-eq? (mix 42 15) 37)
