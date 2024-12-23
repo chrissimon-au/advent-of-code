@@ -44,3 +44,6 @@ EOF
 2024
 EOF
                          ) 23 "AoC Sample Data Part 2")
+
+(check-eq? (most-bananas 2000 (file-contents "testdata.txt") )
+           (string->number (file-contents "testdata.answer2.txt")) "AoC Test Data")
