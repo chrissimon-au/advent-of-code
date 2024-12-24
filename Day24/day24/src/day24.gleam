@@ -8,19 +8,19 @@ pub type Circuit {
 }
 
 pub type Wire {
-  Wire(id: String, value: Option(Bool))
+  Wire(id: String, value: Option(Bool), sources: List(Wire))
 }
 
 fn parse_wire(wire_input: String) {
   case string.split(wire_input, ": ") {
-    [id, value] -> Ok(Wire(id, Some(value == "1")))
+    [id, value] -> Ok(Wire(id, Some(value == "1"), []))
     _ -> Error("Unable to parse wire: " <> wire_input)
   }
 }
 
 fn parse_connection(connection_input: String) {
   case string.split(connection_input, " -> ") {
-    [_, id] -> Ok(Wire(id, None))
+    [_, id] -> Ok(Wire(id, None, []))
     _ -> Error("Unable to parse connection: " <> connection_input)
   }
 }
@@ -30,10 +30,10 @@ fn parse_wires(wires_input: String, connections_input: String) {
     string.split(wires_input, "\n")
     |> list.map(parse_wire)
     |> result.all
-  
-  
-  let undefined_wires = string.split(connections_input, "\n")    
-    |> list.filter(fn (s) {string.length(s) > 0})
+
+  let undefined_wires =
+    string.split(connections_input, "\n")
+    |> list.filter(fn(s) { string.length(s) > 0 })
     |> list.map(parse_connection)
     |> result.all
 

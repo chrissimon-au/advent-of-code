@@ -60,8 +60,11 @@ pub fn circuit_can_have_connections_test() {
   let wire =
     circuit
     |> day24.wire("z00")
-    |> should.be_ok()
+    |> should.be_ok
 
   wire.value
   |> should.be_none
+
+  wire.sources
+  |> should.equal(["x00", "y00"])
 }
