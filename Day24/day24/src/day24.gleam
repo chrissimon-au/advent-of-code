@@ -7,13 +7,24 @@ pub type Circuit {
   Circuit(wires: List(Wire))
 }
 
+pub type Operation {
+  And
+  Or
+  Xor
+}
+
 pub type Wire {
-  Wire(id: String, value: Option(Bool), sources: List(String))
+  Wire(
+    id: String,
+    value: Option(Bool),
+    sources: List(String),
+    operation: Option(Operation),
+  )
 }
 
 fn parse_wire(wire_input: String) {
   case string.split(wire_input, ": ") {
-    [id, value] -> Ok(Wire(id, Some(value == "1"), []))
+    [id, value] -> Ok(Wire(id, Some(value == "1"), [], None))
     _ -> Error("Unable to parse wire: " <> wire_input)
   }
 }
@@ -29,7 +40,7 @@ fn parse_connection(connection_input: String) {
   case string.split(connection_input, " -> ") {
     [srcs, id] ->
       parse_connection_sources(srcs)
-      |> result.map(fn(sources) { Wire(id, None, sources) })
+      |> result.map(fn(sources) { Wire(id, None, sources, None) })
     _ -> Error("Unable to parse connection: " <> connection_input)
   }
 }

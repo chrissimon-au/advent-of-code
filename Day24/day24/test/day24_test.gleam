@@ -67,4 +67,8 @@ pub fn circuit_can_have_connections_test() {
 
   wire.sources
   |> should.equal(["x00", "y00"])
+
+  wire.operation
+  |> should.be_some
+  |> should.equal(day24.And)
 }
