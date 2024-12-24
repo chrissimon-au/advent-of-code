@@ -74,8 +74,8 @@ pub fn circuit_can_have_connections_test() {
 }
 
 pub fn circuit_can_compute_result_test() {
-  let circuit = 
-    day24.parse_circuit("x00: 1
+  day24.parse_circuit(
+    "x00: 1
 x01: 1
 x02: 1
 y00: 0
@@ -84,8 +84,10 @@ y02: 0
 
 x00 AND y00 -> z00
 x01 XOR y01 -> z01
-x02 OR y02 -> z02")
+x02 OR y02 -> z02",
+  )
   |> should.be_ok
   |> day24.output
-  |> should.equal(4)  
+  |> should.be_ok
+  |> should.equal(4)
 }

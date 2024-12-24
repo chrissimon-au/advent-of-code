@@ -1,3 +1,6 @@
+import gleam/bool
+import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -49,9 +52,10 @@ fn parse_connection(connection_input: String) {
   case string.split(connection_input, " -> ") {
     [srcs, id] ->
       parse_connection_sources(srcs)
-      |> result.map(fn(parse_result) { 
+      |> result.map(fn(parse_result) {
         let #(sources, op) = parse_result
-        Wire(id, None, sources, op) })
+        Wire(id, None, sources, op)
+      })
     _ -> Error("Unable to parse connection: " <> connection_input)
   }
 }
@@ -79,6 +83,39 @@ fn create_circuit(wires) {
   }
 }
 
+fn compute_wire(circuit: Circuit, w: Wire) {
+  let sources =
+    w.sources
+    |> list.map(wire(circuit, _))
+    |> result.all
+    |> result.map(fn(l) { list.map(l, fn(wi) { wi.value }) })
+
+  case sources, w.operation {
+    Ok([s1, s2]), Some(op) ->
+      case op {
+        And ->
+          Wire(
+            ..w,
+            value: Some(option.unwrap(s1, False) && option.unwrap(s2, False)),
+          )
+        Or ->
+          Wire(
+            ..w,
+            value: Some(option.unwrap(s1, False) || option.unwrap(s2, False)),
+          )
+        Xor ->
+          Wire(
+            ..w,
+            value: Some(bool.exclusive_or(
+              option.unwrap(s1, False),
+              option.unwrap(s2, False),
+            )),
+          )
+      }
+    _, _ -> w
+  }
+}
+
 pub fn parse_circuit(input: String) {
   case string.split(input, "\n\n") {
     [wires_input, connections_input] ->
@@ -91,6 +128,20 @@ pub fn wire(circuit: Circuit, wire_id: String) {
   list.find(circuit.wires, fn(w) { w.id == wire_id })
 }
 
-pub fn output(_circuit: Circuit) {
-  0
+pub fn output(circuit: Circuit) {
+  circuit.wires
+  |> list.map(compute_wire(circuit, _))
+  |> list.filter(fn(w) {
+    string.starts_with(w.id, "z") && option.unwrap(w.value, False)
+  })
+  |> list.map(fn(w) {
+    string.drop_start(w.id, 1)
+    |> int.parse    
+    |> result.map(int.to_float)
+    |> result.map(int.power(2, _))
+    |> result.flatten
+    |> result.map(float.truncate)
+  })
+  |> result.all
+  |> result.map(int.sum)
 }
