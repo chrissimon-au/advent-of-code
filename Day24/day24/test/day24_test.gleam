@@ -1,6 +1,8 @@
 import day24
 import glacier
 import glacier/should
+import gleam/int
+import simplifile
 
 pub fn main() {
   glacier.main()
@@ -90,4 +92,24 @@ x02 OR y02 -> z02",
   |> day24.output
   |> should.be_ok
   |> should.equal(4)
+}
+
+fn circuit_can_compute_result_from_file(base: String) {
+  let answer =
+    simplifile.read("../" <> base <> "data.answer.txt")
+    |> should.be_ok
+    |> int.parse
+    |> should.be_ok
+
+  simplifile.read("../" <> base <> "data.txt")
+  |> should.be_ok
+  |> day24.parse_circuit
+  |> should.be_ok
+  |> day24.output
+  |> should.be_ok
+  |> should.equal(answer)
+}
+
+pub fn circuit_can_compute_result_from_file_test() {
+  circuit_can_compute_result_from_file("sample")
 }
