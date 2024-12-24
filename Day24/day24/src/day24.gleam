@@ -90,3 +90,7 @@ pub fn parse_circuit(input: String) {
 pub fn wire(circuit: Circuit, wire_id: String) {
   list.find(circuit.wires, fn(w) { w.id == wire_id })
 }
+
+pub fn output(_circuit: Circuit) {
+  0
+}
