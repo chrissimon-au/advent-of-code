@@ -8,7 +8,7 @@ pub type Circuit {
 }
 
 pub type Wire {
-  Wire(id: String, value: Option(Bool), sources: List(Wire))
+  Wire(id: String, value: Option(Bool), sources: List(String))
 }
 
 fn parse_wire(wire_input: String) {
@@ -18,9 +18,18 @@ fn parse_wire(wire_input: String) {
   }
 }
 
+fn parse_connection_sources(source_input: String) {
+  case string.split(source_input, " ") {
+    [source1, _, source2] -> Ok([source1, source2])
+    _ -> Error("Unable to parse connection sources: " <> source_input)
+  }
+}
+
 fn parse_connection(connection_input: String) {
   case string.split(connection_input, " -> ") {
-    [_, id] -> Ok(Wire(id, None, []))
+    [srcs, id] ->
+      parse_connection_sources(srcs)
+      |> result.map(fn(sources) { Wire(id, None, sources) })
     _ -> Error("Unable to parse connection: " <> connection_input)
   }
 }
