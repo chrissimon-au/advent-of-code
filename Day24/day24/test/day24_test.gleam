@@ -7,7 +7,8 @@ pub fn main() {
 }
 
 pub fn wire_can_carry_value_test() {
-  let circuit = day24.create_circuit("x00: 1")
-  day24.wire(circuit, "x00").value
-  |> should.be_true
+  let wire =
+    day24.create_circuit("x00: 1")
+    |> day24.wire("x00")
+  wire.value |> should.be_true
 }
