@@ -11,5 +11,5 @@ pub fn create_circuit(_input: String) {
 }
 
 pub fn wire(_circuit: Circuit, _wire_id: String) {
-  Wire(False)
+  Wire(True)
 }
