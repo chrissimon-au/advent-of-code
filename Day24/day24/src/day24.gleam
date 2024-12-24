@@ -134,10 +134,10 @@ fn is_complete(circuit: Circuit) {
   |> list.all(fn(w) { option.is_some(w.value) })
 }
 
-fn output_value(circuit: Circuit) {
+pub fn port_value(circuit: Circuit, port_id: String) {
   circuit.wires
   |> list.filter(fn(w) {
-    string.starts_with(w.id, "z") && option.unwrap(w.value, False)
+    string.starts_with(w.id, port_id) && option.unwrap(w.value, False)
   })
   |> list.map(fn(w) {
     string.drop_start(w.id, 1)
@@ -153,11 +153,15 @@ fn output_value(circuit: Circuit) {
 
 pub fn output(circuit: Circuit) {
   case is_complete(circuit) {
-    True -> output_value(circuit)
+    True -> port_value(circuit, "z")
     False ->
       output(Circuit(
         circuit.wires
         |> list.map(compute_wire(circuit, _)),
       ))
   }
+}
+
+pub fn find_crossed_wires(_circuit: Circuit, _expected_output: Int) {
+  Error("Not implemented")
 }

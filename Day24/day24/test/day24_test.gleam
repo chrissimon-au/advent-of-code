@@ -94,6 +94,13 @@ x02 OR y02 -> z02",
   |> should.equal(4)
 }
 
+fn load_circuit_from_file(base: String) {
+  simplifile.read("../" <> base <> "data.txt")
+  |> should.be_ok
+  |> day24.parse_circuit
+  |> should.be_ok
+}
+
 fn circuit_can_compute_result_from_file(base: String) {
   let answer =
     simplifile.read("../" <> base <> "data.answer.txt")
@@ -101,10 +108,7 @@ fn circuit_can_compute_result_from_file(base: String) {
     |> int.parse
     |> should.be_ok
 
-  simplifile.read("../" <> base <> "data.txt")
-  |> should.be_ok
-  |> day24.parse_circuit
-  |> should.be_ok
+  load_circuit_from_file(base)
   |> day24.output
   |> should.be_ok
   |> should.equal(answer)
@@ -116,4 +120,13 @@ pub fn can_compute_aoc_sample_test() {
 
 pub fn can_compute_aoc_test_test() {
   circuit_can_compute_result_from_file("test")
+}
+
+pub fn check_inputs_and_output_test() {
+  let circuit = load_circuit_from_file("sample2")
+
+  circuit
+  |> day24.find_crossed_wires(40)
+  |> should.be_ok
+  |> should.equal([])
 }
