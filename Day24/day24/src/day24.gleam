@@ -29,9 +29,18 @@ fn parse_wire(wire_input: String) {
   }
 }
 
+fn string_to_operation(op_input: String) {
+  case op_input {
+    "AND" -> Some(And)
+    "OR" -> Some(Or)
+    "XOR" -> Some(Xor)
+    _ -> None
+  }
+}
+
 fn parse_connection_sources(source_input: String) {
   case string.split(source_input, " ") {
-    [source1, _, source2] -> Ok([source1, source2])
+    [source1, op, source2] -> Ok(#([source1, source2], string_to_operation(op)))
     _ -> Error("Unable to parse connection sources: " <> source_input)
   }
 }
@@ -40,7 +49,9 @@ fn parse_connection(connection_input: String) {
   case string.split(connection_input, " -> ") {
     [srcs, id] ->
       parse_connection_sources(srcs)
-      |> result.map(fn(sources) { Wire(id, None, sources, None) })
+      |> result.map(fn(parse_result) { 
+        let #(sources, op) = parse_result
+        Wire(id, None, sources, op) })
     _ -> Error("Unable to parse connection: " <> connection_input)
   }
 }
