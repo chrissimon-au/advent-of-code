@@ -110,6 +110,10 @@ fn circuit_can_compute_result_from_file(base: String) {
   |> should.equal(answer)
 }
 
-pub fn circuit_can_compute_result_from_file_test() {
+pub fn can_compute_aoc_sample_test() {
   circuit_can_compute_result_from_file("sample")
+}
+
+pub fn can_compute_aoc_test_test() {
+  circuit_can_compute_result_from_file("test")
 }
