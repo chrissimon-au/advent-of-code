@@ -89,8 +89,9 @@ fn compute_wire(circuit: Circuit, w: Wire) {
     |> list.map(wire(circuit, _))
     |> result.all
     |> result.map(fn(l) { list.map(l, fn(wi) { wi.value }) })
-
   case sources, w.operation {
+    Ok([None, _]), _ -> w
+    Ok([_, None]), _ -> w
     Ok([s1, s2]), Some(op) ->
       case op {
         And ->
@@ -128,15 +129,19 @@ pub fn wire(circuit: Circuit, wire_id: String) {
   list.find(circuit.wires, fn(w) { w.id == wire_id })
 }
 
-pub fn output(circuit: Circuit) {
+fn is_complete(circuit: Circuit) {
   circuit.wires
-  |> list.map(compute_wire(circuit, _))
+  |> list.all(fn(w) { option.is_some(w.value) })
+}
+
+fn output_value(circuit: Circuit) {
+  circuit.wires
   |> list.filter(fn(w) {
     string.starts_with(w.id, "z") && option.unwrap(w.value, False)
   })
   |> list.map(fn(w) {
     string.drop_start(w.id, 1)
-    |> int.parse    
+    |> int.parse
     |> result.map(int.to_float)
     |> result.map(int.power(2, _))
     |> result.flatten
@@ -144,4 +149,15 @@ pub fn output(circuit: Circuit) {
   })
   |> result.all
   |> result.map(int.sum)
+}
+
+pub fn output(circuit: Circuit) {
+  case is_complete(circuit) {
+    True -> output_value(circuit)
+    False ->
+      output(Circuit(
+        circuit.wires
+        |> list.map(compute_wire(circuit, _)),
+      ))
+  }
 }
