@@ -12,3 +12,10 @@ pub fn wire_can_carry_value_test() {
     |> day24.wire("x00")
   wire.value |> should.be_true
 }
+
+pub fn wire_can_carry_false_value_test() {
+  let wire =
+    day24.create_circuit("y00: 0")
+    |> day24.wire("y00")
+  wire.value |> should.be_false
+}
