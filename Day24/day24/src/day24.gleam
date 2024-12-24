@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/result
 import gleam/string
 
 pub type Circuit {
@@ -9,13 +10,28 @@ pub type Wire {
   Wire(id: String, value: Bool)
 }
 
-pub fn create_circuit(input: String) {
-  case string.split(input, ": ") {
-    [] -> Error("Unable to parse - empty string")
-    [_] -> Error("Unable to parse - only one field")
-    [id, value] -> Ok(Circuit([Wire(id, value == "1")]))
-    _ -> Error("Unable to parse - too many values")
+fn parse_wire(wire_input: String) {
+  case string.split(wire_input, ": ") {
+    [id, value] -> Ok(Wire(id, value == "1"))
+    _ -> Error("Unable to parse wire: " <> wire_input)
   }
+}
+
+fn parse_wires(wires_input: String) {
+  string.split(wires_input, "\n")
+  |> list.map(parse_wire)
+  |> result.all
+}
+
+fn create_circuit(wires) {
+  case wires {
+    Ok(wires) -> Ok(Circuit(wires))
+    Error(e) -> Error(e)
+  }
+}
+
+pub fn parse_circuit(input: String) {
+  create_circuit(parse_wires(input))
 }
 
 pub fn wire(circuit: Circuit, wire_id: String) {
