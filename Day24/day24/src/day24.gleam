@@ -1,6 +1,7 @@
 import gleam/bool
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -134,34 +135,70 @@ fn is_complete(circuit: Circuit) {
   |> list.all(fn(w) { option.is_some(w.value) })
 }
 
-pub fn port_value(circuit: Circuit, port_id: String) {
+fn bit_in_port(wire: Wire) {
+  wire.id
+  |> string.drop_start(1)
+  |> int.parse
+  |> result.map(int.to_float)
+  |> result.map(int.power(2, _))
+  |> result.flatten
+  |> result.map(float.truncate)
+}
+
+fn port_value(circuit: Circuit, port_id: String) {
   circuit.wires
   |> list.filter(fn(w) {
     string.starts_with(w.id, port_id) && option.unwrap(w.value, False)
   })
-  |> list.map(fn(w) {
-    string.drop_start(w.id, 1)
-    |> int.parse
-    |> result.map(int.to_float)
-    |> result.map(int.power(2, _))
-    |> result.flatten
-    |> result.map(float.truncate)
-  })
+  |> list.map(bit_in_port)
   |> result.all
   |> result.map(int.sum)
 }
 
-pub fn output(circuit: Circuit) {
+fn complete(circuit: Circuit) {
   case is_complete(circuit) {
-    True -> port_value(circuit, "z")
+    True -> circuit
     False ->
-      output(Circuit(
+      complete(Circuit(
         circuit.wires
         |> list.map(compute_wire(circuit, _)),
       ))
   }
 }
 
-pub fn find_crossed_wires(_circuit: Circuit, _expected_output: Int) {
-  Error("Not implemented")
+pub fn output(circuit: Circuit) {
+  circuit
+  |> complete
+  |> port_value("z")
+}
+
+fn wire_with_value(wire: Wire, value: Int) {
+  Wire(
+    ..wire,
+    value: option.from_result(
+      bit_in_port(wire) |> result.map(fn(n) { int.bitwise_and(n, value) > 0 }),
+    ),
+  )
+}
+
+fn with_port_value(circuit: Circuit, port_id: String, value: Int) {
+  Circuit(
+    circuit.wires
+    |> list.map(fn(w) {
+      case string.first(w.id) {
+        Ok(letter) if letter == port_id -> wire_with_value(w, value)
+        _ -> w
+      }
+    }),
+  )
+}
+
+pub fn find_invalid_gates(circuit: Circuit) {
+  
+}
+
+pub fn find_crossed_wires(circuit: Circuit, expected_output: Int) {  
+  circuit
+  |> with_port_value("z", expected_output)
+  |> find_invalid_gates
 }
