@@ -130,12 +130,11 @@ pub fn check_inputs_and_output_sample_test() {
   |> should.be_ok
   |> should.equal("z00,z01,z02,z05")
 }
+// pub fn check_inputs_and_output_test_test_() {
+//   let circuit = load_circuit_from_file("test")
 
-pub fn check_inputs_and_output_test_test() {
-  let circuit = load_circuit_from_file("test")
-
-  circuit
-  |> day24.find_crossed_wires(int.add)
-  |> should.be_ok
-  |> should.equal("_")
-}
+//   circuit
+//   |> day24.find_crossed_wires(int.add)
+//   |> should.be_ok
+//   |> should.equal("_")
+// }

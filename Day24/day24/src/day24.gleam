@@ -212,7 +212,7 @@ fn compute_wire_if_uncomputed(circuit: Circuit, wire: Wire) {
 
 fn reverse_compute_wire_if_uncomputed(circuit: Circuit, wire: Wire) {
   case wire.reverse_value {
-    Some(w) -> wire
+    Some(_) -> wire
     None -> reverse_compute_wire(circuit, wire)
   }
 }
@@ -304,7 +304,7 @@ pub fn find_crossed_wires(
     |> result.flatten
     |> result.unwrap(5)
 
-  list.range(0, 5)
+  list.range(0, max_bit)
   |> list.map(int.to_float)
   |> list.map(int.power(2, _))
   |> list.map(result.map(_, float.truncate))
