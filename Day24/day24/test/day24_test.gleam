@@ -126,7 +126,7 @@ pub fn check_inputs_and_output_test() {
   let circuit = load_circuit_from_file("sample2")
 
   circuit
-  |> day24.find_crossed_wires(40)
+  |> day24.find_crossed_wires(fn(x, y) { int.bitwise_and(x, y) })
   |> should.be_ok
-  |> should.equal([])
+  |> should.equal("z00,z01,z02,z05")
 }

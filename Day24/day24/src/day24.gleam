@@ -90,11 +90,10 @@ fn compute_wire(circuit: Circuit, w: Wire) {
     |> list.map(wire(circuit, _))
     |> result.all
     |> result.map(fn(l) { list.map(l, fn(wi) { wi.value }) })
-  case w.value, sources, w.operation {
-    Some(_), _, _ -> w
-    None, Ok([None, _]), _ -> w
-    None, Ok([_, None]), _ -> w
-    None, Ok([s1, s2]), Some(op) ->
+  case sources, w.operation {
+    Ok([None, _]), _ -> w
+    Ok([_, None]), _ -> w
+    Ok([s1, s2]), Some(op) ->
       case op {
         And ->
           Wire(
@@ -115,7 +114,7 @@ fn compute_wire(circuit: Circuit, w: Wire) {
             )),
           )
       }
-    _, _, _ -> w
+    _, _ -> w
   }
 }
 
@@ -136,7 +135,7 @@ fn is_complete(circuit: Circuit) {
   |> list.all(fn(w) { option.is_some(w.value) })
 }
 
-fn bit_in_port(wire: Wire) {
+fn wire_int(wire: Wire) {
   wire.id
   |> string.drop_start(1)
   |> int.parse
@@ -151,9 +150,16 @@ fn port_value(circuit: Circuit, port_id: String) {
   |> list.filter(fn(w) {
     string.starts_with(w.id, port_id) && option.unwrap(w.value, False)
   })
-  |> list.map(bit_in_port)
+  |> list.map(wire_int)
   |> result.all
   |> result.map(int.sum)
+}
+
+fn compute_wire_if_uncomputed(circuit: Circuit, wire: Wire) {
+  case wire.value {
+    Some(_) -> wire
+    None -> compute_wire(circuit, wire)
+  }
 }
 
 fn complete(circuit: Circuit) {
@@ -162,7 +168,7 @@ fn complete(circuit: Circuit) {
     False ->
       complete(Circuit(
         circuit.wires
-        |> list.map(compute_wire(circuit, _)),
+        |> list.map(compute_wire_if_uncomputed(circuit, _)),
       ))
   }
 }
@@ -177,7 +183,7 @@ fn wire_with_value(wire: Wire, value: Int) {
   Wire(
     ..wire,
     value: option.from_result(
-      bit_in_port(wire) |> result.map(fn(n) { int.bitwise_and(n, value) > 0 }),
+      wire_int(wire) |> result.map(fn(n) { int.bitwise_and(n, value) > 0 }),
     ),
   )
 }
@@ -198,10 +204,38 @@ pub fn find_invalid_gates(circuit: Circuit) {
   let completed =
     circuit
     |> complete
+  completed.wires
+  |> list.filter_map(fn(w) {
+    let computed = compute_wire(circuit, w)
+    case w.value, computed.value {
+      Some(v1), Some(v2) if v1 == v2 -> Error("Not invalid")
+      _, _ -> Ok(w)
+    }
+  })
 }
 
-pub fn find_crossed_wires(circuit: Circuit, expected_output: Int) {
-  circuit
-  |> with_port_value("z", expected_output)
-  |> find_invalid_gates
+pub fn find_crossed_wires(
+  circuit: Circuit,
+  expected_computer: fn(Int, Int) -> Int,
+) {
+  list.range(0, 5)
+  |> list.map(int.to_float)
+  |> list.map(int.power(2, _))
+  |> list.map(result.map(_, float.truncate))
+  |> list.map(result.map(_, fn(v) {
+    circuit
+    |> with_port_value("x", v)
+    |> with_port_value("y", v)
+    |> with_port_value("z", expected_computer(v, v))
+    |> find_invalid_gates
+    |> list.map(fn(w) { w.id })
+  }))
+  |> result.all
+  |> result.map(fn(l) {
+    l
+    |> list.flatten
+    |> list.sort(string.compare)
+    |> list.unique
+    |> string.join(",")
+  })
 }
