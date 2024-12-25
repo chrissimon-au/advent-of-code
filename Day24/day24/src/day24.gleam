@@ -218,15 +218,31 @@ pub fn find_crossed_wires(
   circuit: Circuit,
   expected_computer: fn(Int, Int) -> Int,
 ) {
-  list.range(0, 5)
+  let max_bit =
+    circuit.wires
+    |> list.filter_map(fn(w) {
+      case string.first(w.id) {
+        Ok("z") -> Ok(string.drop_start(w.id, 1))
+        _ -> Error("")
+      }
+    })
+    |> list.map(int.parse)
+    |> result.all
+    |> result.map(list.reduce(_, int.max))
+    |> result.flatten
+    |> result.unwrap(5)
+
+  list.range(0, max_bit)
   |> list.map(int.to_float)
   |> list.map(int.power(2, _))
   |> list.map(result.map(_, float.truncate))
+  |> io.debug
   |> list.map(result.map(_, fn(v) {
     circuit
     |> with_port_value("x", v)
     |> with_port_value("y", v)
     |> with_port_value("z", expected_computer(v, v))
+    |> complete
     |> find_invalid_gates
     |> list.map(fn(w) { w.id })
   }))
