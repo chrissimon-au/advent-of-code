@@ -21,6 +21,7 @@ pub type Wire {
   Wire(
     id: String,
     value: Option(Bool),
+    reverse_value: Option(Bool),
     sources: List(String),
     operation: Option(Operation),
   )
@@ -28,7 +29,8 @@ pub type Wire {
 
 fn parse_wire(wire_input: String) {
   case string.split(wire_input, ": ") {
-    [id, value] -> Ok(Wire(id, Some(value == "1"), [], None))
+    [id, value] ->
+      Ok(Wire(id, Some(value == "1"), Some(value == "1"), [], None))
     _ -> Error("Unable to parse wire: " <> wire_input)
   }
 }
@@ -55,7 +57,7 @@ fn parse_connection(connection_input: String) {
       parse_connection_sources(srcs)
       |> result.map(fn(parse_result) {
         let #(sources, op) = parse_result
-        Wire(id, None, sources, op)
+        Wire(id, None, None, sources, op)
       })
     _ -> Error("Unable to parse connection: " <> connection_input)
   }
@@ -118,6 +120,47 @@ fn compute_wire(circuit: Circuit, w: Wire) {
   }
 }
 
+fn reverse_compute_wire(circuit: Circuit, w: Wire) {
+  let new_value =
+    circuit.wires
+    |> list.filter(fn(w) { w.sources |> list.any(fn(s) { s == w.id }) })
+    |> list.map(fn(t) {
+      let other_source_id =
+        t.sources
+        |> list.filter(fn(s) { s != w.id })
+        |> list.first
+        |> result.unwrap("")
+      wire(circuit, other_source_id)
+      |> result.map(fn(other_source) {
+        case t.reverse_value, t.operation, other_source.reverse_value {
+          Some(True), Some(And), _ -> Some(True)
+          Some(True), Some(Or), Some(False) -> Some(True)
+          Some(True), Some(Xor), Some(v) -> Some(!v)
+          Some(False), Some(Xor), Some(v) -> Some(v)
+          _, _, _ -> None
+        }
+      })
+    })
+    |> result.all
+    |> result.map(fn(l) {
+      list.first(l)
+      |> result.map(fn(f) {
+        case list.all(l, fn(c) { c == f }) {
+          True -> f
+          _ -> None
+        }
+      })
+      |> option.from_result
+      |> option.flatten
+    })
+    |> option.from_result
+    |> option.flatten
+  case new_value {
+    Some(v) -> Wire(..w, reverse_value: Some(v))
+    _ -> w
+  }
+}
+
 pub fn parse_circuit(input: String) {
   case string.split(input, "\n\n") {
     [wires_input, connections_input] ->
@@ -133,6 +176,11 @@ pub fn wire(circuit: Circuit, wire_id: String) {
 fn is_complete(circuit: Circuit) {
   circuit.wires
   |> list.all(fn(w) { option.is_some(w.value) })
+}
+
+fn is_reverse_complete(circuit: Circuit) {
+  circuit.wires
+  |> list.all(fn(w) { option.is_some(w.reverse_value) })
 }
 
 fn wire_int(wire: Wire) {
@@ -162,6 +210,13 @@ fn compute_wire_if_uncomputed(circuit: Circuit, wire: Wire) {
   }
 }
 
+fn reverse_compute_wire_if_uncomputed(circuit: Circuit, wire: Wire) {
+  case wire.reverse_value {
+    Some(w) -> wire
+    None -> reverse_compute_wire(circuit, wire)
+  }
+}
+
 fn complete(circuit: Circuit) {
   case is_complete(circuit) {
     True -> circuit
@@ -173,22 +228,39 @@ fn complete(circuit: Circuit) {
   }
 }
 
+fn reverse_complete(circuit: Circuit) {
+  case is_reverse_complete(circuit) {
+    True -> circuit
+    False ->
+      reverse_complete(Circuit(
+        circuit.wires
+        |> list.map(reverse_compute_wire_if_uncomputed(circuit, _)),
+      ))
+  }
+}
+
 pub fn output(circuit: Circuit) {
   circuit
   |> complete
   |> port_value("z")
 }
 
-fn wire_with_value(wire: Wire, value: Int) {
-  Wire(
-    ..wire,
-    value: option.from_result(
-      wire_int(wire) |> result.map(fn(n) { int.bitwise_and(n, value) > 0 }),
-    ),
-  )
+fn new_value(wire_int: Result(Int, nil), value: Option(Int)) {
+  value
+  |> option.map(fn(v) {
+    wire_int
+    |> result.map(fn(n) { int.bitwise_and(n, v) > 0 })
+    |> option.from_result
+  })
+  |> option.flatten
 }
 
-fn with_port_value(circuit: Circuit, port_id: String, value: Int) {
+fn wire_with_value(wire: Wire, value: Option(Int)) {
+  let new_value = wire_int(wire) |> new_value(value)
+  Wire(..wire, value: new_value, reverse_value: new_value)
+}
+
+fn with_port_value(circuit: Circuit, port_id: String, value: Option(Int)) {
   Circuit(
     circuit.wires
     |> list.map(fn(w) {
@@ -232,17 +304,18 @@ pub fn find_crossed_wires(
     |> result.flatten
     |> result.unwrap(5)
 
-  list.range(0, max_bit)
+  list.range(0, 5)
   |> list.map(int.to_float)
   |> list.map(int.power(2, _))
   |> list.map(result.map(_, float.truncate))
   |> io.debug
   |> list.map(result.map(_, fn(v) {
     circuit
-    |> with_port_value("x", v)
-    |> with_port_value("y", v)
-    |> with_port_value("z", expected_computer(v, v))
+    |> with_port_value("x", Some(v))
+    |> with_port_value("y", Some(v))
+    |> with_port_value("z", Some(expected_computer(v, v)))
     |> complete
+    |> reverse_complete
     |> find_invalid_gates
     |> list.map(fn(w) { w.id })
   }))
