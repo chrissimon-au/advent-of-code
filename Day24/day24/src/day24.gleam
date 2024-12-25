@@ -121,19 +121,25 @@ fn compute_wire(circuit: Circuit, w: Wire) {
 }
 
 fn reverse_compute_wire(circuit: Circuit, w: Wire) {
+  io.debug("reverse computing")
+  io.debug(w)
   let new_value =
     circuit.wires
-    |> list.filter(fn(w) { w.sources |> list.any(fn(s) { s == w.id }) })
+    |> list.filter(fn(ow) { ow.sources |> list.any(fn(s) { s == w.id }) })
+    |> io.debug
     |> list.map(fn(t) {
       let other_source_id =
         t.sources
         |> list.filter(fn(s) { s != w.id })
         |> list.first
         |> result.unwrap("")
+        |> io.debug
       wire(circuit, other_source_id)
+      |> io.debug
       |> result.map(fn(other_source) {
         case t.reverse_value, t.operation, other_source.reverse_value {
           Some(True), Some(And), _ -> Some(True)
+          Some(False), Some(Or), _ -> Some(False)
           Some(True), Some(Or), Some(False) -> Some(True)
           Some(True), Some(Xor), Some(v) -> Some(!v)
           Some(False), Some(Xor), Some(v) -> Some(v)
@@ -142,6 +148,7 @@ fn reverse_compute_wire(circuit: Circuit, w: Wire) {
       })
     })
     |> result.all
+    |> io.debug
     |> result.map(fn(l) {
       list.first(l)
       |> result.map(fn(f) {
@@ -155,6 +162,7 @@ fn reverse_compute_wire(circuit: Circuit, w: Wire) {
     })
     |> option.from_result
     |> option.flatten
+    |> io.debug
   case new_value {
     Some(v) -> Wire(..w, reverse_value: Some(v))
     _ -> w
@@ -178,9 +186,8 @@ fn is_complete(circuit: Circuit) {
   |> list.all(fn(w) { option.is_some(w.value) })
 }
 
-fn is_reverse_complete(circuit: Circuit) {
-  circuit.wires
-  |> list.all(fn(w) { option.is_some(w.reverse_value) })
+fn is_reverse_complete(circuit: Circuit, next) {
+  circuit == next
 }
 
 fn wire_int(wire: Wire) {
@@ -228,14 +235,22 @@ fn complete(circuit: Circuit) {
   }
 }
 
-fn reverse_complete(circuit: Circuit) {
-  case is_reverse_complete(circuit) {
+fn reverse_complete(circuit: Circuit, attempt: Int) {
+  io.debug("======================")
+  io.debug(
+    "reverse completing "
+    <> int.to_string(list.length(circuit.wires))
+    <> " attempt "
+    <> int.to_string(attempt),
+  )
+  let next =
+    Circuit(
+      circuit.wires
+      |> list.map(reverse_compute_wire_if_uncomputed(circuit, _)),
+    )
+  case is_reverse_complete(circuit, next) {
     True -> circuit
-    False ->
-      reverse_complete(Circuit(
-        circuit.wires
-        |> list.map(reverse_compute_wire_if_uncomputed(circuit, _)),
-      ))
+    False -> reverse_complete(next, attempt + 1)
   }
 }
 
@@ -260,6 +275,11 @@ fn wire_with_value(wire: Wire, value: Option(Int)) {
   Wire(..wire, value: new_value, reverse_value: new_value)
 }
 
+fn wire_with_reverse_value(wire: Wire, value: Option(Int)) {
+  let new_value = wire_int(wire) |> new_value(value)
+  Wire(..wire, reverse_value: new_value)
+}
+
 fn with_port_value(circuit: Circuit, port_id: String, value: Option(Int)) {
   Circuit(
     circuit.wires
@@ -272,18 +292,37 @@ fn with_port_value(circuit: Circuit, port_id: String, value: Option(Int)) {
   )
 }
 
+fn with_reverse_port_value(
+  circuit: Circuit,
+  port_id: String,
+  value: Option(Int),
+) {
+  Circuit(
+    circuit.wires
+    |> list.map(fn(w) {
+      case string.first(w.id) {
+        Ok(letter) if letter == port_id -> wire_with_reverse_value(w, value)
+        _ -> w
+      }
+    }),
+  )
+}
+
 pub fn find_invalid_gates(circuit: Circuit) {
   let completed =
     circuit
     |> complete
   completed.wires
   |> list.filter_map(fn(w) {
-    let computed = compute_wire(circuit, w)
-    case w.value, computed.value {
-      Some(v1), Some(v2) if v1 == v2 -> Error("Not invalid")
-      _, _ -> Ok(w)
+    case w.value, w.reverse_value {
+      Some(v1), Some(v2) if v1 != v2 -> Ok(w)
+      _, _ -> Error("not invalid")
     }
   })
+}
+
+type Input {
+  Input(x: Int, y: Int)
 }
 
 pub fn find_crossed_wires(
@@ -304,27 +343,40 @@ pub fn find_crossed_wires(
     |> result.flatten
     |> result.unwrap(5)
 
-  list.range(0, max_bit)
-  |> list.map(int.to_float)
-  |> list.map(int.power(2, _))
-  |> list.map(result.map(_, float.truncate))
-  |> io.debug
-  |> list.map(result.map(_, fn(v) {
+  let binaries =
+    list.range(0, max_bit)
+    |> list.map(int.to_float)
+    |> list.map(int.power(2, _))
+    |> list.map(result.map(_, float.truncate))
+    |> result.values
+
+  let input_pairs_same =
+    binaries
+    |> list.map(fn(i) { Input(i, i) })
+  let input_pairs_double =
+    binaries
+    |> list.map(fn(i) { Input(i, i * 2) })
+  let input_pairs_quad =
+    binaries
+    |> list.map(fn(i) { Input(i, i * 4) })
+
+  input_pairs_same
+  |> list.append(input_pairs_double)
+  |> list.append(input_pairs_quad)
+  |> list.map(fn(inputs) {
+    io.debug(inputs)
     circuit
-    |> with_port_value("x", Some(v))
-    |> with_port_value("y", Some(v))
-    |> with_port_value("z", Some(expected_computer(v, v)))
+    |> with_port_value("x", Some(inputs.x))
+    |> with_port_value("y", Some(inputs.y))
+    |> with_reverse_port_value("z", Some(expected_computer(inputs.x, inputs.y)))
     |> complete
-    |> reverse_complete
+    |> reverse_complete(0)
     |> find_invalid_gates
     |> list.map(fn(w) { w.id })
-  }))
-  |> result.all
-  |> result.map(fn(l) {
-    l
-    |> list.flatten
-    |> list.sort(string.compare)
-    |> list.unique
-    |> string.join(",")
   })
+  |> list.flatten
+  |> list.sort(string.compare)
+  |> list.unique
+  |> string.join(",")
+  |> Ok
 }
