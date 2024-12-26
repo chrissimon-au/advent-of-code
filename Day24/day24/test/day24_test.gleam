@@ -121,3 +121,12 @@ pub fn can_compute_aoc_sample_test() {
 pub fn can_compute_aoc_test_test() {
   circuit_can_compute_result_from_file("test")
 }
+
+pub fn check_inputs_and_output_test_test() {
+  let circuit = load_circuit_from_file("test")
+
+  circuit
+  |> day24.analyse_adder_for_crossed_wires
+  |> should.be_ok
+  |> should.equal("_")
+}
