@@ -1,7 +1,7 @@
-## Day ??: ???
+## Day 25: Code Chronicle
 
-https://adventofcode.com/2024/day/??
+https://adventofcode.com/2024/day/25
 
-TBD in [???](https://some.url) using [testing framework ???](https://some.url/) for testing.
+Completed in [zig](https://ziglang.org/).
 
 To start, run `devenv up` in this folder.
