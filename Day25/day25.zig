@@ -67,8 +67,8 @@ fn key_matches_lock(key: Key, lock: Lock) bool {
     return matches;
 }
 
-fn count_matching_keys_for_lock(lock: Lock, all_items: ArrayList(KeyOrLock)) u8 {
-    var num_matching_keys: u8 = 0;
+fn count_matching_keys_for_lock(lock: Lock, all_items: ArrayList(KeyOrLock)) u64 {
+    var num_matching_keys: u64 = 0;
     for (all_items.items) |item| {
         switch (item) {
             .key => |key| {
@@ -82,11 +82,11 @@ fn count_matching_keys_for_lock(lock: Lock, all_items: ArrayList(KeyOrLock)) u8 
     return num_matching_keys;
 }
 
-fn count_key_lock_combos(input: []const u8, allocator: Allocator) u8 {
+fn count_key_lock_combos(input: []const u8, allocator: Allocator) u64 {
     var all_items = parse_input(input, allocator);
     defer all_items.deinit();
 
-    var num_combos: u8 = 0;
+    var num_combos: u64 = 0;
 
     for (all_items.items) |item| {
         switch (item) {
@@ -224,14 +224,26 @@ test "can parse_sample_input" {
     try expectEqual(5, items.items.len);
 }
 
-test count_key_lock_combos {
-    const input = try load_file("sampledata.txt", std.testing.allocator);
+fn expect_input_file_matches_answer(fileBase: []const u8, allocator: Allocator) anyerror!void {
+    const dataFileName = try std.mem.concat(allocator, u8, &[_][]const u8{ fileBase, "data.txt" });
+    defer std.testing.allocator.free(dataFileName);
+    const input = try load_file(dataFileName, std.testing.allocator);
     defer std.testing.allocator.free(input);
 
-    const answerStr = try load_file("sampledata.answer.txt", std.testing.allocator);
+    const answerFileName = try std.mem.concat(allocator, u8, &[_][]const u8{ fileBase, "data.answer.txt" });
+    defer std.testing.allocator.free(answerFileName);
+    const answerStr = try load_file(answerFileName, std.testing.allocator);
     defer std.testing.allocator.free(answerStr);
 
-    const answer = try std.fmt.parseInt(u8, answerStr, 10);
+    const answer = try std.fmt.parseInt(u64, answerStr, 10);
 
     try expectEqual(answer, count_key_lock_combos(input, std.testing.allocator));
+}
+
+test "count key lock combos AoC Sample Case" {
+    try expect_input_file_matches_answer("sample", std.testing.allocator);
+}
+
+test "count key lock combos AoC Test Case" {
+    try expect_input_file_matches_answer("test", std.testing.allocator);
 }
