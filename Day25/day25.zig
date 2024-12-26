@@ -2,7 +2,7 @@ const std = @import("std");
 const ArrayList = std.ArrayList;
 const expectEqual = std.testing.expectEqual;
 
-const KeyOrLock = union { key: Key, lock: Lock };
+const KeyOrLock = union(enum) { key: Key, lock: Lock, neither };
 
 const Key = struct { heights: [5]u8 };
 const Lock = struct { pins: [5]u8 };
@@ -42,6 +42,14 @@ fn parse_key(input: []const u8) Key {
     return key;
 }
 
+fn parse_either(input: []const u8) KeyOrLock {
+    return switch (input[0]) {
+        '.' => KeyOrLock{ .key = parse_key(input) },
+        '#' => KeyOrLock{ .lock = parse_lock(input) },
+        else => KeyOrLock.neither,
+    };
+}
+
 test parse_lock {
     const lock_input =
         \\#####
@@ -78,20 +86,38 @@ test parse_key {
     try expectEqual(0, key.heights[4]);
 }
 
-// test parse_either {
-//     const key =
-//         \\.....
-//         \\.....
-//         \\#....
-//         \\##...
-//         \\###..
-//         \\####.
-//         \\#####
-//     ;
-//     const key_heights = parse_either(key);
-//     try expectEqual(4, key_heights[0]);
-//     try expectEqual(3, key_heights[1]);
-//     try expectEqual(2, key_heights[2]);
-//     try expectEqual(1, key_heights[3]);
-//     try expectEqual(0, key_heights[4]);
-// }
+test "parse either as key" {
+    const key_input =
+        \\.....
+        \\#....
+        \\#.#..
+        \\###..
+        \\###..
+        \\####.
+        \\#####
+    ;
+    const item = parse_either(key_input);
+    try expectEqual(5, item.key.heights[0]);
+    try expectEqual(3, item.key.heights[1]);
+    try expectEqual(4, item.key.heights[2]);
+    try expectEqual(1, item.key.heights[3]);
+    try expectEqual(0, item.key.heights[4]);
+}
+
+test "parse either as lock" {
+    const lock_input =
+        \\#####
+        \\.####
+        \\.###.
+        \\..##.
+        \\..#.
+        \\..#..
+        \\.....
+    ;
+    const item = parse_either(lock_input);
+    try expectEqual(0, item.lock.pins[0]);
+    try expectEqual(2, item.lock.pins[1]);
+    try expectEqual(5, item.lock.pins[2]);
+    try expectEqual(3, item.lock.pins[3]);
+    try expectEqual(1, item.lock.pins[4]);
+}
