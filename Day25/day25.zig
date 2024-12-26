@@ -59,6 +59,44 @@ fn parse_input(input: []const u8, allocator: Allocator) ArrayList(KeyOrLock) {
     return parsed_items;
 }
 
+fn key_matches_lock(key: Key, lock: Lock) bool {
+    var matches: bool = true;
+    for (0..5) |i| {
+        matches = matches and (key.heights[i] + lock.pins[i] < 6);
+    }
+    return matches;
+}
+
+fn count_matching_keys_for_lock(lock: Lock, all_items: ArrayList(KeyOrLock)) u8 {
+    var num_matching_keys: u8 = 0;
+    for (all_items.items) |item| {
+        switch (item) {
+            .key => |key| {
+                if (key_matches_lock(key, lock)) {
+                    num_matching_keys += 1;
+                }
+            },
+            else => {},
+        }
+    }
+    return num_matching_keys;
+}
+
+fn count_key_lock_combos(input: []const u8, allocator: Allocator) u8 {
+    var all_items = parse_input(input, allocator);
+    defer all_items.deinit();
+
+    var num_combos: u8 = 0;
+
+    for (all_items.items) |item| {
+        switch (item) {
+            .lock => |lock| num_combos += count_matching_keys_for_lock(lock, all_items),
+            else => {},
+        }
+    }
+    return num_combos;
+}
+
 test parse_lock {
     const lock_input =
         \\#####
@@ -184,4 +222,16 @@ test "can parse_sample_input" {
     defer items.deinit();
 
     try expectEqual(5, items.items.len);
+}
+
+test count_key_lock_combos {
+    const input = try load_file("sampledata.txt", std.testing.allocator);
+    defer std.testing.allocator.free(input);
+
+    const answerStr = try load_file("sampledata.answer.txt", std.testing.allocator);
+    defer std.testing.allocator.free(answerStr);
+
+    const answer = try std.fmt.parseInt(u8, answerStr, 10);
+
+    try expectEqual(answer, count_key_lock_combos(input, std.testing.allocator));
 }
