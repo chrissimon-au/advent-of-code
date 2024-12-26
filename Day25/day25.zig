@@ -165,23 +165,23 @@ test parse_input {
     try expectEqual(0, key.heights[4]);
 }
 
-// // From https://ziggit.dev/t/the-zig-way-to-read-a-file/4663/4
-// fn load_file(file_name: [] const u8) {
-//     const file = std.fs.cwd().openFile(file_name, .{}) catch |err| {
-//         std.log.err("Failed to open file: {s}", .{@errorName(err)});
-//         return;
-//     };
-//     defer file.close();
+// Based on https://ziggit.dev/t/the-zig-way-to-read-a-file/4663/4
+fn load_file(file_name: []const u8, allocator: Allocator) anyerror![]const u8 {
+    const file = std.fs.cwd().openFile(file_name, .{}) catch |err| {
+        std.log.err("Failed to open file: {s}", .{@errorName(err)});
+        return err;
+    };
+    defer file.close();
 
-//     while(file.reader().readUntilDelimiterOrEofAlloc(allocator, '\n', std.math.maxInt(usize)) catch |err| {
-//         std.log.err("Failed to read line: {s}", .{@errorName(err)});
-//         return;
-//     }) |line| {
-//         defer allocator.free(line);
-//     _ = line; // Do something with the line
-//     }
-// }
+    return try file.reader().readAllAlloc(allocator, std.math.maxInt(usize));
+}
 
-// test "can parse_sample_input" {
+test "can parse_sample_input" {
+    const input = try load_file("sampledata.txt", std.testing.allocator);
+    defer std.testing.allocator.free(input);
 
-// }
+    const items = parse_input(input, std.testing.allocator);
+    defer items.deinit();
+
+    try expectEqual(5, items.items.len);
+}
