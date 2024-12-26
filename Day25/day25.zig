@@ -50,6 +50,17 @@ fn parse_either(input: []const u8) KeyOrLock {
     };
 }
 
+fn parse_input(input: []const u8) ArrayList(KeyOrLock) {
+    var items = std.mem.split(u8, input, "\n\n");
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    var parsed_items = ArrayList(KeyOrLock).init(allocator);
+    while (items.next()) |item| {
+        parsed_items.append(parse_either(item)) catch {};
+    }
+    return parsed_items;
+}
+
 test parse_lock {
     const lock_input =
         \\#####
@@ -96,12 +107,12 @@ test "parse either as key" {
         \\####.
         \\#####
     ;
-    const item = parse_either(key_input);
-    try expectEqual(5, item.key.heights[0]);
-    try expectEqual(3, item.key.heights[1]);
-    try expectEqual(4, item.key.heights[2]);
-    try expectEqual(1, item.key.heights[3]);
-    try expectEqual(0, item.key.heights[4]);
+    const key = parse_either(key_input).key;
+    try expectEqual(5, key.heights[0]);
+    try expectEqual(3, key.heights[1]);
+    try expectEqual(4, key.heights[2]);
+    try expectEqual(1, key.heights[3]);
+    try expectEqual(0, key.heights[4]);
 }
 
 test "parse either as lock" {
@@ -114,10 +125,43 @@ test "parse either as lock" {
         \\..#..
         \\.....
     ;
-    const item = parse_either(lock_input);
-    try expectEqual(0, item.lock.pins[0]);
-    try expectEqual(2, item.lock.pins[1]);
-    try expectEqual(5, item.lock.pins[2]);
-    try expectEqual(3, item.lock.pins[3]);
-    try expectEqual(1, item.lock.pins[4]);
+    const lock = parse_either(lock_input).lock;
+    try expectEqual(0, lock.pins[0]);
+    try expectEqual(2, lock.pins[1]);
+    try expectEqual(5, lock.pins[2]);
+    try expectEqual(3, lock.pins[3]);
+    try expectEqual(1, lock.pins[4]);
+}
+
+test parse_input {
+    const input =
+        \\#####
+        \\.####
+        \\.###.
+        \\..##.
+        \\..#.
+        \\..#..
+        \\.....
+        \\
+        \\.....
+        \\#....
+        \\#.#..
+        \\###..
+        \\###..
+        \\####.
+        \\#####
+    ;
+    const items = parse_input(input);
+    const lock = items.items[0].lock;
+    try expectEqual(0, lock.pins[0]);
+    try expectEqual(2, lock.pins[1]);
+    try expectEqual(5, lock.pins[2]);
+    try expectEqual(3, lock.pins[3]);
+    try expectEqual(1, lock.pins[4]);
+    const key = items.items[1].key;
+    try expectEqual(5, key.heights[0]);
+    try expectEqual(3, key.heights[1]);
+    try expectEqual(4, key.heights[2]);
+    try expectEqual(1, key.heights[3]);
+    try expectEqual(0, key.heights[4]);
 }
