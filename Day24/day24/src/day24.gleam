@@ -281,34 +281,6 @@ fn get_reversed_normalized_wire_id(wire: Wire, circuit: Circuit) {
   }
 }
 
-fn is_normalized_mismatch(wire: Wire, circuit: Circuit) {
-  let n_wire = get_reversed_normalized_wire_id(wire, circuit)
-  case wire.normalized_id, n_wire.normalized_id {
-    Some("s'" <> n1), Some("c" <> n2) -> {
-      let assert Ok(ni1) = int.parse(n1)
-      let assert Ok(ni2) = int.parse(n2)
-      case ni1 - ni2 {
-        1 -> False
-        _ -> {
-          io.debug("found a mismatch")
-          n_wire |> io.debug
-          wire |> io.debug
-          True
-        }
-      }
-    }
-    Some("x00"), Some("c-1") -> False
-    Some("y00"), Some("c-1") -> False
-    Some(id1), Some(id2) if id1 == id2 -> False
-    _, _ -> {
-      io.debug("found a mismatch")
-      n_wire |> io.debug
-      wire |> io.debug
-      True
-    }
-  }
-}
-
 fn reverse_normalize_wire_id(wire: Wire, circuit: Circuit) {
   case wire.normalized_id {
     Some(_) -> wire
@@ -322,22 +294,22 @@ fn forward_normalize_wire_id(wire: Wire, circuit: Circuit) {
   case wire {
     Wire(_, None, _, _, srcs, Some(Xor)) ->
       case match_sources(circuit, srcs, "x", "y", id) {
-        Some(n) -> wire |> normalize_wire_id_with("s'" <> n)
+        Some(n) -> wire |> normalize_wire_id_with("s" <> n)
         None -> wire
       }
 
     Wire(_, None, _, _, srcs, Some(And)) ->
       case match_sources(circuit, srcs, "x", "y", id) {
-        Some(n) -> wire |> normalize_wire_id_with("c'" <> n)
+        Some(n) -> wire |> normalize_wire_id_with("d" <> n)
         None ->
-          case match_sources(circuit, srcs, "s'", "c", sub1) {
-            Some(n) -> wire |> normalize_wire_id_with("c''" <> n)
+          case match_sources(circuit, srcs, "s", "c", sub1) {
+            Some(n) -> wire |> normalize_wire_id_with("e" <> n)
             None -> wire
           }
       }
 
     Wire(_, None, _, _, srcs, Some(Or)) -> {
-      case match_sources(circuit, srcs, "c'", "c''", id) {
+      case match_sources(circuit, srcs, "d", "e", id) {
         Some(n) -> wire |> normalize_wire_id_with("c" <> n)
         None -> wire
       }
@@ -365,15 +337,190 @@ fn normalize_circuit_ids(circuit: Circuit) {
   }
 }
 
+fn find_problems_in_e_wire(circuit: Circuit, wire: Wire) {
+  case wire {
+    Wire(_, Some("e" <> _), _, _, _, Some(And)) -> {
+      let sources =
+        circuit.wires
+        |> list.filter(fn(w) { wire.sources |> list.contains(w.id) })
+
+      sources
+      |> list.map(fn(src) {
+        let assert Some(e_n) =
+          wire.normalized_id
+          |> option.map(string.drop_start(_, 1))
+
+        let assert Ok(n) = int.parse(e_n)
+        let expected_c_n = format(n - 1, 2)
+
+        case src.normalized_id {
+          Some("s" <> s_n) if s_n == e_n -> []
+          Some("c" <> c_n) if c_n == expected_c_n -> []
+          _ -> {
+            io.debug("problem with e-src")
+            io.debug(wire)
+            [src |> io.debug]
+          }
+        }
+      })
+      |> list.flatten
+    }
+    _ -> {
+      io.debug("e definition bad")
+      [wire |> io.debug]
+    }
+  }
+}
+
+fn find_problems_in_d_wire(circuit: Circuit, wire: Wire) {
+  case wire {
+    Wire(_, Some("d" <> _), _, _, _, Some(And)) -> {
+      let sources =
+        circuit.wires
+        |> list.filter(fn(w) { wire.sources |> list.contains(w.id) })
+
+      sources
+      |> list.map(fn(src) {
+        let assert Some(d_n) =
+          wire.normalized_id
+          |> option.map(string.drop_start(_, 1))
+
+        case src.normalized_id {
+          Some("x" <> x_n) if x_n == d_n -> []
+          Some("y" <> y_n) if y_n == d_n -> []
+          _ -> {
+            io.debug("problem with d-src")
+            io.debug(wire)
+            [src |> io.debug]
+          }
+        }
+      })
+      |> list.flatten
+    }
+    _ -> {
+      io.debug("d definition bad")
+      [wire |> io.debug]
+    }
+  }
+}
+
+fn find_problems_in_c_wire(circuit: Circuit, wire: Wire) {
+  case wire {
+    Wire(_, Some("c" <> _), _, _, _, Some(Or)) -> {
+      let sources =
+        circuit.wires
+        |> list.filter(fn(w) { wire.sources |> list.contains(w.id) })
+
+      sources
+      |> list.map(fn(src) {
+        let assert Some(c_n) =
+          wire.normalized_id
+          |> option.map(string.drop_start(_, 1))
+
+        case src.normalized_id {
+          Some("d" <> d_n) if d_n == c_n ->
+            find_problems_in_d_wire(circuit, src)
+          Some("e" <> e_n) if e_n == c_n ->
+            find_problems_in_e_wire(circuit, src)
+          _ -> {
+            io.debug("problem with c-src")
+            io.debug(wire)
+            [src |> io.debug]
+          }
+        }
+      })
+      |> list.flatten
+    }
+    _ -> {
+      io.debug("c definition bad")
+      [wire |> io.debug]
+    }
+  }
+}
+
+fn find_problems_in_s_wire(circuit: Circuit, wire: Wire) {
+  case wire {
+    Wire(_, Some("s" <> _), _, _, _, Some(Xor)) -> {
+      let sources =
+        circuit.wires
+        |> list.filter(fn(w) { wire.sources |> list.contains(w.id) })
+
+      sources
+      |> list.map(fn(src) {
+        let assert Some(s_n) =
+          wire.normalized_id
+          |> option.map(string.drop_start(_, 1))
+
+        case src.normalized_id {
+          Some("x" <> x_n) if x_n == s_n -> []
+          Some("y" <> y_n) if y_n == s_n -> []
+          _ -> {
+            io.debug("problem with s-src")
+            io.debug(wire)
+            [src |> io.debug]
+          }
+        }
+      })
+      |> list.flatten
+    }
+    _ -> {
+      io.debug("s definition bad")
+      [wire |> io.debug]
+    }
+  }
+}
+
+fn find_problems_in_z_wire(circuit: Circuit, wire: Wire) {
+  case wire {
+    Wire("z" <> _, _, _, _, _, Some(Xor)) -> {
+      let sources =
+        circuit.wires
+        |> list.filter(fn(w) { wire.sources |> list.contains(w.id) })
+
+      sources
+      |> list.map(fn(src) {
+        let z_n =
+          wire.id
+          |> string.drop_start(1)
+
+        let assert Ok(n) = int.parse(z_n)
+        let expected_c_n = format(n - 1, 2)
+
+        case src.normalized_id {
+          Some("s" <> s_n) if s_n == z_n ->
+            find_problems_in_s_wire(circuit, src)
+          Some("c" <> c_n) if c_n == expected_c_n ->
+            find_problems_in_c_wire(circuit, src)
+          Some("x00") if z_n == "00" -> []
+          Some("y00") if z_n == "00" -> []
+          //find_problems_in_c_wire(circuit, src)
+          _ -> {
+            io.debug("Problem with z-src")
+            io.debug(wire)
+            [src |> io.debug]
+          }
+        }
+      })
+      |> list.flatten
+    }
+    Wire("z45" <> _, _, _, _, _, Some(Or)) -> []
+    _ -> {
+      io.debug("z definition bad")
+      [wire |> io.debug]
+    }
+  }
+}
+
 pub fn analyse_adder_for_crossed_wires(circuit: Circuit) {
   let normalized =
     circuit
     |> normalize_circuit_ids
 
   normalized.wires
-  |> list.filter(fn(w) {
-    option.is_none(w.normalized_id) || is_normalized_mismatch(w, normalized)
-  })
+  |> list.map(io.debug)
+  |> list.filter(fn(w) { string.starts_with(w.id, "z") })
+  |> list.map(find_problems_in_z_wire(normalized, _))
+  |> list.flatten
   |> list.map(fn(w) { w.id })
   |> list.sort(string.compare)
   |> list.unique

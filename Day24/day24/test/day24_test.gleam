@@ -123,10 +123,14 @@ pub fn can_compute_aoc_test_test() {
 }
 
 pub fn check_inputs_and_output_test_test() {
+  let answer =
+    simplifile.read("../testdata.answer2.txt")
+    |> should.be_ok
+
   let circuit = load_circuit_from_file("test")
 
   circuit
   |> day24.analyse_adder_for_crossed_wires
   |> should.be_ok
-  |> should.equal("_")
+  |> should.equal(answer)
 }
