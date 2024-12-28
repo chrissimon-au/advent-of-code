@@ -1,1 +1,1 @@
-cp -r template Day$1
+cp -r ../day-template Day$1
