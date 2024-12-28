@@ -11,16 +11,7 @@
   # https://devenv.sh/languages/
   languages.racket.enable = true;
 
-  # https://devenv.sh/processes/
-  processes.code.exec = "code .";
-  process.managers.process-compose.settings = {
-    processes = {
-      test-wait = {
-        command = "watchexec -e txt,rkt --timings 'raco test *.rkt'";
-        is_tty = true;
-      };
-    };
-  };
+  enterShell = "watchexec -e txt,rkt --timings 'raco test day$DAY/day$DAY.rkt'; exit";
 
   cachix.enable = false;
 }

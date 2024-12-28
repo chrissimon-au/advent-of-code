@@ -2,7 +2,8 @@
 
 (require
   typed/rackunit
-  typed/rackunit/text-ui)
+  typed/rackunit/text-ui
+  "../common.rkt")
 
 (define
   (string-count [str : String] [ch : Char]) : Number
@@ -38,23 +39,20 @@
   (position-of-floor-calc (string->list instructions) target-floor 0 0)
   )
 
+(define (part1 [input : String]) : Number (final-floor input))
+(define (part2 [input : String]) : Number (position-of-floor input -1))
+
 (module+ test
-
-  (define (file-contents [file-name : Path-String]) : String
-    (string-trim (port->string (open-input-file file-name) #:close? #t)))
-
-
-  (define day01
-    (test-suite
-     "day-01"
-     (check-equal? (string-count "((" #\() 2)
-     (check-equal? (final-floor "(())") 0)
-     (check-equal? (final-floor "()()") 0)
-     (check-equal? (final-floor "(((") 3)
-     (check-equal? (final-floor (file-contents "day01.test.data")) (string->number (file-contents "day01.test-answer.data")))
-     (check-equal? (position-of-floor (file-contents "day01.test.data") -1) (string->number (file-contents "day01.test-answer2.data")))
-     ))
-  (run-tests day01)
+  (run-tests
+   (test-suite
+    "day-01"
+    (check-equal? (string-count "((" #\() 2)
+    (check-equal? (final-floor "(())") 0)
+    (check-equal? (final-floor "()()") 0)
+    (check-equal? (final-floor "(((") 3)
+    (check-aoc part1 "test" "1")
+    (check-aoc part2 "test" "2")
+    ))
   )
 
 
