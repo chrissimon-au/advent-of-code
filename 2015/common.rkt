@@ -9,9 +9,9 @@
 (define (file-contents-number [file-name : Path-String]) : (U Complex False)
   (string->number (file-contents file-name)))
 
+; These files are expected to be ignored so as not to share AoC input data as requested by Advent of Code
 (define (check-aoc [fn : (String -> Number)] [base : String] [suffix : String]) : Any
   (check-equal? (fn (file-contents (string-append base ".data"))) (file-contents-number (string-append base "-answer" suffix ".data"))))
-
 
 (provide
  file-contents
