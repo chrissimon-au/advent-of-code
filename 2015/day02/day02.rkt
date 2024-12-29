@@ -21,8 +21,21 @@
 (define (area-for-presents [input : String]) : Number
   (foldl + 0 (map area-for-present (string-split input "\n"))))
 
+(define (ribbon-length [input : String]) : Number
+  (let* (
+         [sides-str : (Listof String) (string-split input "x")]
+         [sides : (Listof Real) (map (lambda ([s : String]) (assert (string->number s) real?)) sides-str)]
+         [perimiters : (Listof Real) (match sides [(list l w h) (list (+ l l h h) (+ h h w w) (+ w w l l))])]
+         [volume : Number (foldl * 1 sides)]
+         )
+    (+ (apply min perimiters) volume)
+    ))
+
+(define (ribbon-lengths [input : String]) : Number
+  (foldl + 0 (map ribbon-length (string-split input "\n"))))
+
 (define (part1 [input : String]) : Number (area-for-presents input))
-(define (part2 [_input : String]) : Number 0)
+(define (part2 [input : String]) : Number (ribbon-lengths input))
 
 (module+
     test
@@ -32,9 +45,11 @@
     "day-02"
     (check-equal? (area-for-present "2x3x4") 58)
     (check-equal? (area-for-present "1x1x10") 43)
+    (check-equal? (ribbon-length "2x3x4") 34)
+    (check-equal? (ribbon-length "1x1x10") 14)
     ;(check-aoc part1 "sample" "1")
     ;(check-aoc part2 "sample" "2")
     (check-aoc part1 "test" "1")
-    ;(check-aoc part2 "test" "2")
+    (check-aoc part2 "test" "2")
     ))
   )

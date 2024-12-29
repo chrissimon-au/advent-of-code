@@ -11,7 +11,7 @@
   # https://devenv.sh/languages/
   languages.racket.enable = true;
 
-  enterShell = "watchexec -e txt,rkt --timings 'raco test day$DAY/day$DAY.rkt'; exit";
+  enterShell = "watchexec -e data,rkt --timings 'raco test day$DAY/day$DAY.rkt'; exit";
 
   cachix.enable = false;
 }
