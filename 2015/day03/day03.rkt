@@ -57,12 +57,15 @@
          [robosanta-instructions (alternating-elements (cdr instructions))]
          [santa-final-state (follow-instructions santa-instructions)]
          [robosanta-final-state (follow-instructions robosanta-instructions)]
-         [all-locations (set-union (SantaState-visited-locations santa-final-state) (SantaState-visited-locations robosanta-final-state))]
+         [all-locations
+          (set-union
+           (SantaState-visited-locations santa-final-state)
+           (SantaState-visited-locations robosanta-final-state))]
          )
     (set-count all-locations)))
 
-(define (part1 [input : String]) : Number (num-houses input))
-(define (part2 [input : String]) : Number (num-houses-with-robo-santa input))
+(define part1 num-houses)
+(define part2 num-houses-with-robo-santa)
 
 (module+
     test
