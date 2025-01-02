@@ -177,40 +177,35 @@
     (submod ".." day06-common)
     "../common.rkt")
 
-  (define-type Grid (HashTable Position Real))
+  (define-type Grid (Mutable-HashTable Position Real))
 
-  (define empty-grid : Grid (hash))
+  (define (new-grid) : Grid (make-hash))
 
-  (define (update-brightness [lights : Grid] [pos : Position] [i : Real])
+  (define (update-brightness [lights : Grid] [pos : Position] [i : Real]) : Void
     (let*
         (
          [brightness (hash-ref lights pos (lambda () 0))]
          [new-brightness (max (+ brightness i) 0)]
          )
-      (hash-set lights pos new-brightness)
+      (hash-set! lights pos new-brightness)
       ))
 
 
-  (define (process-instruction [instruction : String] [pos : Position] [lights : Grid]) : Grid
+  (define (process-instruction [instruction : String] [pos : Position] [lights : Grid]) : Void
     (case
         instruction
       [("turn on") (update-brightness lights pos 1)]
       [("turn off") (update-brightness lights pos -1)]
       [("toggle") (update-brightness lights pos 2)]
-      [else lights]
       )
     )
 
-  (define (process-row [instruction : String] [row : Real] [colStart : Real] [colEnd : Real] [lights : Grid])
-    (foldl
-     (lambda
-         ([c : Real] [l : Grid])
-       (process-instruction instruction (Position c row)
-                            l
-                            )) lights (sequence->list (in-range colStart (+ 1 colEnd))))
-    )
+  (define (process-row [instruction : String] [row : Real] [colStart : Real] [colEnd : Real] [lights : Grid]) : Void
+    (for ([c (in-range colStart (+ 1 colEnd))])
+      (process-instruction instruction (Position c row) lights)
+      ))
 
-  (define (process-square [instruction : Instruction] [lights : Grid])
+  (define (process-square [instruction : Instruction] [lights : Grid]) : Void
     (let*
         (
          [start (Instruction-start instruction)]
@@ -220,22 +215,26 @@
          [rowStart (Position-y start)]
          [rowEnd (Position-y end)]
          )
-      (foldl
-       (lambda
-           ([r : Real] [l : Grid])
-         (process-row (Instruction-i instruction) r colStart colEnd l))
-       lights
-       (sequence->list (in-range rowStart (+ 1 rowEnd)))
-       ))
-    )
+      (for ([r (in-range rowStart (+ 1 rowEnd))])
+        (process-row (Instruction-i instruction) r colStart colEnd lights))
+      ))
 
 
   (define (process-line [input : String] [lights : Grid]) : Grid
     (process-square (parse-line input) lights)
+    lights
     )
 
   (define (follow-instructions [input : String]) : Grid
-    (foldl (lambda ([line : String] [l : Grid]) (process-line line l)) empty-grid (string-split input "\n"))
+    (let
+        (
+         [lights (new-grid)]
+         )
+      (for ([line (string-split input "\n")])
+        (process-line line lights)
+        )
+      lights
+      )
     )
 
   (define (total-brightness [input : String]) : Real
@@ -249,13 +248,13 @@
     (define suite
       (test-suite
        "part-02"
-       (check-equal? (process-line "turn on 0,0 through 0,0" empty-grid) (hash (Position 0 0) 1))
-       (check-equal? (process-line "turn on 0,0 through 0,0" (process-line "turn on 0,0 through 0,0" empty-grid)) (hash (Position 0 0) 2))
-       (check-equal? (process-line "toggle 0,0 through 0,0" empty-grid) (hash (Position 0 0) 2))
-       (check-equal? (process-line "turn off 0,0 through 0,0" (process-line "toggle 0,0 through 0,0" empty-grid)) (hash (Position 0 0) 1))
-       (check-equal? (process-line "turn off 0,0 through 0,0" empty-grid) (hash (Position 0 0) 0))
+       (check-equal? (hash-ref (process-line "turn on 0,0 through 0,0" (new-grid)) (Position 0 0) (lambda () 0)) 1)
+       (check-equal? (hash-ref (process-line "turn on 0,0 through 0,0" (process-line "turn on 0,0 through 0,0" (new-grid))) (Position 0 0) (lambda () 0)) 2)
+       (check-equal? (hash-ref (process-line "toggle 0,0 through 0,0" (new-grid)) (Position 0 0) (lambda () 0)) 2)
+       (check-equal? (hash-ref (process-line "turn off 0,0 through 0,0" (process-line "toggle 0,0 through 0,0" (new-grid))) (Position 0 0) (lambda () 0)) 1)
+       (check-equal? (hash-ref (process-line "turn off 0,0 through 0,0" (new-grid)) (Position 0 0) (lambda () 0)) 0)
        ;(check-aoc part2 "sample" "2")
-       ;(check-aoc part2 "test" "2")
+       (check-aoc part2 "test" "2")
        )
 
       )
