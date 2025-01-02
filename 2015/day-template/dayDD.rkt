@@ -18,8 +18,8 @@
    (test-suite
     "day-DD"
     ;(check-aoc part1 "sample" "1")
-    ;(check-aoc part2 "sample" "2")
     ;(check-aoc part1 "test" "1")
+    ;(check-aoc part2 "sample" "2")
     ;(check-aoc part2 "test" "2")
     ))
   )
