@@ -9,3 +9,4 @@ Run `test.sh xx` where xx is the day for the tests to run a watcher on.  This wi
 * [Day 03](./day03/day03.rkt)
 * [Day 04](./day04/day04.rkt)
 * [Day 05](./day05/day05.rkt)
+* [Day 06](./day06/day06.rkt)
