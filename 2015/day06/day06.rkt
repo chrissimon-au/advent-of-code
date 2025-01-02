@@ -1,6 +1,6 @@
 #lang typed/racket
 
-(module part1 typed/racket
+(module day06-common typed/racket
 
   (require
     typed/rackunit
@@ -8,8 +8,6 @@
     "../common.rkt")
 
   (struct Position ([x : Real] [y : Real]) #:transparent)
-
-  (define-type Grid (Setof Position))
 
   (define (position-from-string [input : String]) : Position
     (let*
@@ -19,6 +17,57 @@
          )
       (Position (car parts) (cadr parts))
       ))
+
+  (struct Instruction ([i : String] [start : Position] [end : Position]) #:transparent)
+
+  (define (parse-line [input : String]) : Instruction
+    (let*
+        (
+         [m (assert (regexp-match #px"(.*) ([\\d,]+) through ([\\d,]+)" input))]
+         [parts : (Listof String) (map (lambda (d) (assert d string?)) (cdr m))]
+         [instruction : String (car parts)]
+         [start : Position (position-from-string (cadr parts))]
+         [end : Position (position-from-string (caddr parts))]
+         )
+      (Instruction instruction start end)
+      ))
+
+  (provide
+   Position
+   Position-x
+   Position-y
+   position-from-string
+   Instruction
+   Instruction-i
+   Instruction-start
+   Instruction-end
+   parse-line
+   )
+
+
+  (module+ test
+
+    (provide suite)
+
+    (define suite
+      (test-suite
+       "common"
+       (check-equal? (position-from-string "5,10") (Position 5 10))
+       )
+      )
+    )
+
+  )
+
+(module part1 typed/racket
+
+  (require
+    typed/rackunit
+    racket/set
+    (submod ".." day06-common)
+    "../common.rkt")
+
+  (define-type Grid (Setof Position))
 
   (define empty-grid (list->set '()))
 
@@ -44,9 +93,11 @@
                             )) lights (sequence->list (in-range colStart (+ 1 colEnd))))
     )
 
-  (define (process-square [instruction : String] [start : Position] [end : Position] [lights : Grid])
-    (let
+  (define (process-square [instruction : Instruction] [lights : Grid])
+    (let*
         (
+         [start (Instruction-start instruction)]
+         [end (Instruction-end instruction)]
          [colStart (Position-x start)]
          [colEnd (Position-x end)]
          [rowStart (Position-y start)]
@@ -55,7 +106,7 @@
       (foldl
        (lambda
            ([r : Real] [l : Grid])
-         (process-row instruction r colStart colEnd l))
+         (process-row (Instruction-i instruction) r colStart colEnd l))
        lights
        (sequence->list (in-range rowStart (+ 1 rowEnd)))
        ))
@@ -63,16 +114,8 @@
 
 
   (define (process-line [input : String] [lights : Grid]) : Grid
-    (let*
-        (
-         [m (assert (regexp-match #px"(.*) ([\\d,]+) through ([\\d,]+)" input))]
-         [parts : (Listof String) (map (lambda (d) (assert d string?)) (cdr m))]
-         [instruction : String (car parts)]
-         [start : Position (position-from-string (cadr parts))]
-         [end : Position (position-from-string (caddr parts))]
-         )
-      (process-square instruction start end lights)
-      ))
+    (process-square (parse-line input) lights)
+    )
 
   (define (follow-instructions [input : String]) : Grid
     (foldl (lambda ([line : String] [l : Grid]) (process-line line l)) empty-grid (string-split input "\n"))
@@ -88,7 +131,7 @@
 
     (define suite
       (test-suite
-       "day-06-part-01"
+       "part-01"
        (check-equal? (position-from-string "5,10") (Position 5 10))
        (check-equal? (process-line "turn on 0,0 through 0,0" empty-grid) (set (Position 0 0)))
        (check-equal? (process-line "turn on 1,1 through 1,1" (process-line "turn on 0,0 through 0,0" empty-grid)) (set (Position 0 0) (Position 1 1)))
@@ -130,18 +173,87 @@
 
   (require
     typed/rackunit
-    racket/set
+    racket/hash
+    (submod ".." day06-common)
     "../common.rkt")
 
-  (define (part2 [_input : String]) : Number 0)
+  (define-type Grid (HashTable Position Real))
+
+  (define empty-grid : Grid (hash))
+
+  (define (update-brightness [lights : Grid] [pos : Position] [i : Real])
+    (let*
+        (
+         [brightness (hash-ref lights pos (lambda () 0))]
+         [new-brightness (max (+ brightness i) 0)]
+         )
+      (hash-set lights pos new-brightness)
+      ))
+
+
+  (define (process-instruction [instruction : String] [pos : Position] [lights : Grid]) : Grid
+    (case
+        instruction
+      [("turn on") (update-brightness lights pos 1)]
+      [("turn off") (update-brightness lights pos -1)]
+      [("toggle") (update-brightness lights pos 2)]
+      [else lights]
+      )
+    )
+
+  (define (process-row [instruction : String] [row : Real] [colStart : Real] [colEnd : Real] [lights : Grid])
+    (foldl
+     (lambda
+         ([c : Real] [l : Grid])
+       (process-instruction instruction (Position c row)
+                            l
+                            )) lights (sequence->list (in-range colStart (+ 1 colEnd))))
+    )
+
+  (define (process-square [instruction : Instruction] [lights : Grid])
+    (let*
+        (
+         [start (Instruction-start instruction)]
+         [end (Instruction-end instruction)]
+         [colStart (Position-x start)]
+         [colEnd (Position-x end)]
+         [rowStart (Position-y start)]
+         [rowEnd (Position-y end)]
+         )
+      (foldl
+       (lambda
+           ([r : Real] [l : Grid])
+         (process-row (Instruction-i instruction) r colStart colEnd l))
+       lights
+       (sequence->list (in-range rowStart (+ 1 rowEnd)))
+       ))
+    )
+
+
+  (define (process-line [input : String] [lights : Grid]) : Grid
+    (process-square (parse-line input) lights)
+    )
+
+  (define (follow-instructions [input : String]) : Grid
+    (foldl (lambda ([line : String] [l : Grid]) (process-line line l)) empty-grid (string-split input "\n"))
+    )
+
+  (define (total-brightness [input : String]) : Real
+    (foldl + 0 (hash-values (follow-instructions input))))
+
+  (define part2 total-brightness)
 
   (module+
       test
 
     (define suite
       (test-suite
-       "day-06-part-02"
-       (check-true #f)
+       "part-02"
+       (check-equal? (process-line "turn on 0,0 through 0,0" empty-grid) (hash (Position 0 0) 1))
+       (check-equal? (process-line "turn on 0,0 through 0,0" (process-line "turn on 0,0 through 0,0" empty-grid)) (hash (Position 0 0) 2))
+       (check-equal? (process-line "toggle 0,0 through 0,0" empty-grid) (hash (Position 0 0) 2))
+       (check-equal? (process-line "turn off 0,0 through 0,0" (process-line "toggle 0,0 through 0,0" empty-grid)) (hash (Position 0 0) 1))
+       (check-equal? (process-line "turn off 0,0 through 0,0" empty-grid) (hash (Position 0 0) 0))
        ;(check-aoc part2 "sample" "2")
        ;(check-aoc part2 "test" "2")
        )
@@ -155,6 +267,7 @@
 (module+ test
 
   (require
+    (rename-in (submod ".." day06-common test) [suite commonsuite])
     (rename-in (submod ".." part1 test) [suite p1suite])
     (rename-in (submod ".." part2 test) [suite p2suite])
     typed/rackunit
@@ -163,6 +276,7 @@
 
   (run-tests (test-suite
               "day06"
+              commonsuite
               p1suite
               p2suite))
 
