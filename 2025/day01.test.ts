@@ -20,11 +20,15 @@ test("sample", () => expect(part1(sample)).toBe(3));
 const t1=readFileSync("testdata.day01.part1.txt").toString("UTF-8");
 const t1a=parseInt(readFileSync("testdata.day01.part1.answer.txt").toString("UTF-8"));
 
-test("p2 simple", () => expect(part2("R25")).toBe(0))
+test("p2 simple", () => expect(part2("R25")).toBe(0));
 test("p2 1 rotate", ()=> expect(part2("R60")).toBe(1));
-test("p2 back", () => expect(part2("R60\nL10")).toBe(2))
+test("p2 back", () => expect(part2("R60\nL10")).toBe(2));
 test("p2 double rotate", () => expect(part2("R110\nR40")).toBe(2));
-test("p2 triple rotate", () => expect(part2("R350\nL100\nR10")).toBe(5))
+test("p2 triple rotate", () => expect(part2("R350\nL100\nR10")).toBe(5));
+
+test("p2 c1", () => expect(part2("L199")).toBe(2));
+
+
 test("sample2", () => expect(part2(sample)).toBe(6));
 
 test("part2", () => expect(part2(t1)).toBe(0));
