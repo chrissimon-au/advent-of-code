@@ -1,10 +1,11 @@
 obj
 bin
 io
-TestData.*
-sampledata.*
-testdata.*
-result
+*TestData.*
+*sampledata.*
+*testdata.*
+*result*
+*answer*
 node_modules
 __pycache__
 target
