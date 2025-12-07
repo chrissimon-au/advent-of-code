@@ -32,12 +32,18 @@ describe("part1", () => {
     });
 });
 
-// describe("part2", () => {
-//     test.each([
 
+describe("part2", () => {
+    test.each([
+        [".", 0],
+        ["@", 1],
+        [`
+            @@@
+            @@@
+            @@@`, 9],
 
-//         //[t1, t2a]
-//     ])("%$", (input: string, expected: number) => {
-//         expect(part2(input)).toBe(expected);
-//     })
-// });
+        [t1, t2a]
+    ])("%$", (input: string, expected: number) => {
+        expect(part2(input)).toBe(expected);
+    })
+});
