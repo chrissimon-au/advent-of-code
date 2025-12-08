@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { readFileSync } from 'fs';
 
-import { part1, part2 } from './day03.ts';
+import { part1, part2 } from './day03';
 
 const t1 = readFileSync("day03.p1.testdata.txt").toString();
 const t1a = parseInt(readFileSync("day03.p1.answer.txt").toString());
