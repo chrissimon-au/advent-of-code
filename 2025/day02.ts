@@ -15,7 +15,7 @@ export function part1(input: string) {
 
     var t = startHN;
     var i = parseInt(startHalf + startHalf);
-    console.log("startHalf", startHalf)
+    //("startHalf", startHalf)
     while (i < startN) {
       t++;
       const tStr = t.toString();
@@ -41,8 +41,8 @@ export function part2(input: string) {
     const startN = parseInt(start);
     const endN = parseInt(end);
     const maxChunkSize = Math.floor(Math.max(start.length, end.length) / 2);
-    console.log("===========================");
-    console.log("start", start, "end", end, "maxChunkSize", maxChunkSize);
+    //("===========================");
+    //("start", start, "end", end, "maxChunkSize", maxChunkSize);
     for (var chunkSize = 1; chunkSize <= maxChunkSize; chunkSize++) {
       var numChunks = Math.floor(start.length / chunkSize);
       var firstChunk = start.substring(0, chunkSize);
@@ -53,21 +53,21 @@ export function part2(input: string) {
       var s = parseInt(firstChunk);
       const t = firstChunk.repeat(numChunks);
       var i = parseInt(t);
-      console.log("   ", "chunkSize", chunkSize, "numChunks", numChunks, "s", s, "t", t)
+      //("   ", "chunkSize", chunkSize, "numChunks", numChunks, "s", s, "t", t)
       while (i < startN) {
         s++;
         const sStr = s.toString();
         const t = sStr.repeat(numChunks);
         i = parseInt(t);
       }
-      console.log("    ", "starting to accumulate", "s", s, "i", i);
+      //("    ", "starting to accumulate", "s", s, "i", i);
       while (i >= startN && i <= endN) {
         if (!counted.has(i)) {
           acc += i;
           counted.add(i);
-          console.log("accumulating", i);
+          //("accumulating", i);
         } else {
-          console.log(" not accumulating, already counted", i);
+          //(" not accumulating, already counted", i);
         }
         s++;
         var sStr = s.toString();
@@ -75,11 +75,11 @@ export function part2(input: string) {
           sStr = "1" + "0".repeat(chunkSize - 1);
           s = parseInt(sStr);
           numChunks++;
-          console.log("  ", "new numChunks", numChunks, sStr)
+          //("  ", "new numChunks", numChunks, sStr)
         }
         const t = sStr.repeat(numChunks);
         i = parseInt(t);
-        console.log("       ", "s", s, "i", i);
+        //("       ", "s", s, "i", i);
       }
     }
 

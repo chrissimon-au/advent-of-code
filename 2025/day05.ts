@@ -24,7 +24,7 @@ export function part1(input: string) {
     return ids.reduce((acc, id) => acc + (rangeNums.some(r => r.low <= id && r.high >= id) ? 1 : 0), 0);
 }
 
-function collapseRange(range: Range[]) : [Range[], number] {
+function collapseRange(range: Range[]): [Range[], number] {
     const collapsedRanges: Range[] = []
     var numCollapse = 0;
     for (var r of range) {
@@ -40,7 +40,7 @@ function collapseRange(range: Range[]) : [Range[], number] {
         } else {
             collapsedRanges.push(r);
         }
-        console.log(collapsedRanges);
+        //console.log(collapsedRanges);
     }
     return [collapsedRanges, numCollapse];
 }
