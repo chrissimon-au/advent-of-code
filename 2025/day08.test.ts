@@ -9,9 +9,7 @@ const t1 = readFileSync(`day${day}.p1.testdata.txt`).toString();
 const t1a = parseInt(readFileSync(`day${day}.p1.answer.txt`).toString());
 const t2a = parseInt(readFileSync(`day${day}.p2.answer.txt`).toString());
 
-describe("part1", () => {
-    test.each([
-        [`
+const sample = `
 162,817,812
 57,618,57
 906,360,560
@@ -31,9 +29,22 @@ describe("part1", () => {
 941,993,340
 862,61,35
 984,92,344
-425,690,689`, 10, 3, 40],
+425,690,689`;
+
+describe("part1", () => {
+    test.each([
+        [sample, 10, 3, 40],
         [t1, 1000, 3, t1a],
     ])("%$", (input: string, numConnections: number, numCircuits: number, expected: number) => {
         expect(part1(input.trim(), numConnections, numCircuits)).toBe(expected);
+    });
+});
+
+describe("part2", () => {
+    test.each([
+        [sample, 25272],
+        [t1, t2a],
+    ])("%$", (input: string, expected: number) => {
+        expect(part2(input.trim())).toBe(expected);
     });
 });
