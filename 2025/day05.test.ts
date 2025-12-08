@@ -37,12 +37,19 @@ describe("part1", () => {
 });
 
 
-// describe("part2", () => {
-//     test.each([
-
-
-//         //[t1, t2a]
-//     ])("%$", (input: string, expected: number) => {
-//         expect(part2(input)).toBe(expected);
-//     })
-// });
+describe("part2", () => {
+    test.each([
+        [`1-4`, 4],
+        [`1-4
+7-8`, 6],
+        [`1-4
+3-5`, 5],
+        [`3-5
+10-14
+16-20
+12-18`, 14],
+        [t1, t2a],
+    ])("%$", (input: string, expected: number) => {
+        expect(part2(input)).toBe(expected);
+    })
+});
