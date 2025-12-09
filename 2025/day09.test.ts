@@ -27,7 +27,7 @@ describe("part1", () => {
         [`
 1,1
 0,0`, 4],
-[`
+        [`
 1,1
 0,0
 5,5`, 36],
@@ -38,11 +38,16 @@ describe("part1", () => {
     });
 });
 
-// describe("part2", () => {
-//     test.each([
-//         //[sample, 40],
-//         //[t1, t2a],
-//     ])("%$", (input: string, expected: number) => {
-//         expect(part1(input.trim())).toBe(expected);
-//     });
-// });
+describe("part2", () => {
+    test.each([
+        [`
+0,0
+4,0
+3,2
+1,1`, -1],
+        [sample, 24],
+        [t1, t2a],
+    ])("%$", (input: string, expected: number) => {
+        expect(part2(input.trim())).toBe(expected);
+    });
+});
