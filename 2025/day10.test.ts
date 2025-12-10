@@ -28,11 +28,16 @@ describe("part1", () => {
     });
 });
 
-// describe("part2", () => {
-//     test.each([
-//         //[sample, 24],
-//         //[t1, t2a],
-//     ])("%$", (input: string, expected: number) => {
-//         expect(part2(input.trim())).toBe(expected);
-//     });
-// });
+describe("part2", () => {
+    test.each([
+        [`[#] (0) {3}`, 3],
+        [`[#] (0) (1) {3,2}`, 5],
+        [`[###] (0) (1,2) (2) {3,2,5}`, 8],
+        [`
+[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}`, 10]
+        //[sample, 24],
+        //[t1, t2a],
+    ])("%$", (input: string, expected: number) => {
+        expect(part2(input.trim())).toBe(expected);
+    });
+});
