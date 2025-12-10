@@ -75,8 +75,10 @@ function getButtonPressesForLightState(line: string) {
 }
 
 interface Node {
-    state: number[]
+    key: string
+    state: JoltageLevels
     stepCount: number
+    parentState?: JoltageLevels
 }
 
 /*
@@ -120,28 +122,43 @@ function isStateOnPathToTarget(state: JoltageLevels, target: JoltageLevels) {
     return isOnPath;
 }
 
+function keyFromState(jl: JoltageLevels) {
+    return jl.join(",");
+}
+
 function countPressesToTargetJoltage(machine: Machine) {
     const queue = new Queue();
+    const initialState = Array(machine.targetJoltageLevels.length).fill(0);
     const initialNode = {
-        state: Array(machine.targetJoltageLevels.length).fill(0),
+        key: keyFromState(initialState),
+        state: initialState,
         stepCount: 0
     }
+    const queuedStates = {};
     queue.enqueue(initialNode);
+    queuedStates[initialNode.key] = true;
     while (queue.size > 0) {
         console.log(queue.size);
         const current = queue.dequeue() as Node;
         for (const button of machine.buttons) {
-            const nextState = {
+            const nextState = computeNextJoltageLevels(current.state, button);
+            const nextNode = {
                 stepCount: current.stepCount + 1,
-                state: computeNextJoltageLevels(current.state, button)
+                state: nextState,
+                key: keyFromState(nextState),
             }
-            if (joltagesEqual(nextState.state, machine.targetJoltageLevels)) {
-                console.log("Found!", nextState);
-                return nextState.stepCount;
-            }
-            if (isStateOnPathToTarget(nextState.state, machine.targetJoltageLevels)) {
-                console.log("Enqueing", nextState);
-                queue.enqueue(nextState);
+            if (!(nextNode.key in queuedStates)) {
+                if (joltagesEqual(nextNode.state, machine.targetJoltageLevels)) {
+                    console.log("Found!", nextNode.key);
+                    return nextNode.stepCount;
+                }
+                if (isStateOnPathToTarget(nextNode.state, machine.targetJoltageLevels)) {
+                    console.log("Enqueing", nextNode.key);
+                    queue.enqueue(nextNode);
+                    queuedStates[nextNode.key] = true;
+                }
+            } else {
+                console.log("Not considering as already queued", nextNode.key)
             }
         }
     }
