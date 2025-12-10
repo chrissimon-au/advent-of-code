@@ -4,12 +4,22 @@ import {
     serializeGraph,
 } from 'graph-data-structure';
 
-import { create, all, MathCollection, MathNumericType, BigNumber } from 'mathjs'
-
-const math = create(all, {});
+import {
+    mat,
+    vec,
+    prettyPrint,
+    solve,
+    Vector,
+    FloatMatrix,
+    calculateLinearLeastSquares,
+    calculateGeneralLeastSquares,
+    calculateSingularValueDecomposition,
+    UnderdeterminedSolution,
+    ApproximationFunctionTemplate
+} from '@josh-brown/vector';
 
 type Button = number[];
-type JoltageLevels = MathCollection<MathNumericType>;
+type JoltageLevels = number[];
 
 interface Machine {
     targetLightState: number
@@ -77,116 +87,66 @@ function getButtonPressesForLightState(line: string) {
 }
 
 
-interface DistanceOption {
-    angle: number
-    buttonIdx: number
-}
-
-interface Node {
-    state: JoltageLevels
-    alternativeNextSteps: DistanceOption[]
-}
-
 function buttonToVector(button: Button, length: number): number[] {
-    const vec = Array(length).fill(0);
-    button.forEach(joltageIdx => vec[joltageIdx] = 1);
-    return vec;
+    const buttonVec = Array(length).fill(0);
+    button.forEach(joltageIdx => buttonVec[joltageIdx] = 1);
+    return buttonVec;
 }
 
-//const angles = buttonVectors.map((bv, idx) => [angle(bv, math.subtract(machine.targetJoltageLevels, currentState)), idx])
-function angle(bv: MathCollection<MathNumericType>, currentState: MathCollection<MathNumericType>, targetJoltages: MathCollection<MathNumericType>): number {
-    const v2 = math.subtract(targetJoltages, currentState);
-    return math.acos(math.divide(math.dot(bv, v2), (math.multiply(math.norm(bv), math.norm(v2)))).valueOf() as number) as number;
+function vectorCost(v: Vector) {
+    return v.toArray().reduce((acc, v) => acc + v);
 }
 
-function distance(bv: MathCollection<MathNumericType>, currentState: MathCollection<MathNumericType>, targetJoltages: MathCollection<MathNumericType>) {
-    return math.norm(math.subtract(targetJoltages, math.add(currentState, bv))).valueOf() as number
-}
+const matrixBuilder = FloatMatrix.builder()
 
-const halfPi = math.pi / 2;
+function getPressesToTargetJoltage(machine: Machine): number {
 
-function computeNextSteps(buttonVectors: MathCollection<MathNumericType>, currentState: MathCollection<MathNumericType>, targetJoltages: MathCollection<MathNumericType>): DistanceOption[] {
-    return (buttonVectors.map((bv, idx) => ({
-        angle: angle(bv, currentState, targetJoltages),
-        buttonIdx: idx
-    })) as DistanceOption[]).sort((d1, d2) => d2.angle - d1.angle);
-}
+    const buttonMatrix = mat(machine.buttons.map(b => buttonToVector(b, machine.targetJoltageLevels.length))).transpose();
+    console.log("buttons:");
+    console.log(prettyPrint(buttonMatrix));
 
-function keyOfState(state: JoltageLevels): string {
-    return (state.valueOf() as number[]).join(',');
-}
+    const targetJoltages = vec(machine.targetJoltageLevels);
+    console.log("Target:");
+    console.log(prettyPrint(targetJoltages));
 
-function countPressesToTargetJoltage(machine: Machine): number {
-    const numJoltages: number = math.size(machine.targetJoltageLevels)[0];
-    const buttonVectors: number[][] = machine.buttons.map(b => buttonToVector(b, numJoltages))
-    //console.log("Buttonvectors", buttonVectors);
+    const initialSln = solve(buttonMatrix, targetJoltages) as UnderdeterminedSolution<number>;
+    console.log("initial solution");
+    console.log(prettyPrint(initialSln.solution));
 
-    const initialState = math.zeros(numJoltages)
-    var currentNode: Node = {
-        state: initialState,
-        alternativeNextSteps: computeNextSteps(buttonVectors, initialState, machine.targetJoltageLevels)
-    }
+    const columns = buttonMatrix.getColumnVectors();
+    const linearData = matrixBuilder.fromColumnVectors([...columns, targetJoltages]).getRowVectors();
+    //const res = calculateLinearLeastSquares(linearData.getRowVectors());
 
-    const consideredStates = {};
-
-    const path = [];
-
-    var iterations = 0;
-
-    while (!math.deepEqual(currentNode.state, machine.targetJoltageLevels)) {
-        const log = iterations % 1_000_000 == 0;// || ((iterations - 1) % 5000 == 0);
-        if (log) {
-            console.log("===========", iterations);
-            console.log("press count:", path.length);
-            console.log("CurrentState", currentNode.state.valueOf());
-            console.log("Next Step Options", currentNode.alternativeNextSteps);
-        }
-
-        const nextStep = currentNode.alternativeNextSteps[currentNode.alternativeNextSteps.length - 1];
-        currentNode.alternativeNextSteps.pop(); // remove as we're testing this step now
-        if (log) { console.log("Selected next step", nextStep); }
-        const nextState = math.add(buttonVectors[nextStep.buttonIdx], currentNode.state)
-
-        var tryNextState = true;
-
-        if (keyOfState(nextState) in consideredStates) {
-            if (log) { console.log("Already considered", nextState.valueOf()); }
-            tryNextState = false;
-        } else {
-            const withinTargetBox = math.subtract(machine.targetJoltageLevels, nextState).valueOf() as number[];
-            if (log) { console.log("Within target box", withinTargetBox); }
-            const isBeyondTarget = withinTargetBox.some(n => n < 0);
-
-            if (isBeyondTarget) {
-                if (log) { console.log("  Is past target, unwinding"); }
-                tryNextState = false;
+    const ops = linearData[0].ops();
+    const linearFunctionTemplate: ApproximationFunctionTemplate<number> = (coefficients) => {
+        console.log(" new coefficients:")
+        console.log(prettyPrint(coefficients));
+        return (input: Vector<number>) => {
+            console.log("   new input");
+            console.log(prettyPrint(input));
+            let value = 0; // constant term
+            for (let i = 0; i < coefficients.getDimension(); i++) {
+                console.log(coefficients.getEntry(i), input.getEntry(i))
+                const newTerm = ops.multiply(coefficients.getEntry(i), input.getEntry(i));
+                value = ops.add(value, newTerm);
             }
-        }
+            return value;
+        };
+    };
 
-        if (tryNextState) {
-            if (log) { console.log(" trying next state", nextState.valueOf()); }
-            path.push(currentNode);
-            consideredStates[keyOfState(currentNode.state)] = true;
-            currentNode = {
-                state: nextState,
-                alternativeNextSteps: computeNextSteps(buttonVectors, nextState, machine.targetJoltageLevels)
-            }
-        } else {
-            while (currentNode.alternativeNextSteps.length == 0) {
-                if (log) { console.log("  ran out of alternative next steps, so popping back to previous state", nextState.valueOf()); }
-                currentNode = path.pop();
-            }
-        }
-        iterations++;
-    }
-    console.log("Iterations", iterations);
-    return path.length;
+    const res = calculateGeneralLeastSquares(linearData, linearFunctionTemplate, linearData[0].getDimension() - 1);
+    console.log("linear regression solution");
+    console.log(prettyPrint(res.coefficients));
+    let args = res.coefficients.toArray().map(x => Math.round(x))
+    console.log("  after rounding");
+    console.log(args);
+    return args.reduce((acc, i) => acc + i);
 }
 
 function getButtonPressesForJoltageLevels(line: string) {
     const machine = parseMachine(line);
     //console.log(machine);
-    return countPressesToTargetJoltage(machine);
+    return getPressesToTargetJoltage(machine);
 }
 
 export function part1(input: string) {
