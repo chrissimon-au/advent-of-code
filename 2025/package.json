@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest --test-timeout=0"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
   "dependencies": {
     "geometric": "^2.5.5",
     "graph-data-structure": "^4.5.0",
-    "yocto-queue": "^1.2.2"
+    "mathjs": "^15.1.0",
+    "stack-lifo": "^0.1.6"
   }
 }

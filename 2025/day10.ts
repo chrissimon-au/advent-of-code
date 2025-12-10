@@ -4,10 +4,12 @@ import {
     serializeGraph,
 } from 'graph-data-structure';
 
-import Queue from 'yocto-queue';
+import { create, all, MathCollection, MathNumericType, BigNumber } from 'mathjs'
+
+const math = create(all, {});
 
 type Button = number[];
-type JoltageLevels = number[];
+type JoltageLevels = MathCollection<MathNumericType>;
 
 interface Machine {
     targetLightState: number
@@ -74,101 +76,116 @@ function getButtonPressesForLightState(line: string) {
     return shortestPath(graph, '0', machine.targetLightState.toString()).weight;
 }
 
+
+interface DistanceOption {
+    angle: number
+    buttonIdx: number
+}
+
 interface Node {
-    key: string
     state: JoltageLevels
-    stepCount: number
-    parentState?: JoltageLevels
+    alternativeNextSteps: DistanceOption[]
 }
 
-/*
-https://en.wikipedia.org/wiki/Breadth-first_search
- procedure BFS(G, root) is
- 2      let Q be a queue
- 3      label root as explored
- 4      Q.enqueue(root)
- 5      while Q is not empty do
- 6          v := Q.dequeue()
- 7          if v is the goal then
- 8              return v
- 9          for all edges from v to w in G.adjacentEdges(v) do
-10              if w is not labeled as explored then
-11                  label w as explored
-12                  w.parent := v
-13                  Q.enqueue(w)
-*/
-
-function joltagesEqual(j1: JoltageLevels, j2: JoltageLevels) {
-    console.log("  Is", j1, "equal to", j2);
-    const areEqual = j1.every((v, i) => v == j2[i]);
-    console.log("   ", areEqual);
-    return areEqual;
+function buttonToVector(button: Button, length: number): number[] {
+    const vec = Array(length).fill(0);
+    button.forEach(joltageIdx => vec[joltageIdx] = 1);
+    return vec;
 }
 
-function computeNextJoltageLevels(state: JoltageLevels, button: Button) {
-    const nextState = [...state];
-    button.forEach(buttonJoltage => nextState[buttonJoltage]++)
-    console.log("getting nextstate from", state, "with", button, "and it's", nextState);
-    if (nextState.length != state.length) {
-        throw Error("Incorrect state " + JSON.stringify(nextState) + ", from applying " + JSON.stringify(button) + " to " + JSON.stringify(state));
-    }
-    return nextState;
+//const angles = buttonVectors.map((bv, idx) => [angle(bv, math.subtract(machine.targetJoltageLevels, currentState)), idx])
+function angle(bv: MathCollection<MathNumericType>, currentState: MathCollection<MathNumericType>, targetJoltages: MathCollection<MathNumericType>): number {
+    const v2 = math.subtract(targetJoltages, currentState);
+    return math.acos(math.divide(math.dot(bv, v2), (math.multiply(math.norm(bv), math.norm(v2)))).valueOf() as number) as number;
 }
 
-function isStateOnPathToTarget(state: JoltageLevels, target: JoltageLevels) {
-    console.log("  Is state", state, "on path to", target, "?");
-    const isOnPath = state.every((jl, i) => jl <= target[i]);
-    console.log("   ", isOnPath);
-    return isOnPath;
+function distance(bv: MathCollection<MathNumericType>, currentState: MathCollection<MathNumericType>, targetJoltages: MathCollection<MathNumericType>) {
+    return math.norm(math.subtract(targetJoltages, math.add(currentState, bv))).valueOf() as number
 }
 
-function keyFromState(jl: JoltageLevels) {
-    return jl.join(",");
+const halfPi = math.pi / 2;
+
+function computeNextSteps(buttonVectors: MathCollection<MathNumericType>, currentState: MathCollection<MathNumericType>, targetJoltages: MathCollection<MathNumericType>): DistanceOption[] {
+    return (buttonVectors.map((bv, idx) => ({
+        angle: angle(bv, currentState, targetJoltages),
+        buttonIdx: idx
+    })) as DistanceOption[]).sort((d1, d2) => d2.angle - d1.angle);
 }
 
-function countPressesToTargetJoltage(machine: Machine) {
-    const queue = new Queue();
-    const initialState = Array(machine.targetJoltageLevels.length).fill(0);
-    const initialNode = {
-        key: keyFromState(initialState),
+function keyOfState(state: JoltageLevels): string {
+    return (state.valueOf() as number[]).join(',');
+}
+
+function countPressesToTargetJoltage(machine: Machine): number {
+    const numJoltages: number = math.size(machine.targetJoltageLevels)[0];
+    const buttonVectors: number[][] = machine.buttons.map(b => buttonToVector(b, numJoltages))
+    //console.log("Buttonvectors", buttonVectors);
+
+    const initialState = math.zeros(numJoltages)
+    var currentNode: Node = {
         state: initialState,
-        stepCount: 0
+        alternativeNextSteps: computeNextSteps(buttonVectors, initialState, machine.targetJoltageLevels)
     }
-    const queuedStates = {};
-    queue.enqueue(initialNode);
-    queuedStates[initialNode.key] = true;
-    while (queue.size > 0) {
-        console.log(queue.size);
-        const current = queue.dequeue() as Node;
-        for (const button of machine.buttons) {
-            const nextState = computeNextJoltageLevels(current.state, button);
-            const nextNode = {
-                stepCount: current.stepCount + 1,
-                state: nextState,
-                key: keyFromState(nextState),
-            }
-            if (!(nextNode.key in queuedStates)) {
-                if (joltagesEqual(nextNode.state, machine.targetJoltageLevels)) {
-                    console.log("Found!", nextNode.key);
-                    return nextNode.stepCount;
-                }
-                if (isStateOnPathToTarget(nextNode.state, machine.targetJoltageLevels)) {
-                    console.log("Enqueing", nextNode.key);
-                    queue.enqueue(nextNode);
-                    queuedStates[nextNode.key] = true;
-                }
-            } else {
-                console.log("Not considering as already queued", nextNode.key)
+
+    const consideredStates = {};
+
+    const path = [];
+
+    var iterations = 0;
+
+    while (!math.deepEqual(currentNode.state, machine.targetJoltageLevels)) {
+        const log = iterations % 1_000_000 == 0;// || ((iterations - 1) % 5000 == 0);
+        if (log) {
+            console.log("===========", iterations);
+            console.log("press count:", path.length);
+            console.log("CurrentState", currentNode.state.valueOf());
+            console.log("Next Step Options", currentNode.alternativeNextSteps);
+        }
+
+        const nextStep = currentNode.alternativeNextSteps[currentNode.alternativeNextSteps.length - 1];
+        currentNode.alternativeNextSteps.pop(); // remove as we're testing this step now
+        if (log) { console.log("Selected next step", nextStep); }
+        const nextState = math.add(buttonVectors[nextStep.buttonIdx], currentNode.state)
+
+        var tryNextState = true;
+
+        if (keyOfState(nextState) in consideredStates) {
+            if (log) { console.log("Already considered", nextState.valueOf()); }
+            tryNextState = false;
+        } else {
+            const withinTargetBox = math.subtract(machine.targetJoltageLevels, nextState).valueOf() as number[];
+            if (log) { console.log("Within target box", withinTargetBox); }
+            const isBeyondTarget = withinTargetBox.some(n => n < 0);
+
+            if (isBeyondTarget) {
+                if (log) { console.log("  Is past target, unwinding"); }
+                tryNextState = false;
             }
         }
-    }
-    return -1;
-}
 
+        if (tryNextState) {
+            if (log) { console.log(" trying next state", nextState.valueOf()); }
+            path.push(currentNode);
+            consideredStates[keyOfState(currentNode.state)] = true;
+            currentNode = {
+                state: nextState,
+                alternativeNextSteps: computeNextSteps(buttonVectors, nextState, machine.targetJoltageLevels)
+            }
+        } else {
+            while (currentNode.alternativeNextSteps.length == 0) {
+                if (log) { console.log("  ran out of alternative next steps, so popping back to previous state", nextState.valueOf()); }
+                currentNode = path.pop();
+            }
+        }
+        iterations++;
+    }
+    console.log("Iterations", iterations);
+    return path.length;
+}
 
 function getButtonPressesForJoltageLevels(line: string) {
     const machine = parseMachine(line);
-    console.log(machine);
+    //console.log(machine);
     return countPressesToTargetJoltage(machine);
 }
 
