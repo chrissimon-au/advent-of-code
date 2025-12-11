@@ -14,8 +14,8 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
-    "@josh-brown/vector": "^4.2.0",
     "geometric": "^2.5.5",
+    "glpk-ts": "^0.0.11",
     "graph-data-structure": "^4.5.0",
     "stack-lifo": "^0.1.6"
   }

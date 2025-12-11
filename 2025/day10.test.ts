@@ -30,12 +30,12 @@ describe("part1", () => {
 
 describe("part2", () => {
     test.each([
-        // [`[#] (0) {3}`, 3],
-        // [`[#] (0) (1) {3,2}`, 5],
-        // [`[###] (0) (1,2) (2) {3,2,5}`, 8],
-        //[sample, 33],
+        [`[#] (0) {3}`, 3],
+        [`[#] (0) (1) {3,2}`, 5],
+        [`[###] (0) (1,2) (2) {3,2,5}`, 8],
+        [sample, 33],
         [t1, t2a],
-    ])("%$", (input: string, expected: number) => {
-        expect(part2(input.trim())).toBe(expected);
+    ])("%$", async (input: string, expected: number) => {
+        expect(await part2(input.trim())).toBe(expected);
     });
 });
